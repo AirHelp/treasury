@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 
 	"github.com/AirHelp/treasury/aws"
@@ -21,11 +20,14 @@ func (c *Client) Read(key string) (*Secret, error) {
 	}
 
 	// API rq
-	context := fmt.Sprintf("secret?key=%s", key)
-	req, err := c.NewRequest("GET", context, nil)
+	req, err := c.NewRequest("GET", "secret", nil)
 	if err != nil {
 		return nil, err
 	}
+	query := req.URL.Query()
+	query.Add("key", key)
+	req.URL.RawQuery = query.Encode()
+
 	res, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
