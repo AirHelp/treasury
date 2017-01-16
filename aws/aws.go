@@ -16,7 +16,7 @@ func New() (*Client, error) {
 	sess, err := session.NewSession()
 	if err != nil {
 		fmt.Println("Failed to create AWS session,", err)
-		return &Client{}, err
+		return nil, err
 	}
 	return &Client{sess: sess}, nil
 }
