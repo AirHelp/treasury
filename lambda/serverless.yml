@@ -15,7 +15,7 @@ provider:
         - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
-      Resource: "arn:aws:dynamodb:eu-west-1:*:*"
+      Resource: "arn:aws:dynamodb:eu-west-1:*:table/treasury-${opt:stage, self:provider.stage}"
   environment:
     DYNAMODB_TABLE: treasury-${opt:stage, self:provider.stage}
 
