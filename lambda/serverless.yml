@@ -17,7 +17,7 @@ provider:
         - dynamodb:PutItem
       Resource: "arn:aws:dynamodb:eu-west-1:*:*"
   environment:
-    DYNAMODB_TABLE: treasury
+    DYNAMODB_TABLE: treasury-${opt:stage, self:provider.stage}
 
 
 functions:
@@ -42,7 +42,7 @@ resources:
     usersTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: treasury
+        TableName: treasury-${opt:stage, self:provider.stage}
         AttributeDefinitions:
           - AttributeName: key
             AttributeType: S
