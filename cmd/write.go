@@ -24,7 +24,7 @@ import (
 
 // writeCmd represents the write command
 var writeCmd = &cobra.Command{
-	Use:   "write KEY SECRET",
+	Use:   "write ENVIRONMENT/APPLICATION/KEY SECRET",
 	Short: "Write secrets into Treasury",
 	Long:  `Write sends data into Treasury at the given key (path).`,
 	RunE:  write,
@@ -33,17 +33,12 @@ var writeCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(writeCmd)
 	writeCmd.SuggestFor = []string{"put"}
-	writeCmd.Flags().StringVarP(&flagsKms, "kms", "k", "", "KMS Alias name")
 }
 
 func write(cmd *cobra.Command, args []string) error {
 	if len(args) != 2 {
 		return errors.New("Missing Key and Value to write.")
 	}
-	if flagsKms == "" {
-		return errors.New("KMS Alias was not given")
-	}
-	// TO DO: validate if those are valid types
 	key := args[0]
 	value := args[1]
 
@@ -53,7 +48,7 @@ func write(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	response, err := treasury.Write(key, value, flagsKms)
+	response, err := treasury.Write(key, value)
 	if err != nil {
 		return err
 	}
