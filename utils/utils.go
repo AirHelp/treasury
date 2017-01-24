@@ -2,23 +2,27 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"regexp"
 	"strings"
 )
 
 // validateInputKey checks if cli input is valid
-func validateInputKey(cliIn string) (bool, error) {
-	return regexp.MatchString(`^[a-z]+/[a-z]+/.+$`, cliIn)
+func validateInputKey(cliIn string) error {
+	match, err := regexp.MatchString(`^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_]+$`, cliIn)
+	if err != nil {
+		return err
+	}
+	if !match {
+		return fmt.Errorf("Given Key (%s) does not match to defined regex.", cliIn)
+	}
+	return nil
 }
 
 // FindEnvironmentApplicationName slices cli input into environment and application names
 func FindEnvironmentApplicationName(cliIn string) (string, string, error) {
-	validIn, err := validateInputKey(cliIn)
-	if err != nil {
+	if err := validateInputKey(cliIn); err != nil {
 		return "", "", err
-	}
-	if !validIn {
-		return "", "", errors.New("Invalid input. Please check documentation.")
 	}
 
 	substrings := strings.Split(cliIn, "/")
