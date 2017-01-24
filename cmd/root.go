@@ -25,8 +25,6 @@ var (
 	// TO DO: CLI config
 	// if we decided to use config file we should use https://github.com/spf13/viper
 	treasuryURL string
-	// TO DO: move it
-	flagsKms string
 )
 
 var RootCmd = &cobra.Command{

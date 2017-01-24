@@ -42,13 +42,13 @@ AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
 
 Write secret
 ```
-> treasury write webapp/integration/cockpit_api_pass superSecretPassword -k test
+> treasury write integration/webapp/cockpit_api_pass superSecretPassword
 Success! Data written to: webapp/integration/cockpit_api_pass
 ```
 
 Read secret:
 ```
-> treasury read webapp/integration/cockpit_api_pass
+> treasury read integration/webapp/cockpit_api_pass
 superSecretPassword
 ```
 

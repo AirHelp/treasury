@@ -7,10 +7,15 @@ import (
 	"io"
 
 	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/utils"
 )
 
 // Write secret to Treasure
-func (c *Client) Write(key, secret, kmsKey string) (string, error) {
+func (c *Client) Write(key, secret string) (string, error) {
+	environment, _, err := utils.FindEnvironmentApplicationName(key)
+	if err != nil {
+		return "", err
+	}
 	// AWS connection
 	awsClient, err := aws.New()
 	if err != nil {
@@ -24,7 +29,7 @@ func (c *Client) Write(key, secret, kmsKey string) (string, error) {
 	}
 
 	// convert plain text secret into encrypted blob
-	kmsResponse, err := awsClient.Encrypt(kmsKey, secret)
+	kmsResponse, err := awsClient.Encrypt(environment, secret)
 	if err != nil {
 		return "", err
 	}
