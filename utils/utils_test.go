@@ -9,7 +9,7 @@ func TestValidateInputKey(t *testing.T) {
 		"Integration/claim-score/elasticsearch_url",
 	}
 	for _, testString := range validTestStrings {
-		if err := validateInputKey(testString); err != nil {
+		if err := ValidateInputKey(testString); err != nil {
 			t.Error(err)
 		}
 	}
@@ -20,7 +20,7 @@ func TestValidateInputKey(t *testing.T) {
 		"1231/12312/312313",
 	}
 	for _, testString := range invalidTestStrings {
-		if err := validateInputKey(testString); err == nil {
+		if err := ValidateInputKey(testString); err == nil {
 			t.Errorf("expected error for test string: %s", testString)
 		}
 	}

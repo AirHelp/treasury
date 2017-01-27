@@ -24,7 +24,7 @@ import (
 var (
 	// TO DO: CLI config
 	// if we decided to use config file we should use https://github.com/spf13/viper
-	treasuryURL string
+	treasuryS3 string
 )
 
 var RootCmd = &cobra.Command{
@@ -33,7 +33,7 @@ var RootCmd = &cobra.Command{
 	Long: `
 Treasury is a very simple and easy to use tool for managing secrets.
 It uses AWS Key Management Service (KMS) for encrypting and decrypting secret values and master-key storage,
-and DynamoDB for encrypted secrets storage.`,
+and S3 for encrypted secrets storage.`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -51,9 +51,9 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	treasuryURL = os.Getenv("TREASURY_URL")
-	if treasuryURL == "" {
-		fmt.Println("TREASURY_URL environment variable is missing")
+	treasuryS3 = os.Getenv("TREASURY_S3")
+	if treasuryS3 == "" {
+		fmt.Println("TREASURY_S3 environment variable is missing")
 		os.Exit(-1)
 	}
 }

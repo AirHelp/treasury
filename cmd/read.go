@@ -39,11 +39,9 @@ func read(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
 		return errors.New("Missing Key to read.")
 	}
-	// TO DO: validate input
 	key := args[0]
-	// use default client options
-	treasuryOptions := client.Options{}
-	treasury, err := client.NewClient(treasuryURL, treasuryOptions)
+
+	treasury, err := client.NewClient(treasuryS3, &client.Options{})
 	if err != nil {
 		return err
 	}

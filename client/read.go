@@ -1,57 +1,33 @@
 package client
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"errors"
-	"io"
+	"bytes"
 
 	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/utils"
 )
 
 // Read returns decrypted secret for given key
 func (c *Client) Read(key string) (*Secret, error) {
-	var data Secret
+	if err := utils.ValidateInputKey(key); err != nil {
+		return nil, err
+	}
 
-	// AWS connection
-	awsClient, err := aws.New()
+	s3objectInput := &aws.GetObjectInput{
+		Bucket: c.bucketName,
+		Key:    key,
+	}
+	s3object, err := c.AwsClient.GetObject(s3objectInput)
 	if err != nil {
 		return nil, err
 	}
 
-	// API rq
-	req, err := c.NewRequest("GET", "secret", nil)
-	if err != nil {
-		return nil, err
-	}
-	query := req.URL.Query()
-	query.Add("key", key)
-	req.URL.RawQuery = query.Encode()
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(s3object.Body)
 
-	res, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, err
+	secret := &Secret{
+		Key:   key,
+		Value: buf.String(),
 	}
-	if res.StatusCode != 200 {
-		return nil, errors.New(res.Status)
-	}
-
-	// unmarshal response
-	err = json.NewDecoder(res.Body).Decode(&data)
-	if err != nil && err != io.EOF {
-		return nil, err
-	}
-
-	// decrypt secret
-	blobSecret, err := base64.StdEncoding.DecodeString(data.Value)
-	if err != nil {
-		return nil, err
-	}
-	plainTextSecret, err := awsClient.Decrypt(blobSecret)
-	if err != nil {
-		return nil, err
-	}
-	data.Value = plainTextSecret
-
-	return &data, err
+	return secret, nil
 }

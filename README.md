@@ -1,10 +1,10 @@
 # treasury
 
-Treasury is a very simple and easy to use tool for managing secrets. It uses AWS Key Management Service (KMS) for encrypting and decrypting secret values and master-key storage, and DynamoDB for encrypted secrets storage.
+Treasury is a very simple and easy to use tool for managing secrets. It uses AWS Key Management Service (KMS) for encrypting and decrypting secret values and master-key storage, and S3 for encrypted secrets storage.
 
 ## Architecture
 
-![Architecture overwiev](doc/Treasure_diagram_v1.png)
+![Architecture overwiev](doc/Treasure_diagram_v2.png)
 
 ## Command Line interface (CLI)
 
@@ -18,11 +18,11 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### Requirements
 
-* Treasury API URL over environment variable
+* Treasury S3 over environment variable
 
 For example:
 ```
-export TREASURY_URL=https://zywdb8nrhf.execute-api.eu-west-1.amazonaws.com/dev
+export TREASURY_S3=st-treasury-st-staging
 ```
 
 * AWS Credentials
@@ -73,76 +73,32 @@ if err != nil {
 fmt.Println(secret.Value)
 ```
 
-## API Gateway & Lambda
-
-The Treasury HTTP API has been build on AWS API Gateway and AWS Lambda services. The API gives you access to Treasury via HTTP but it returns only encrypted secrets. The Treasury CLI uses the HTTP API to access Treasury storage.
-
-All API routes are prefixed with /v1/.
-
-** TO DO: add authentication over AIM **
-
-### Deployment
-
-The serverless cli is required for API Gateway & Lambda deployment.
-
-```
-npm install -g serverless
-```
-
-Deployment:
-
-```
-cd lambda && sls deploy -v
-```
-
-### Usage example
-
-Read secret
-```
-$ curl -s -XGET https://zywdb8nrhf.execute-api.eu-west-1.amazonaws.com/dev/v1/secret?key=webapp/integration/cockpit_api_pass | jq .
-{
-  "version": 1484216745.431677,
-  "kms_arn": "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8",
-  "value": "base64EncryptedBlob",
-  "key": "webapp/production/cockpit_api_user",
-  "author": "Krzysztof"
-}
-```
-
-Write secret
-```
-$ curl -s -XPOST -H "Content-Type: application/json" -d '{"key": "webapp/production/cockpit_api_user","value": "base64EncryptedBlob","kms_arn": "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8","author": "Krzysztof"}' https://zywdb8nrhf.execute-api.eu-west-1.amazonaws.com/dev/v1/secret | jq .
-{
-  "message": "Success! Data written to: webapp/production/cockpit_api_user"
-}
-```
-
-## DynamoDB
-
-DynamoDB as a backend storage is responsible for durable storage of encrypted data.
-
-DynamoDB table can be created via serverless resource:
-
-```
-resources:
-  Resources:
-    usersTable:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: treasury
-        AttributeDefinitions:
-          - AttributeName: key
-            AttributeType: S
-          - AttributeName: version
-            AttributeType: N
-        KeySchema:
-          - AttributeName: key
-            KeyType: HASH
-          - AttributeName: version
-            KeyType: RANGE
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-```
-
 ** TO DO: add terraform resource **
+
+
+## Development
+
+## Build for development
+
+```
+make build
+```
+
+## Tests
+
+Go tests
+
+```
+make test
+```
+
+Bats tests
+
+```
+bats test/bats/tests.bats
+```
+
+If `bats` missing, install it:
+```bash
+brew install bats
+```

@@ -1,23 +1,24 @@
 package client_test
 
 import (
-	"os"
 	"testing"
 
+	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/client"
+	"github.com/AirHelp/treasury/test"
 )
 
 func TestWrite(t *testing.T) {
-	treasuryURL := os.Getenv("TREASURY_URL")
-	if treasuryURL == "" {
-		t.Fatalf("TREASURY_URL environment variable is missing")
+	dummyClientOptions := &client.Options{
+		AwsClient: &aws.Client{
+			S3Svc: &test.MockS3Client{},
+		},
 	}
-
-	treasury, err := client.NewClient(treasuryURL, client.Options{})
+	treasury, err := client.NewClient("fake_s3_bucket", dummyClientOptions)
 	if err != nil {
 		t.Error(err)
 	}
-	_, err = treasury.Write(testKey, testSecret)
+	err = treasury.Write(testKey, testSecret)
 	if err != nil {
 		t.Error(err)
 	}
