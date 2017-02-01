@@ -17,33 +17,46 @@ type PutObjectInput struct {
 	Environment string
 }
 
-// GetObjectInput structure for PutObject
+// GetObjectInput structure for GetObject
 type GetObjectInput struct {
 	Bucket  string
 	Key     string
 	Version string
 }
 
+const (
+	// http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
+	s3ACL = "private"
+	// http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html
+	s3ServerSideEncryption = "AES256"
+	// ApplicatonMetaKey is used as a Key for s3 object's metadata and tag
+	ApplicatonMetaKey = "Application"
+	// EnvironmentMetaKey is used as a Key for s3 object's metadata and tag
+	EnvironmentMetaKey = "Environment"
+)
+
 // PutObject copy secret data on S3 bucket
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
-func (c *Client) PutObject(obcject *PutObjectInput) error {
+func (c *Client) PutObject(object *PutObjectInput) error {
 
 	tags := fmt.Sprintf(
-		"Application=%s&Environment=%s",
-		obcject.Application,
-		obcject.Environment,
+		"%s=%s&%s=%s",
+		ApplicatonMetaKey,
+		object.Application,
+		EnvironmentMetaKey,
+		object.Environment,
 	)
 
 	params := &s3.PutObjectInput{
-		Bucket: aws.String(obcject.Bucket),
-		Key:    aws.String(obcject.Key),
-		ACL:    aws.String("private"),
-		Body:   bytes.NewReader([]byte(obcject.Value)),
+		Bucket: aws.String(object.Bucket),
+		Key:    aws.String(object.Key),
+		ACL:    aws.String(s3ACL),
+		Body:   bytes.NewReader([]byte(object.Value)),
 		Metadata: map[string]*string{
-			"Application": aws.String(obcject.Application),
-			"Environment": aws.String(obcject.Environment),
+			ApplicatonMetaKey:  aws.String(object.Application),
+			EnvironmentMetaKey: aws.String(object.Environment),
 		},
-		ServerSideEncryption: aws.String("AES256"),
+		ServerSideEncryption: aws.String(s3ServerSideEncryption),
 		Tagging:              aws.String(tags),
 	}
 
