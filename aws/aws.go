@@ -15,10 +15,7 @@ type Client struct {
 }
 
 // New returns clients for AWS services
-func New(externalSess ...*session.Session) (*Client, error) {
-	if len(externalSess) != 0 {
-		return &Client{sess: externalSess[0]}, nil
-	}
+func New() (*Client, error) {
 	sess, err := session.NewSession()
 	if err != nil {
 		fmt.Println("Failed to create AWS session,", err)
