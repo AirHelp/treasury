@@ -8,6 +8,11 @@ import (
 	"github.com/AirHelp/treasury/test"
 )
 
+const (
+	testKey    = "test/webapp/cocpit_api_pass"
+	testSecret = "as9@#$%^&*(/2hdiwnf"
+)
+
 func TestWrite(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		AwsClient: &aws.Client{
