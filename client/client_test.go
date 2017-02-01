@@ -12,7 +12,7 @@ const (
 )
 
 func TestClient(t *testing.T) {
-	_, err := client.NewClient("testBucketName", &client.Options{})
+	_, err := client.New("testBucketName", &client.Options{})
 	if err != nil {
 		t.Fatalf("Could not initialize client. Error:%s", err)
 	}

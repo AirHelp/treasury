@@ -42,7 +42,7 @@ func write(cmd *cobra.Command, args []string) error {
 	key := args[0]
 	value := args[1]
 
-	treasury, err := client.NewClient(treasuryS3, &client.Options{})
+	treasury, err := client.New(treasuryS3, &client.Options{})
 	if err != nil {
 		return err
 	}

@@ -29,8 +29,8 @@ type Options struct {
 	AwsClient *aws.Client
 }
 
-// NewClient initializes a new client for the given AWS account with S3 bucket
-func NewClient(bucketName string, options *Options) (*Client, error) {
+// New initializes a new client for the given AWS account with S3 bucket
+func New(bucketName string, options *Options) (*Client, error) {
 	if bucketName == "" {
 		return nil, errors.New("S3 bucket name is missing")
 	}
