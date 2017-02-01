@@ -1,6 +1,6 @@
 # treasury
 
-Treasury is a very simple and easy to use tool for managing secrets. It uses AWS Key Management Service (KMS) for encrypting and decrypting secret values and master-key storage, and S3 for encrypted secrets storage.
+Treasury is a very simple and easy to use tool for managing secrets. It uses Amazon S3 service to store secrets. The secrets are encrypt before saving it on disks in its data centers and decrypt it when we read the secret. Treasury uses Server-Side Encryption.
 
 ## Architecture
 

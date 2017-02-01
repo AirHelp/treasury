@@ -32,8 +32,7 @@ var RootCmd = &cobra.Command{
 	Short: "A tool for managing secrets.",
 	Long: `
 Treasury is a very simple and easy to use tool for managing secrets.
-It uses AWS Key Management Service (KMS) for encrypting and decrypting secret values and master-key storage,
-and S3 for encrypted secrets storage.`,
+`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
