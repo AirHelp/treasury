@@ -18,8 +18,11 @@ func TestRead(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	_, err = treasury.Read(testKey)
+	secret, err := treasury.Read(test.TestKey)
 	if err != nil {
 		t.Error(err)
+	}
+	if secret.Value != test.TestSecret {
+		t.Errorf("Reads returns wrong secret")
 	}
 }

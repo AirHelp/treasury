@@ -18,7 +18,7 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = treasury.Write(testKey, testSecret)
+	err = treasury.Write(test.TestKey, test.TestSecret)
 	if err != nil {
 		t.Error(err)
 	}
