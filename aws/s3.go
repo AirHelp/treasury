@@ -73,10 +73,6 @@ func (c *Client) GetObject(object *GetObjectInput) (*s3.GetObjectOutput, error) 
 	params := &s3.GetObjectInput{
 		Bucket: aws.String(object.Bucket),
 		Key:    aws.String(object.Key),
-		// IfMatch:           aws.String("IfMatch"),
-		// IfModifiedSince:   aws.Time(time.Now()),
-		// IfUnmodifiedSince: aws.Time(time.Now()),
-		// VersionId: aws.String(object.Version),
 	}
 
 	resp, err := c.S3Svc.GetObject(params)
