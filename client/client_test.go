@@ -1,6 +1,14 @@
 package client_test
 
-const (
-	testKey    = "test/webapp/cocpit_api_pass"
-	testSecret = "as9@#$%^&*(/2hdiwnf"
+import (
+	"testing"
+
+	"github.com/AirHelp/treasury/client"
 )
+
+func TestClient(t *testing.T) {
+	_, err := client.New("testBucketName", &client.Options{})
+	if err != nil {
+		t.Fatalf("Could not initialize client. Error:%s", err)
+	}
+}

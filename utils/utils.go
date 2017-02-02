@@ -8,7 +8,7 @@ import (
 )
 
 // validateInputKey checks if cli input is valid
-func validateInputKey(cliIn string) error {
+func ValidateInputKey(cliIn string) error {
 	match, err := regexp.MatchString(`^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_]+$`, cliIn)
 	if err != nil {
 		return err
@@ -21,7 +21,7 @@ func validateInputKey(cliIn string) error {
 
 // FindEnvironmentApplicationName slices cli input into environment and application names
 func FindEnvironmentApplicationName(cliIn string) (string, string, error) {
-	if err := validateInputKey(cliIn); err != nil {
+	if err := ValidateInputKey(cliIn); err != nil {
 		return "", "", err
 	}
 

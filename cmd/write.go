@@ -42,17 +42,15 @@ func write(cmd *cobra.Command, args []string) error {
 	key := args[0]
 	value := args[1]
 
-	// use default client options
-	treasuryOptions := client.Options{}
-	treasury, err := client.NewClient(treasuryURL, treasuryOptions)
+	treasury, err := client.New(treasuryS3, &client.Options{})
 	if err != nil {
 		return err
 	}
-	response, err := treasury.Write(key, value)
+	err = treasury.Write(key, value)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println(response)
+	fmt.Println("Success! Data written to: ", key)
 	return nil
 }
