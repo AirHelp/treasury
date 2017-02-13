@@ -14,7 +14,7 @@ func TestRead(t *testing.T) {
 			S3Svc: &test.MockS3Client{},
 		},
 	}
-	treasury, err := client.New("fake_s3_bucket", dummyClientOptions)
+	treasury, err := client.New("fake_s3_bucket", "", dummyClientOptions)
 	if err != nil {
 		t.Error(err)
 	}

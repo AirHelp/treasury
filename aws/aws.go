@@ -3,6 +3,7 @@ package aws
 import (
 	"fmt"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3iface"
@@ -15,8 +16,16 @@ type Client struct {
 }
 
 // New returns clients for AWS services
-func New() (*Client, error) {
-	sess, err := session.NewSession()
+func New(s3Region string) (*Client, error) {
+	var sess *session.Session
+	var err error
+
+	if s3Region != "" {
+		sess, err = session.NewSession(&aws.Config{Region: aws.String(s3Region)})
+	} else {
+		sess, err = session.NewSession()
+	}
+
 	if err != nil {
 		fmt.Println("Failed to create AWS session,", err)
 		return nil, err

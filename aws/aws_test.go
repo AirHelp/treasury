@@ -7,7 +7,7 @@ import (
 )
 
 func TestAws(t *testing.T) {
-	_, err := aws.New()
+	_, err := aws.New("")
 	if err != nil {
 		t.Error(err)
 	}

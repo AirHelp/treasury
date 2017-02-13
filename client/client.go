@@ -30,7 +30,7 @@ type Options struct {
 }
 
 // New initializes a new client for the given AWS account with S3 bucket
-func New(bucketName string, options *Options) (*Client, error) {
+func New(bucketName, s3Region string, options *Options) (*Client, error) {
 	if bucketName == "" {
 		return nil, errors.New("S3 bucket name is missing")
 	}
@@ -42,7 +42,7 @@ func New(bucketName string, options *Options) (*Client, error) {
 	// AWS connection
 	var err error
 	if options.AwsClient == nil {
-		options.AwsClient, err = aws.New()
+		options.AwsClient, err = aws.New(s3Region)
 		if err != nil {
 			return nil, err
 		}
