@@ -38,7 +38,7 @@ Alternatively, you can set the following environment variables:
 AWS_ACCESS_KEY_ID=AKID1234567890
 AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
 
-You can also use non-default awscli profile: 
+You can also use non-default awscli profile:
 
 AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass
 
@@ -70,7 +70,7 @@ import "github.com/AirHelp/treasury/client"
 
 // use default client options
 treasuryOptions := client.Options{}
-treasury, err := client.NewClient(treasuryURL, "", treasuryOptions)
+treasury, err := client.NewClient(treasuryURL, treasuryOptions)
 if err != nil {
   return err
 }
