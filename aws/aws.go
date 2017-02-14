@@ -15,16 +15,21 @@ type Client struct {
 	S3Svc s3iface.S3API
 }
 
-// New returns clients for AWS services
-func New(s3Region string) (*Client, error) {
-	var sess *session.Session
-	var err error
+// Options for AWS services
+type Options struct {
+	Region string
+}
 
-	if s3Region != "" {
-		sess, err = session.NewSession(&aws.Config{Region: aws.String(s3Region)})
-	} else {
-		sess, err = session.NewSession()
+// New returns clients for AWS services
+func New(options Options) (*Client, error) {
+
+	config := aws.Config{}
+
+	if options.Region != "" {
+		config.Region = aws.String(options.Region)
 	}
+
+	sess, err := session.NewSession(&config)
 
 	if err != nil {
 		fmt.Println("Failed to create AWS session,", err)

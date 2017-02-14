@@ -7,8 +7,16 @@ import (
 )
 
 func TestAws(t *testing.T) {
-	_, err := aws.New("")
-	if err != nil {
-		t.Error(err)
+	var tests = []struct {
+		region string
+	}{
+		{""},
+		{"eu-west-1"},
+	}
+
+	for _, test := range tests {
+		if _, got := aws.New(aws.Options{test.region}); got != nil {
+			t.Error(got)
+		}
 	}
 }
