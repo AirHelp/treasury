@@ -17,14 +17,13 @@ type Client struct {
 
 // New returns clients for AWS services
 func New(s3Region string) (*Client, error) {
-	var sess *session.Session
-	var err error
+	config := aws.Config{}
 
 	if s3Region != "" {
-		sess, err = session.NewSession(&aws.Config{Region: aws.String(s3Region)})
-	} else {
-		sess, err = session.NewSession()
+		config.Region = aws.String(s3Region)
 	}
+
+	sess, err := session.NewSession(&config)
 
 	if err != nil {
 		fmt.Println("Failed to create AWS session,", err)
