@@ -7,8 +7,16 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	_, err := client.New("testBucketName", &client.Options{})
-	if err != nil {
-		t.Fatalf("Could not initialize client. Error:%s", err)
+	tests := []struct {
+		bucketName string
+		options    *client.Options
+	}{
+		{"testBucketName", &client.Options{}},
+	}
+
+	for _, test := range tests {
+		if _, got := client.New(test.bucketName, test.options); got != nil {
+			t.Fatalf("Could not initialize client. Error:%s", got)
+		}
 	}
 }

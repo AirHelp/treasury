@@ -41,7 +41,7 @@ func read(cmd *cobra.Command, args []string) error {
 	}
 	key := args[0]
 
-	treasury, err := client.New(treasuryS3, &client.Options{})
+	treasury, err := client.New(treasuryS3, &client.Options{Region: s3Region})
 	if err != nil {
 		return err
 	}

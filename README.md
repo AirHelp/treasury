@@ -18,11 +18,12 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### Requirements
 
-* Treasury S3 over environment variable
+* Treasury S3 over environment variable and region (environment variable or --region parameter) set
 
 For example:
 ```
 export TREASURY_S3=st-treasury-st-staging
+export AWS_REGION=eu-west-1
 ```
 
 * AWS Credentials
@@ -37,6 +38,15 @@ Alternatively, you can set the following environment variables:
 
 AWS_ACCESS_KEY_ID=AKID1234567890
 AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
+
+You can also use non-default awscli profile:
+
+AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass
+
+And non-default awscli profile without default region:
+
+AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass
+
 
 ### CLI Usage
 
