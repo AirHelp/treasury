@@ -18,11 +18,12 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### Requirements
 
-* Treasury S3 over environment variable
+* Treasury S3 over environment variable and default region (you can use --region instead)
 
 For example:
 ```
 export TREASURY_S3=st-treasury-st-staging
+export AWS_REGION=eu-west-1
 ```
 
 * AWS Credentials
