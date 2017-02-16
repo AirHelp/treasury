@@ -18,7 +18,7 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### Requirements
 
-* Treasury S3 over environment variable and default region (you can use --region instead)
+* Treasury S3 over environment variable and region (environment variable or --region parameter) set
 
 For example:
 ```
