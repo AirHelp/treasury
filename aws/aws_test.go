@@ -15,7 +15,7 @@ func TestAws(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if _, got := aws.New(aws.Options{test.region}); got != nil {
+		if _, got := aws.New(aws.Options{Region: test.region}); got != nil {
 			t.Error(got)
 		}
 	}

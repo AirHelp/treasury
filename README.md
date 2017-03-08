@@ -1,6 +1,6 @@
 # treasury
 
-Treasury is a very simple and easy to use tool for managing secrets. It uses Amazon S3 service to store secrets. The secrets are encrypt before saving it on disks in its data centers and decrypt it when we read the secret. Treasury uses Server-Side Encryption.
+Treasury is a very simple tool for managing secrets. It uses Amazon S3 service to store secrets. The secrets are encrypted before saving them on disks in their data centers and decrypted when we read the secrets. Treasury uses Server-Side Encryption.
 
 ## Architecture
 
@@ -8,7 +8,7 @@ Treasury is a very simple and easy to use tool for managing secrets. It uses Ama
 
 ## Command Line interface (CLI)
 
-Treasury is controlled via a very easy to use command-line interface (CLI). Treasury is only a single command-line application: treasury. This application then takes a subcommand such as "read" or "write".
+Treasury is controlled via a very easy to use command-line interface (CLI). Treasury is only a single command-line application: treasury. This application takes a subcommand such as "read" or "write".
 
 The Treasury CLI is a well-behaved command line application. In erroneous cases, a non-zero exit status will be returned. It also responds to -h and --help as you'd most likely expect.
 
@@ -18,7 +18,7 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### Requirements
 
-* Treasury S3 over environment variable and region (environment variable or --region parameter) set
+* Export environment variables: treasury S3 bucket and region (environment variable or --region parameter) set
 
 For example:
 ```
@@ -28,7 +28,7 @@ export AWS_REGION=eu-west-1
 
 * AWS Credentials
 
-Before using the Treasury CLI, ensure that you've configured credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
+Before using the Treasury CLI, ensure that you've configured AWS credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
 
 [default]
 aws_access_key_id = AKID1234567890
