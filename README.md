@@ -20,32 +20,35 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 * Export environment variables: treasury S3 bucket and region (environment variable or --region parameter) set
 
-For example:
-```
-export TREASURY_S3=st-treasury-st-staging
-export AWS_REGION=eu-west-1
+  For example:
+  ```
+  export TREASURY_S3=st-treasury-st-staging
+  export AWS_REGION=eu-west-1
 ```
 
 * AWS Credentials
 
-Before using the Treasury CLI, ensure that you've configured AWS credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
+  Before using the Treasury CLI, ensure that you've configured AWS credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
 
-[default]
-aws_access_key_id = AKID1234567890
-aws_secret_access_key = MY-SECRET-KEY
+  ```bash
+  [default]
+  aws_access_key_id = AKID1234567890
+  aws_secret_access_key = MY-SECRET-KEY
+```
 
-Alternatively, you can set the following environment variables:
+  Alternatively, you can set the following environment variables:
 
-AWS_ACCESS_KEY_ID=AKID1234567890
-AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
+  ```bash
+  AWS_ACCESS_KEY_ID=AKID1234567890
+  AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
+  ```
+  You can also use non-default awscli profile:
 
-You can also use non-default awscli profile:
+  `AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass`
 
-AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass
+  And non-default awscli profile without default region:
 
-And non-default awscli profile without default region:
-
-AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass
+  `AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass`
 
 
 ### CLI Usage

@@ -24,6 +24,17 @@ type GetObjectInput struct {
 	Version string
 }
 
+// GetObjectsInput structure for ListObjectsInput
+type GetObjectsInput struct {
+	Bucket string
+	Prefix string
+}
+
+// GetObjectsOuput structure for ListObjectsOutput
+type GetObjectsOuput struct {
+	Secrets map[string]string
+}
+
 const (
 	// http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
 	s3ACL = "private"
@@ -81,4 +92,30 @@ func (c *Client) GetObject(object *GetObjectInput) (*s3.GetObjectOutput, error) 
 	}
 
 	return resp, nil
+}
+
+// GetObjects returns key value map for given pattern
+func (c *Client) GetObjects(object *GetObjectsInput) (*GetObjectsOuput, error) {
+	params := &s3.ListObjectsInput{
+		Bucket: aws.String(object.Bucket),
+		Prefix: aws.String(object.Prefix),
+	}
+
+	resp, err := c.S3Svc.ListObjects(params)
+	if err != nil {
+		return nil, err
+	}
+
+	keyValuePairs := make(map[string]string, len(resp.Contents))
+	for _, keyObject := range resp.Contents {
+		key := *keyObject.Key
+		s3Object, err := c.GetObject(&GetObjectInput{Bucket: object.Bucket, Key: key})
+		if err != nil {
+			return nil, err
+		}
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(s3Object.Body)
+		keyValuePairs[key] = buf.String()
+	}
+	return &GetObjectsOuput{Secrets: keyValuePairs}, nil
 }

@@ -31,3 +31,30 @@ func (c *Client) Read(key string) (*Secret, error) {
 	}
 	return secret, nil
 }
+
+// ReadGroup returns list of secrets for given key prefix
+func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
+	if err := utils.ValidateInputKey(keyPrefix); err != nil {
+		return nil, err
+	}
+	params := &aws.GetObjectsInput{
+		Bucket: c.bucketName,
+		Prefix: keyPrefix,
+	}
+	resp, err := c.AwsClient.GetObjects(params)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var secrets []*Secret
+
+	for key, value := range resp.Secrets {
+		secret := &Secret{
+			Key:   key,
+			Value: value,
+		}
+		secrets = append(secrets, secret)
+	}
+	return secrets, nil
+}

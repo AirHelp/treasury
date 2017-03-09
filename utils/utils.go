@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-// validateInputKey checks if cli input is valid
+// ValidateInputKey checks if cli input is valid
 func ValidateInputKey(cliIn string) error {
-	match, err := regexp.MatchString(`^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_]+$`, cliIn)
+	match, err := regexp.MatchString(`^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_]*$`, cliIn)
 	if err != nil {
 		return err
 	}
