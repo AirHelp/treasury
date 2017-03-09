@@ -1,7 +1,6 @@
 package client_test
 
 import (
-	"bytes"
 	"fmt"
 	"path/filepath"
 	"strings"
@@ -23,39 +22,41 @@ func TestExport(t *testing.T) {
 		t.Error(err)
 	}
 	scenarios := []struct {
-		key            string
-		responseString string
+		key             string
+		responseStrings []string
 	}{
 		{
 			key: filepath.Dir(test.Key1) + "/",
-			responseString: formatExportString(map[string]string{
+			responseStrings: formatExportString(map[string]string{
 				test.Key1: test.KeyValueMap[test.Key1],
 				test.Key2: test.KeyValueMap[test.Key2],
 			}),
 		},
 		{
 			key: test.Key1,
-			responseString: formatExportString(map[string]string{
+			responseStrings: formatExportString(map[string]string{
 				test.Key1: test.KeyValueMap[test.Key1],
 			}),
 		},
 	}
 	for _, scenario := range scenarios {
-		exportString, err := treasury.Export(test.Key1)
+		exportString, err := treasury.Export(scenario.key)
 		if err != nil {
 			t.Error(err)
 		}
-		if exportString != scenario.responseString {
-			t.Errorf("Wrong export string returned, \nexpected:%s, \ngot:%s", scenario.responseString, exportString)
+		for _, exportValue := range scenario.responseStrings {
+			if !strings.Contains(exportString, exportValue) {
+				t.Errorf("Wrong export string returned:\n%s, \nshoudl contain:\n%s", exportString, exportValue)
+			}
 		}
 	}
 }
 
-func formatExportString(keyValue map[string]string) string {
-	var buffer bytes.Buffer
+func formatExportString(keyValue map[string]string) []string {
+	var exportStrings []string
 	for key, value := range keyValue {
-		buffer.WriteString(fmt.Sprintf(client.ExportString, filepath.Base(key), value))
+		valueToExport := fmt.Sprintf(client.ExportString, filepath.Base(key), value)
+		exportStrings = append(exportStrings, valueToExport)
 	}
-	response := buffer.String()
-	return strings.Trim(response[:len(response)-2], " ")
+	return exportStrings
 }

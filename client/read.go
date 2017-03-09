@@ -34,7 +34,7 @@ func (c *Client) Read(key string) (*Secret, error) {
 
 // ReadGroup returns list of secrets for given key prefix
 func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
-	if err := utils.ValidateInputKey(keyPrefix); err != nil {
+	if err := utils.ValidateInputKeyPattern(keyPrefix); err != nil {
 		return nil, err
 	}
 	params := &aws.GetObjectsInput{

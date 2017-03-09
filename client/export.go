@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"fmt"
 	"path/filepath"
-	"strings"
 )
 
 const (
-	ExportString = " export %s='%s' &&"
+	// ExportString format of single export string
+	ExportString = "export %s='%s'\n"
 )
 
 // Export returns decrypted secret for given key
@@ -21,6 +21,6 @@ func (c *Client) Export(key string) (string, error) {
 	for _, secret := range secrets {
 		buffer.WriteString(fmt.Sprintf(ExportString, filepath.Base(secret.Key), secret.Value))
 	}
-	exportCommand := strings.Trim(buffer.String()[:len(buffer.String())-2], " ")
+	exportCommand := buffer.String()[:len(buffer.String())]
 	return exportCommand, nil
 }

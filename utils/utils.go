@@ -7,9 +7,23 @@ import (
 	"strings"
 )
 
+const (
+	environmentApplicationKeyRegex = `^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_0-9]+$`
+	environmentApplicationRegex    = `^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_0-9]*$`
+)
+
 // ValidateInputKey checks if cli input is valid
 func ValidateInputKey(cliIn string) error {
-	match, err := regexp.MatchString(`^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_]*$`, cliIn)
+	return validate(cliIn, environmentApplicationKeyRegex)
+}
+
+// ValidateInputKeyPattern checks if cli input is valid, also without key name
+func ValidateInputKeyPattern(cliIn string) error {
+	return validate(cliIn, environmentApplicationRegex)
+}
+
+func validate(cliIn, pattern string) error {
+	match, err := regexp.MatchString(pattern, cliIn)
 	if err != nil {
 		return err
 	}

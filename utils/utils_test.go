@@ -7,6 +7,7 @@ func TestValidateInputKey(t *testing.T) {
 		"staging/webapp/cockpit_api_pass",
 		"STAGING/WeBapp/cockpit_api-pass",
 		"Integration/claim-score/elasticsearch_url",
+		"staging/webapp/1coc3_k--pit123",
 	}
 	for _, testString := range validTestStrings {
 		if err := ValidateInputKey(testString); err != nil {
@@ -17,10 +18,37 @@ func TestValidateInputKey(t *testing.T) {
 	invalidTestStrings := []string{
 		"staging/webapp",
 		"45678901jbf",
+		"asasa/12312/312313",
 		"1231/12312/312313",
 	}
 	for _, testString := range invalidTestStrings {
 		if err := ValidateInputKey(testString); err == nil {
+			t.Errorf("expected error for test string: %s", testString)
+		}
+	}
+}
+
+func TestValidateInputKeyPattern(t *testing.T) {
+	validTestStrings := []string{
+		"staging/webapp/cockpit_api_pass",
+		"STAGING/WeBapp/cockpit_api-pass",
+		"Integration/claim-score/elasticsearch_url",
+		"staging/webapp/1coc3_k--pit123",
+		"staging/webapp/",
+	}
+	for _, testString := range validTestStrings {
+		if err := ValidateInputKeyPattern(testString); err != nil {
+			t.Error(err)
+		}
+	}
+
+	invalidTestStrings := []string{
+		"45678901jbf",
+		"asasa/12312/312313",
+		"1231/12312/312313",
+	}
+	for _, testString := range invalidTestStrings {
+		if err := ValidateInputKeyPattern(testString); err == nil {
 			t.Errorf("expected error for test string: %s", testString)
 		}
 	}

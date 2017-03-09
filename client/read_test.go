@@ -29,7 +29,7 @@ func TestRead(t *testing.T) {
 	}
 }
 
-func TestReadGroupd(t *testing.T) {
+func TestReadGroup(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		AwsClient: &aws.Client{
 			S3Svc: &test.MockS3Client{},

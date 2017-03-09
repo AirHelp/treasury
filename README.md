@@ -8,7 +8,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 service t
 
 ## Command Line interface (CLI)
 
-Treasury is controlled via a very easy to use command-line interface (CLI). Treasury is only a single command-line application: treasury. This application takes a subcommand such as "read" or "write".
+Treasury is controlled via a very easy to use command-line interface (CLI). Treasury is only a single command-line application: treasury. This application takes a subcommand such as "read", "write" and "export".
 
 The Treasury CLI is a well-behaved command line application. In erroneous cases, a non-zero exit status will be returned. It also responds to -h and --help as you'd most likely expect.
 
@@ -53,18 +53,36 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 ### CLI Usage
 
-Write secret
+#### Write secret
 ```
 > treasury write integration/webapp/cockpit_api_pass superSecretPassword
 Success! Data written to: webapp/integration/cockpit_api_pass
 ```
 
-Read secret:
+#### Read secret:
 ```
 > treasury read integration/webapp/cockpit_api_pass
 superSecretPassword
 ```
 
+#### Export secrets:
+Assuming stored secrets pairs on s3
+```bash
+integration/webapp/key1 => superSecretPassword1
+integration/webapp/key2 => superSecretPassword2
+```
+
+To see exported values:
+```bash
+> treasury read integration/webapp/
+export key1=superSecretPassword1
+export key2=superSecretPassword2
+```
+
+To export them into shell environment variables:
+```bash
+eval $(treasury export integration/webapp/)
+```
 
 ## Go Client
 
