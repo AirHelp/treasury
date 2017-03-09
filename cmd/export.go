@@ -25,14 +25,13 @@ import (
 // exportCmd represents the read command
 var exportCmd = &cobra.Command{
 	Use:   "export ENVIRONMENT/APPLICATION/[KEY]",
-	Short: "Return secrets found by given pattern",
-	Long:  `Exports pairs KEY=VALUE from Treasury.`,
+	Short: "Returns command exporting found secretes",
+	Long:  `Returns command exporting found secretes to environment variables.`,
 	RunE:  export,
 }
 
 func init() {
 	RootCmd.AddCommand(exportCmd)
-	readCmd.SuggestFor = []string{"get"}
 }
 
 func export(cmd *cobra.Command, args []string) error {

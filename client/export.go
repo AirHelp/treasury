@@ -11,7 +11,7 @@ const (
 	ExportString = "export %s='%s'\n"
 )
 
-// Export returns decrypted secret for given key
+// Export returns command exporting found secrets
 func (c *Client) Export(key string) (string, error) {
 	secrets, err := c.ReadGroup(key)
 	if err != nil {
@@ -21,6 +21,5 @@ func (c *Client) Export(key string) (string, error) {
 	for _, secret := range secrets {
 		buffer.WriteString(fmt.Sprintf(ExportString, filepath.Base(secret.Key), secret.Value))
 	}
-	exportCommand := buffer.String()[:len(buffer.String())]
-	return exportCommand, nil
+	return buffer.String(), nil
 }
