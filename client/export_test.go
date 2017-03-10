@@ -8,8 +8,8 @@ import (
 
 	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/client"
+	"github.com/AirHelp/treasury/cmd"
 	"github.com/AirHelp/treasury/test"
-	"github.com/apex/treasury/cmd"
 )
 
 func TestExport(t *testing.T) {
