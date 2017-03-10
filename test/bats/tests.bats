@@ -28,6 +28,12 @@ treasury=$PWD/treasury
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
+@test "write second" {
+  run $treasury write test/treasury/test-key2 secret2
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "Success!" ]]
+}
+
 @test "write-wrong-data" {
   run $treasury write test secret
   [ $status -eq 255 ]
@@ -44,4 +50,17 @@ treasury=$PWD/treasury
   run $treasury read test
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "export single" {
+  run $treasury export test/treasury/test-key
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "export test-key='secret'" ]]
+}
+
+@test "export all" {
+  run $treasury export test/treasury/
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "export test-key='secret'" ]]
+  [[ ${lines[1]} == "export test-key2='secret2'" ]]
 }
