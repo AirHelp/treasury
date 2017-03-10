@@ -74,7 +74,7 @@ integration/webapp/key2 => superSecretPassword2
 
 To see exported values:
 ```bash
-> treasury read integration/webapp/
+> treasury export integration/webapp/
 export key1=superSecretPassword1
 export key2=superSecretPassword2
 ```

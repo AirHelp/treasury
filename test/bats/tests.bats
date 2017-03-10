@@ -61,5 +61,6 @@ treasury=$PWD/treasury
 @test "export all" {
   run $treasury export test/treasury/
   [ $status -eq 0 ]
-  [[ ${lines[0]} == "export test-key='secret'" && ${lines[1]} == "export test-key2='secret2'" ]]
+  [[ ${lines[0]} == "export test-key='secret'" ]]
+  [[ ${lines[1]} == "export test-key2='secret2'" ]]
 }

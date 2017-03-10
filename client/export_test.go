@@ -9,6 +9,7 @@ import (
 	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/client"
 	"github.com/AirHelp/treasury/test"
+	"github.com/apex/treasury/cmd"
 )
 
 func TestExport(t *testing.T) {
@@ -40,7 +41,7 @@ func TestExport(t *testing.T) {
 		},
 	}
 	for _, scenario := range scenarios {
-		exportString, err := treasury.Export(scenario.key)
+		exportString, err := treasury.Export(scenario.key, cmd.ExportString)
 		if err != nil {
 			t.Error(err)
 		}
@@ -55,7 +56,7 @@ func TestExport(t *testing.T) {
 func formatExportString(keyValue map[string]string) []string {
 	var exportStrings []string
 	for key, value := range keyValue {
-		valueToExport := fmt.Sprintf(client.ExportString, filepath.Base(key), value)
+		valueToExport := fmt.Sprintf(cmd.ExportString, filepath.Base(key), value)
 		exportStrings = append(exportStrings, valueToExport)
 	}
 	return exportStrings

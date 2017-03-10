@@ -22,6 +22,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	// ExportString format of single export string
+	ExportString = "export %s='%s'\n"
+)
+
 // exportCmd represents the read command
 var exportCmd = &cobra.Command{
 	Use:   "export ENVIRONMENT/APPLICATION/[KEY]",
@@ -44,7 +49,7 @@ func export(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	exportCommand, err := treasury.Export(key)
+	exportCommand, err := treasury.Export(key, ExportString)
 	if err != nil {
 		return err
 	}
