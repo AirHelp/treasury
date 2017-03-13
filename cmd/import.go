@@ -14,8 +14,8 @@ const (
 
 var importCmd = &cobra.Command{
 	Use:   "import ENVIRONMENT/APPLICATION/ secrets/file/path",
-	Short: "command importing secretes form file",
-	Long:  `command importing secretes to properties file`,
+	Short: "command importing secrets form file",
+	Long:  `command importing secrets to properties file`,
 	RunE:  importFunc,
 }
 

@@ -20,6 +20,6 @@ func TestImport(t *testing.T) {
 		t.Error(err)
 	}
 	if err := treasury.Import(prefix, "./import.env.test"); err != nil {
-		t.Error("Could not import files. Error: ", err.Error())
+		t.Error("Could not import secrets. Error: ", err.Error())
 	}
 }
