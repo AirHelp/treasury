@@ -2,6 +2,8 @@ package test
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"strings"
 
@@ -27,6 +29,9 @@ type MockS3Client struct {
 }
 
 func (m *MockS3Client) PutObject(input *s3.PutObjectInput) (*s3.PutObjectOutput, error) {
+	if _, ok := KeyValueMap[*input.Key]; !ok {
+		return nil, errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", *input.Key))
+	}
 	return &s3.PutObjectOutput{}, nil
 }
 

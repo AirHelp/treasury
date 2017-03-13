@@ -11,7 +11,7 @@ func TestPutObject(t *testing.T) {
 	dummyClient := &Client{S3Svc: &test.MockS3Client{}}
 	object := &PutObjectInput{
 		Bucket:      "dummyBucket",
-		Key:         "test/application/key",
+		Key:         test.Key1,
 		Value:       "secret",
 		Application: "application",
 		Environment: "test",
@@ -25,7 +25,7 @@ func TestGetObject(t *testing.T) {
 	dummyClient := &Client{S3Svc: &test.MockS3Client{}}
 	s3objectInput := &GetObjectInput{
 		Bucket: "dummyBucket",
-		Key:    "test/application/key",
+		Key:    test.Key1,
 	}
 	resp, err := dummyClient.GetObject(s3objectInput)
 	if err != nil {
