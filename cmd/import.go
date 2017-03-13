@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/apex/treasury/client"
+	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
 )
 
