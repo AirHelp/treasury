@@ -77,6 +77,8 @@ To import these values into s3:
 Import successful
 ```
 
+Note: using `=` in secret value is not allowed.
+
 #### Export secrets
 Assuming stored secrets pairs on s3
 ```bash
