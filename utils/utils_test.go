@@ -91,10 +91,10 @@ func TestFindEnvironmentApplicationName(t *testing.T) {
 
 func TestReadSecrets(t *testing.T) {
 	expected := map[string]string{
-		"KEY1": "value1",
+		"KEY1": "value@$!#A&*()+-1",
 		"KEY2": "value2",
 	}
-	secrets, err := ReadSecrets("./properties.env.test")
+	secrets, err := ReadSecrets("../test/resources/properties.env.test")
 	if err != nil {
 		t.Error(err)
 	}
