@@ -88,3 +88,24 @@ func TestFindEnvironmentApplicationName(t *testing.T) {
 		}
 	}
 }
+
+func TestReadSecrets(t *testing.T) {
+	expected := map[string]string{
+		"KEY1": "value@$!#A&*()+-1",
+		"KEY2": "value2",
+	}
+	secrets, err := ReadSecrets("../test/resources/properties.env.test")
+	if err != nil {
+		t.Error(err)
+	}
+	if len(expected) != len(secrets) {
+		t.Errorf("Wrong found secrets paits, expected:%d. got:%d", len(expected), len(secrets))
+	}
+	for expectedKey, expectedValue := range expected {
+		foundValue := secrets[expectedKey]
+		if foundValue != expectedValue {
+			t.Errorf("Wrong value for key:%s, expected:%s, got:%s", expectedKey, expectedValue, foundValue)
+		}
+	}
+
+}

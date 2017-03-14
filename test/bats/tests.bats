@@ -23,25 +23,25 @@ treasury=$PWD/treasury
 # }
 
 @test "write" {
-  run $treasury write test/treasury/test-key secret
+  run $treasury write test/treasury/key1 secret1
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second" {
-  run $treasury write test/treasury/test-key2 secret2
+  run $treasury write test/treasury/key2 secret2
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write-wrong-data" {
-  run $treasury write test secret
+  run $treasury write test secret1
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
 }
 
 @test "read" {
-  run $treasury read test/treasury/test-key
+  run $treasury read test/treasury/key1
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret" ]]
 }
@@ -53,14 +53,33 @@ treasury=$PWD/treasury
 }
 
 @test "export single" {
-  run $treasury export test/treasury/test-key
+  run $treasury export test/treasury/key1
   [ $status -eq 0 ]
-  [[ ${lines[0]} == "export test-key='secret'" ]]
+  [[ ${lines[0]} == "export key1='secret1'" ]]
 }
 
 @test "export all" {
   run $treasury export test/treasury/
   [ $status -eq 0 ]
-  [[ ${lines[0]} == "export test-key='secret'" ]]
-  [[ ${lines[1]} == "export test-key2='secret2'" ]]
+  echo ${lines[0]}
+  [[ ${lines[0]} == "export key1='secret1'" ]]
+  [[ ${lines[1]} == "export key2='secret2'" ]]
+}
+
+@test "import" {
+  run $treasury import test/treasury/ test/bats/bats.env.test
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "Import successful" ]]
+}
+
+@test "read imported key3" {
+  run $treasury read test/treasury/key3
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "secret3" ]]
+}
+
+@test "read imported key4" {
+  run $treasury read test/treasury/key4
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "secret4" ]]
 }

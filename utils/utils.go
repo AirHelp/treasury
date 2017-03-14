@@ -1,8 +1,10 @@
 package utils
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 )
@@ -44,4 +46,27 @@ func FindEnvironmentApplicationName(cliIn string) (string, string, error) {
 		return "", "", errors.New("Unable to split the input into environment and application name.")
 	}
 	return substrings[0], substrings[1], nil
+}
+
+// ReadSecrets reads key value pairs from file
+func ReadSecrets(secretsFile string) (map[string]string, error) {
+	file, err := os.Open(secretsFile)
+	if err != nil {
+		return nil, err
+	}
+	secrets := make(map[string]string)
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := strings.Trim(scanner.Text(), " ")
+		if !strings.HasPrefix(line, "#") {
+			keyVal := strings.Split(line, "=")
+			if len(keyVal) == 2 {
+				secrets[keyVal[0]] = keyVal[1]
+			}
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	return secrets, nil
 }
