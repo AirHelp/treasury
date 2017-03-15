@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"errors"
-	"fmt"
+	"strconv"
 
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
@@ -33,6 +33,7 @@ var writeCmd = &cobra.Command{
 func init() {
 	RootCmd.AddCommand(writeCmd)
 	writeCmd.SuggestFor = []string{"put"}
+	writeCmd.PersistentFlags().Bool("force", false, "Force overwrite secret value")
 }
 
 func write(cmd *cobra.Command, args []string) error {
@@ -41,16 +42,18 @@ func write(cmd *cobra.Command, args []string) error {
 	}
 	key := args[0]
 	value := args[1]
+	force, err := strconv.ParseBool(cmd.Flag("force").Value.String())
+	if err != nil {
+		return err
+	}
 
 	treasury, err := client.New(treasuryS3, &client.Options{Region: s3Region})
 	if err != nil {
 		return err
 	}
-	err = treasury.Write(key, value)
+	err = treasury.Write(key, value, force)
 	if err != nil {
 		return err
 	}
-
-	fmt.Println("Success! Data written to: ", key)
 	return nil
 }

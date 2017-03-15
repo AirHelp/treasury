@@ -34,6 +34,18 @@ treasury=$PWD/treasury
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
+@test "write second not forced" {
+  run $treasury write test/treasury/key2 secret2
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "Success!" ]]
+}
+
+@test "write second forced" {
+  run $treasury write test/treasury/key2 secret2 --force
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "Success!" ]]
+}
+
 @test "write-wrong-data" {
   run $treasury write test secret1
   [ $status -eq 255 ]
@@ -66,10 +78,12 @@ treasury=$PWD/treasury
   [[ ${lines[1]} == "export key2='secret2'" ]]
 }
 
-@test "import" {
-  run $treasury import test/treasury/ test/bats/bats.env.test
+@test "import forced" {
+  run $treasury import test/treasury/ test/bats/bats.env.test --force
   [ $status -eq 0 ]
-  [[ ${lines[0]} == "Import successful" ]]
+  [[ ${lines[0]} =~ "Success!" ]]
+  [[ ${lines[1]} =~ "Success!" ]]
+  [[ ${lines[2]} == "Import successful" ]]
 }
 
 @test "read imported key3" {

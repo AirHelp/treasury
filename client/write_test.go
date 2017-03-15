@@ -18,8 +18,12 @@ func TestWrite(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	err = treasury.Write(test.Key1, test.KeyValueMap[test.Key1])
+	err = treasury.Write(test.Key1, test.KeyValueMap[test.Key1], false)
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestSkipValue(t *testing.T) {
+
 }
