@@ -21,6 +21,7 @@ var importCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(importCmd)
+	importCmd.PersistentFlags().Bool("force", false, "Force overwrite secret value")
 }
 
 func importFunc(cmd *cobra.Command, args []string) error {
@@ -29,12 +30,16 @@ func importFunc(cmd *cobra.Command, args []string) error {
 	}
 	keyPrefix := args[0]
 	secretsFilePath := args[1]
+	force, err := cmd.Flags().GetBool("force")
+	if err != nil {
+		return err
+	}
 
 	treasury, err := client.New(treasuryS3, &client.Options{Region: s3Region})
 	if err != nil {
 		return err
 	}
-	if err := treasury.Import(keyPrefix, secretsFilePath); err != nil {
+	if err := treasury.Import(keyPrefix, secretsFilePath, force); err != nil {
 		return err
 	}
 	fmt.Println(success)

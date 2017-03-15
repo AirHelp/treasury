@@ -59,6 +59,8 @@ To view a list of the available commands at any time, just run `treasury` with n
 Success! Data written to: webapp/integration/cockpit_api_pass
 ```
 
+Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite.
+
 #### Read secret
 ```
 > treasury read integration/webapp/cockpit_api_pass
@@ -77,7 +79,8 @@ To import these values into s3:
 Import successful
 ```
 
-Note: using `=` in secret value is not allowed.
+Note: Using `=` in secret value is not allowed.
+      If secret value is equal to existing one, import skips this value. `--force` flag can be used to overwrite.
 
 #### Export secrets
 Assuming stored secrets pairs on s3

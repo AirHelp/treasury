@@ -1,15 +1,30 @@
 package client
 
 import (
+	"strings"
+
 	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/utils"
 )
 
+const (
+	noSuchKey = "NoSuchKey"
+)
+
 // Write secret to Treasure
-func (c *Client) Write(key, secret string) error {
+func (c *Client) Write(key, secret string, force bool) error {
 	environment, application, err := utils.FindEnvironmentApplicationName(key)
 	if err != nil {
 		return err
+	}
+
+	if !force {
+		secretObject, err := c.Read(key)
+		if err != nil && !strings.Contains(err.Error(), noSuchKey) {
+			return err
+		} else if secret == secretObject.Value {
+			return nil
+		}
 	}
 
 	body := &aws.PutObjectInput{
@@ -24,6 +39,5 @@ func (c *Client) Write(key, secret string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
