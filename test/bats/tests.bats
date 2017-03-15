@@ -81,9 +81,7 @@ treasury=$PWD/treasury
 @test "import forced" {
   run $treasury import test/treasury/ test/bats/bats.env.test --force
   [ $status -eq 0 ]
-  [[ ${lines[0]} =~ "Success!" ]]
-  [[ ${lines[1]} =~ "Success!" ]]
-  [[ ${lines[2]} == "Import successful" ]]
+  [[ ${lines[0]} == "Import successful" ]]
 }
 
 @test "read imported key3" {

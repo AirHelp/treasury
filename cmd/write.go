@@ -16,7 +16,7 @@ package cmd
 
 import (
 	"errors"
-	"strconv"
+	"fmt"
 
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
@@ -42,7 +42,7 @@ func write(cmd *cobra.Command, args []string) error {
 	}
 	key := args[0]
 	value := args[1]
-	force, err := strconv.ParseBool(cmd.Flag("force").Value.String())
+	force, err := cmd.Flags().GetBool("force")
 	if err != nil {
 		return err
 	}
@@ -55,5 +55,6 @@ func write(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	fmt.Println("Success! Data written to: ", key)
 	return nil
 }

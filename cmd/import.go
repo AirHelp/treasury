@@ -3,7 +3,6 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"strconv"
 
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
@@ -31,7 +30,7 @@ func importFunc(cmd *cobra.Command, args []string) error {
 	}
 	keyPrefix := args[0]
 	secretsFilePath := args[1]
-	force, err := strconv.ParseBool(cmd.Flag("force").Value.String())
+	force, err := cmd.Flags().GetBool("force")
 	if err != nil {
 		return err
 	}

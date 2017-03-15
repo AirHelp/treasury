@@ -1,8 +1,6 @@
 package client
 
 import (
-	"errors"
-	"fmt"
 	"strings"
 
 	"github.com/AirHelp/treasury/aws"
@@ -10,11 +8,8 @@ import (
 )
 
 const (
-	equalSecrets = "Secrets are equal"
-	noSuchKey    = "NoSuchKey"
+	noSuchKey = "NoSuchKey"
 )
-
-var skipErrors = []string{equalSecrets, noSuchKey}
 
 // Write secret to Treasure
 func (c *Client) Write(key, secret string, force bool) error {
@@ -23,14 +18,13 @@ func (c *Client) Write(key, secret string, force bool) error {
 		return err
 	}
 
-	if err = c.skipValue(key, secret, force); err != nil {
-		for _, errorMessage := range skipErrors {
-			if strings.Contains(err.Error(), errorMessage) {
-				fmt.Printf("Success! Skipped secret write:%s - %s\n", key, err.Error())
-				return nil
-			}
+	if !force {
+		secretObject, err := c.Read(key)
+		if err != nil && !strings.Contains(err.Error(), noSuchKey) {
+			return err
+		} else if secret == secretObject.Value {
+			return nil
 		}
-		return err
 	}
 
 	body := &aws.PutObjectInput{
@@ -44,21 +38,6 @@ func (c *Client) Write(key, secret string, force bool) error {
 	err = c.AwsClient.PutObject(body)
 	if err != nil {
 		return err
-	}
-	fmt.Println("Success! Data written to: ", key)
-	return nil
-}
-
-func (c Client) skipValue(key, value string, force bool) error {
-	if force {
-		return nil
-	}
-	secretObject, err := c.Read(key)
-	if err != nil {
-		return err
-	}
-	if value == secretObject.Value {
-		return errors.New(equalSecrets)
 	}
 	return nil
 }
