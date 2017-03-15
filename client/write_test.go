@@ -23,7 +23,3 @@ func TestWrite(t *testing.T) {
 		t.Error(err)
 	}
 }
-
-func TestSkipValue(t *testing.T) {
-
-}
