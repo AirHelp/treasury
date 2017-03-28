@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 treasury=$PWD/treasury
+randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 
 @test "Check that the treasury binary is available" {
     command $treasury
@@ -50,6 +51,12 @@ treasury=$PWD/treasury
   run $treasury write test secret1
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "write random key" {
+  run $treasury write test/application/"${randomKey}" secret
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "read" {
