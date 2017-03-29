@@ -1,10 +1,9 @@
 package client
 
 import (
-	"strings"
-
 	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/utils"
+	"github.com/aws/aws-sdk-go/aws/awserr"
 )
 
 const (
@@ -20,8 +19,16 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 	if !force {
 		secretObject, err := c.Read(key)
-		if err != nil && !strings.Contains(err.Error(), noSuchKey) {
-			return err
+		if err != nil {
+			if aerr, ok := err.(awserr.Error); ok {
+				// in this case 404 is ok for us
+				// so we'd proceed if 404 occurs
+				if aerr.Code() != noSuchKey {
+					return err
+				}
+			} else {
+				return err
+			}
 		} else if secret == secretObject.Value {
 			return nil
 		}
