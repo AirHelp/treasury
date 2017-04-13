@@ -39,7 +39,7 @@ const (
 	// http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
 	s3ACL = "private"
 	// http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html
-	s3ServerSideEncryption = "AES256"
+	s3ServerSideEncryption = "aws:kms"
 	// ApplicatonMetaKey is used as a Key for s3 object's metadata and tag
 	ApplicatonMetaKey = "Application"
 	// EnvironmentMetaKey is used as a Key for s3 object's metadata and tag
@@ -68,6 +68,7 @@ func (c *Client) PutObject(object *PutObjectInput) error {
 			EnvironmentMetaKey: aws.String(object.Environment),
 		},
 		ServerSideEncryption: aws.String(s3ServerSideEncryption),
+		SSEKMSKeyId:          aws.String("alias/" + object.Environment),
 		Tagging:              aws.String(tags),
 	}
 

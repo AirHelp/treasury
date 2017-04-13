@@ -30,11 +30,12 @@ func New(options Options) (*Client, error) {
 	}
 
 	sess, err := session.NewSession(&config)
-
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
 	}
+
 	s3Svc := s3.New(sess)
+
 	return &Client{
 		sess:  sess,
 		S3Svc: s3Svc,
