@@ -132,7 +132,6 @@ Read only policy for `test/*` keys
             "Sid": "Stmt1491319793000",
             "Effect": "Allow",
             "Action": [
-                "s3:PutObject*",
                 "s3:GetObject*"
             ],
             "Resource": [
@@ -140,6 +139,30 @@ Read only policy for `test/*` keys
             ]
         }
     ]
+}
+```
+
+* Example AWS S3 Policy
+
+The following bucket policy denies upload object (s3:PutObject) permission to everyone if the request does not include the `x-amz-server-side-encryption` header requesting server-side encryption with SSE-KMS.
+
+```json
+{
+   "Version":"2012-10-17",
+   "Id":"PutObjPolicy",
+   "Statement":[{
+         "Sid":"DenyUnEncryptedObjectUploads",
+         "Effect":"Deny",
+         "Principal":"*",
+         "Action":"s3:PutObject",
+         "Resource":"arn:aws:s3:::YourBucket/*",
+         "Condition":{
+            "StringNotEquals":{
+               "s3:x-amz-server-side-encryption":"aws:kms"
+            }
+         }
+      }
+   ]
 }
 ```
 
