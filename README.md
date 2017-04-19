@@ -148,21 +148,34 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
 
 ```json
 {
-   "Version":"2012-10-17",
-   "Id":"PutObjPolicy",
-   "Statement":[{
-         "Sid":"DenyUnEncryptedObjectUploads",
-         "Effect":"Deny",
-         "Principal":"*",
-         "Action":"s3:PutObject",
-         "Resource":"arn:aws:s3:::YourBucket/*",
-         "Condition":{
-            "StringNotEquals":{
-               "s3:x-amz-server-side-encryption":"aws:kms"
-            }
-         }
+  "Version": "2012-10-17",
+  "Id": "PutObjPolicy",
+  "Statement": [
+    {
+      "Sid": "DenyIncorrectEncryptionHeader",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:x-amz-server-side-encryption": "aws:kms"
+        }
       }
-   ]
+    },
+    {
+      "Sid": "DenyUnEncryptedObjectUploads",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Condition": {
+        "Null": {
+          "s3:x-amz-server-side-encryption": true
+        }
+      }
+    }
+  ]
 }
 ```
 
