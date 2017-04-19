@@ -1,6 +1,6 @@
 # treasury
 
-Treasury is a very simple tool for managing secrets. It uses Amazon S3 service to store secrets. The secrets are encrypted before saving them on disks in their data centers and decrypted when we read the secrets. Treasury uses Server-Side Encryption.
+Treasury is a very simple tool for managing secrets. It uses Amazon S3 service to store secrets. The secrets are encrypted before saving them on disks in their data centers and decrypted when we read the secrets. Treasury uses Server-Side Encryption with AWS KMS-Managed Keys ([SSE-KMS](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html)).
 
 ## Architecture
 
@@ -20,36 +20,164 @@ To view a list of the available commands at any time, just run `treasury` with n
 
 * Export environment variables: treasury S3 bucket and region (environment variable or --region parameter) set
 
-  For example:
-  ```
-  export TREASURY_S3=st-treasury-st-staging
-  export AWS_REGION=eu-west-1
+For example:
+
+```
+export TREASURY_S3=st-treasury-st-staging
+export AWS_REGION=eu-west-1
 ```
 
 * AWS Credentials
 
-  Before using the Treasury CLI, ensure that you've configured AWS credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
+Before using the Treasury CLI, ensure that you've configured AWS credentials. The best way to configure credentials on your machine is to use the ~/.aws/credentials file, which might look like:
 
-  ```bash
-  [default]
-  aws_access_key_id = AKID1234567890
-  aws_secret_access_key = MY-SECRET-KEY
+```bash
+[default]
+aws_access_key_id = AKID1234567890
+aws_secret_access_key = MY-SECRET-KEY
 ```
 
-  Alternatively, you can set the following environment variables:
+Alternatively, you can set the following environment variables:
 
-  ```bash
-  AWS_ACCESS_KEY_ID=AKID1234567890
-  AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
-  ```
-  You can also use non-default awscli profile:
+```bash
+AWS_ACCESS_KEY_ID=AKID1234567890
+AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
+```
 
-  `AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass`
+You can also use non-default awscli profile:
 
-  And non-default awscli profile without default region:
+```
+AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass`
+```
 
-  `AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass`
+And non-default awscli profile without default region:
 
+```
+AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass`
+```
+
+* Example AWS IAM Policy
+
+Read and Write policy to `test/test/*` and `test/cockpit/*` keys
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1491319766000",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ListAliases",
+                "kms:ListKeys",
+                "kms:GenerateDataKey*"
+            ],
+            "Resource": [
+                "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::st-treasury-st-staging"
+            ]
+        },
+        {
+            "Sid": "Stmt1491319793000",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject*",
+                "s3:GetObject*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::st-treasury-st-staging/test/test/*",
+                "arn:aws:s3:::st-treasury-st-staging/test/cockpit/*"
+            ]
+        }
+    ]
+}
+```
+
+Read only policy for `test/*` keys
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "Stmt1491319766000",
+            "Effect": "Allow",
+            "Action": [
+                "kms:Decrypt",
+                "kms:ListAliases",
+                "kms:ListKeys",
+            ],
+            "Resource": [
+                "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::st-treasury-st-staging"
+            ]
+        },
+        {
+            "Sid": "Stmt1491319793000",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::st-treasury-st-staging/test/*"
+            ]
+        }
+    ]
+}
+```
+
+* Example AWS S3 Policy
+
+The following bucket policy denies upload object (s3:PutObject) permission to everyone if the request does not include the `x-amz-server-side-encryption` header requesting server-side encryption with SSE-KMS.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Id": "PutObjPolicy",
+  "Statement": [
+    {
+      "Sid": "DenyIncorrectEncryptionHeader",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Condition": {
+        "StringNotEquals": {
+          "s3:x-amz-server-side-encryption": "aws:kms"
+        }
+      }
+    },
+    {
+      "Sid": "DenyUnEncryptedObjectUploads",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": "s3:PutObject",
+      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Condition": {
+        "Null": {
+          "s3:x-amz-server-side-encryption": true
+        }
+      }
+    }
+  ]
+}
+```
 
 ### CLI Usage
 
