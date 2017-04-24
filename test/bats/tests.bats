@@ -102,3 +102,8 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret4" ]]
 }
+
+@test "check version" {
+  run $treasury version
+  [ $status -eq 0 ]
+}
