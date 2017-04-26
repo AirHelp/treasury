@@ -43,8 +43,10 @@ build: test
 	@rm -fr pkg
 	@mkdir pkg
 	@for distro in ${BUILD_DISTROS}; do \
-		GOOS=$${distro} ${DOCKER_CMD} go build -ldflags "${GO_LDFLAGS}" -o pkg/treasury-$${distro}-amd64; \
-		tar -cjf pkg/treasury-$${distro}-amd64.tar.bz2 pkg/treasury-$${distro}-amd64; \
+		GOOS=$${distro} ${DOCKER_CMD} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
+		cd pkg/$${distro}; \
+		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
+		cd ../..; \
 	done
 
 release: build
