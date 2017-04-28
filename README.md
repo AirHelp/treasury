@@ -179,6 +179,14 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
 }
 ```
 
+## Installation
+
+on OSX:
+```
+brew tap airhelp/taps git@github.com:AirHelp/homebrew-taps.git
+brew install treasury
+```
+
 ### CLI Usage
 
 #### Write secret
