@@ -1,7 +1,6 @@
-TEST = $(shell go list ./... | grep -v '/vendor/')
 GOFMT_FILES = $(shell find . -type f -name '*.go' | grep -v vendor)
 TREASURY_S3 ?= st-treasury-st-staging
-GO_VERSION ?= 1.8.1-alpine
+GO_VERSION ?= 1.9.0-alpine
 DOCKER_WORKING_DIR := /go/src/github.com/AirHelp/treasury
 DOCKER_CMD = docker run --rm -i \
 	-e GOOS \
@@ -34,7 +33,7 @@ vet:
 test: fmt vet
 	@echo 'run the unit tests'
 	@TREASURY_S3=${TREASURY_S3} \
-	${DOCKER_CMD} go test -cover -v $(TEST)
+	${DOCKER_CMD} go test -cover -v ./...
 
 testall: build
 	bats test/bats/tests.bats
