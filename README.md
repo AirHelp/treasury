@@ -279,7 +279,7 @@ make test
 Bats tests
 
 ```
-AWS_PROFILE=development make test-bats
+AWS_PROFILE=development make testall
 ```
 
 If `bats` missing, install it:
