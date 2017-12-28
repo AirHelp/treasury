@@ -23,7 +23,7 @@ To view a list of the available commands at any time, just run `treasury` with n
 For example:
 
 ```
-export TREASURY_S3=st-treasury-st-staging
+export TREASURY_S3=ah-dev-treasury-development
 export AWS_REGION=eu-west-1
 ```
 
@@ -47,13 +47,13 @@ AWS_SECRET_ACCESS_KEY=MY-SECRET-KEY
 You can also use non-default awscli profile:
 
 ```
-AWS_PROFILE=st-staging treasury read integration/webapp/cockpit_api_pass`
+AWS_PROFILE=development treasury read development/webapp/cockpit_api_pass`
 ```
 
 And non-default awscli profile without default region:
 
 ```
-AWS_PROFILE=st-staging ./treasury --region eu-west-1 read test/webapp/cockpit_pass`
+AWS_PROFILE=development ./treasury --region eu-west-1 read test/webapp/cockpit_pass`
 ```
 
 * Example AWS IAM Policy
@@ -83,7 +83,7 @@ Read and Write policy to `test/test/*` and `test/cockpit/*` keys
                 "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::st-treasury-st-staging"
+                "arn:aws:s3:::TREASURY_S3_BUCKET_NAME"
             ]
         },
         {
@@ -94,8 +94,8 @@ Read and Write policy to `test/test/*` and `test/cockpit/*` keys
                 "s3:GetObject*"
             ],
             "Resource": [
-                "arn:aws:s3:::st-treasury-st-staging/test/test/*",
-                "arn:aws:s3:::st-treasury-st-staging/test/cockpit/*"
+                "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/test/test/*",
+                "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/test/cockpit/*"
             ]
         }
     ]
@@ -125,7 +125,7 @@ Read only policy for `test/*` keys
                 "s3:ListBucket"
             ],
             "Resource": [
-                "arn:aws:s3:::st-treasury-st-staging"
+                "arn:aws:s3:::TREASURY_S3_BUCKET_NAME"
             ]
         },
         {
@@ -135,7 +135,7 @@ Read only policy for `test/*` keys
                 "s3:GetObject*"
             ],
             "Resource": [
-                "arn:aws:s3:::st-treasury-st-staging/test/*"
+                "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/test/*"
             ]
         }
     ]
@@ -156,7 +156,7 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
       "Effect": "Deny",
       "Principal": "*",
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Resource": "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/*",
       "Condition": {
         "StringNotEquals": {
           "s3:x-amz-server-side-encryption": "aws:kms"
@@ -168,7 +168,7 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
       "Effect": "Deny",
       "Principal": "*",
       "Action": "s3:PutObject",
-      "Resource": "arn:aws:s3:::st-treasury-st-staging/*",
+      "Resource": "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/*",
       "Condition": {
         "Null": {
           "s3:x-amz-server-side-encryption": true
@@ -191,15 +191,15 @@ brew install treasury
 
 #### Write secret
 ```
-> treasury write integration/webapp/cockpit_api_pass superSecretPassword
-Success! Data written to: webapp/integration/cockpit_api_pass
+> treasury write development/webapp/cockpit_api_pass superSecretPassword
+Success! Data written to: development/webapp/cockpit_api_pass
 ```
 
 Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite.
 
 #### Read secret
 ```
-> treasury read integration/webapp/cockpit_api_pass
+> treasury read development/webapp/cockpit_api_pass
 superSecretPassword
 ```
 
@@ -211,7 +211,7 @@ key2=secret2
 ```
 To import these values into s3:
 ```bash
-> treasury import integration/application/ ./secrets.env
+> treasury import development/application/ ./secrets.env
 Import successful
 ```
 
@@ -221,20 +221,20 @@ Note: Using `=` in secret value is not allowed.
 #### Export secrets
 Assuming stored secrets pairs on s3
 ```bash
-integration/webapp/key1 => superSecretPassword1
-integration/webapp/key2 => superSecretPassword2
+development/webapp/key1 => superSecretPassword1
+development/webapp/key2 => superSecretPassword2
 ```
 
 To see exported values:
 ```bash
-> treasury export integration/webapp/
+> treasury export development/webapp/
 export key1=superSecretPassword1
 export key2=superSecretPassword2
 ```
 
 To export them into shell environment variables:
 ```bash
-eval $(treasury export integration/webapp/)
+eval $(treasury export development/webapp/)
 ```
 
 ## Go Client
@@ -279,7 +279,7 @@ make test
 Bats tests
 
 ```
-bats test/bats/tests.bats
+AWS_PROFILE=development make test-bats
 ```
 
 If `bats` missing, install it:

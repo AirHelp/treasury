@@ -24,25 +24,25 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 # }
 
 @test "write" {
-  run $treasury write test/treasury/key1 secret1
+  run $treasury write development/treasury/key1 secret1
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second" {
-  run $treasury write test/treasury/key2 secret2
+  run $treasury write development/treasury/key2 secret2
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second not forced" {
-  run $treasury write test/treasury/key2 secret2
+  run $treasury write development/treasury/key2 secret2
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second forced" {
-  run $treasury write test/treasury/key2 secret2 --force
+  run $treasury write development/treasury/key2 secret2 --force
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
@@ -54,13 +54,13 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 }
 
 @test "write random key" {
-  run $treasury write test/application/"${randomKey}" secret
+  run $treasury write development/application/"${randomKey}" secret
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "read" {
-  run $treasury read test/treasury/key1
+  run $treasury read development/treasury/key1
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret" ]]
 }
@@ -72,13 +72,13 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 }
 
 @test "export single" {
-  run $treasury export test/treasury/key1
+  run $treasury export development/treasury/key1
   [ $status -eq 0 ]
   [[ ${lines[0]} == "export key1='secret1'" ]]
 }
 
 @test "export all" {
-  run $treasury export test/treasury/
+  run $treasury export development/treasury/
   [ $status -eq 0 ]
   echo ${lines[0]}
   [[ ${lines[0]} == "export key1='secret1'" ]]
@@ -86,19 +86,19 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 }
 
 @test "import forced" {
-  run $treasury import test/treasury/ test/bats/bats.env.test --force
+  run $treasury import development/treasury/ test/bats/bats.env.test --force
   [ $status -eq 0 ]
   [[ ${lines[0]} == "Import successful" ]]
 }
 
 @test "read imported key3" {
-  run $treasury read test/treasury/key3
+  run $treasury read development/treasury/key3
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret3" ]]
 }
 
 @test "read imported key4" {
-  run $treasury read test/treasury/key4
+  run $treasury read development/treasury/key4
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret4" ]]
 }
