@@ -105,18 +105,6 @@
 			"revisionTime": "2017-04-06T18:18:18Z"
 		},
 		{
-			"checksumSHA1": "O6hcK24yI6w7FA+g4Pbr+eQ7pys=",
-			"path": "github.com/aws/aws-sdk-go/private/protocol/json/jsonutil",
-			"revision": "4c307b6c988d40b9601a86768b29c28e8fb033eb",
-			"revisionTime": "2017-04-06T18:18:18Z"
-		},
-		{
-			"checksumSHA1": "R00RL5jJXRYq1iiK1+PGvMfvXyM=",
-			"path": "github.com/aws/aws-sdk-go/private/protocol/jsonrpc",
-			"revision": "4c307b6c988d40b9601a86768b29c28e8fb033eb",
-			"revisionTime": "2017-04-06T18:18:18Z"
-		},
-		{
 			"checksumSHA1": "ZqY5RWavBLWTo6j9xqdyBEaNFRk=",
 			"path": "github.com/aws/aws-sdk-go/private/protocol/query",
 			"revision": "9a535c358fe58f8541d2edaaddce7ce50b3be7b6",
@@ -151,18 +139,6 @@
 			"path": "github.com/aws/aws-sdk-go/private/waiter",
 			"revision": "9a535c358fe58f8541d2edaaddce7ce50b3be7b6",
 			"revisionTime": "2017-01-25T00:04:14Z"
-		},
-		{
-			"checksumSHA1": "zeEh/FDxM81fU3X2ftWU2Z++iQg=",
-			"path": "github.com/aws/aws-sdk-go/service/kms",
-			"revision": "4c307b6c988d40b9601a86768b29c28e8fb033eb",
-			"revisionTime": "2017-04-06T18:18:18Z"
-		},
-		{
-			"checksumSHA1": "zZX6an+mEnzPNBxky6CtniXEWjg=",
-			"path": "github.com/aws/aws-sdk-go/service/kms/kmsiface",
-			"revision": "4c307b6c988d40b9601a86768b29c28e8fb033eb",
-			"revisionTime": "2017-04-06T18:18:18Z"
 		},
 		{
 			"checksumSHA1": "yeut1ZgvmDnjhSDTen7oKOtrfos=",
