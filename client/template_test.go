@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	templateTestSourceFile      = "test/resources/source.secret.tpl"
-	templateTestDestinationFile = "test/resources/destination.secret"
+	templateTestSourceFile      = "../test/resources/source.secret.tpl"
+	templateTestDestinationFile = "../test/output/destination.secret"
 )
 
 func TestTemplate(t *testing.T) {
@@ -23,7 +23,7 @@ func TestTemplate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile); err != nil {
+	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile, 0); err != nil {
 		t.Error("Could not generate secret file from template. Error: ", err.Error())
 	}
 }

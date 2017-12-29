@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
@@ -25,6 +26,8 @@ func init() {
 	RootCmd.AddCommand(templateCmd)
 	templateCmd.PersistentFlags().String("src", "", "template file path")
 	templateCmd.PersistentFlags().String("dst", "", "destination file path")
+	templateCmd.PersistentFlags().Int("perms", 0, "destination file permission, e.g.: 0644")
+
 }
 
 func template(cmd *cobra.Command, args []string) error {
@@ -44,11 +47,16 @@ func template(cmd *cobra.Command, args []string) error {
 		return errors.New(templateErrorMissingDestinationFile)
 	}
 
+	perms, err := cmd.Flags().GetInt("perms")
+	if err != nil {
+		return err
+	}
+
 	treasury, err := client.New(treasuryS3, &client.Options{Region: s3Region})
 	if err != nil {
 		return err
 	}
-	if err := treasury.Template(sourceFilePath, destinationFilePath); err != nil {
+	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms)); err != nil {
 		return err
 	}
 	fmt.Println(templateSuccessMsg)

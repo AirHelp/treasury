@@ -25,7 +25,26 @@ func TestRead(t *testing.T) {
 		t.Error(err)
 	}
 	if secret.Value != test.KeyValueMap[test.Key1] {
-		t.Errorf("Reads returns wrong secret")
+		t.Errorf("Read returns wrong secret")
+	}
+}
+
+func TestReadValue(t *testing.T) {
+	dummyClientOptions := &client.Options{
+		AwsClient: &aws.Client{
+			S3Svc: &test.MockS3Client{},
+		},
+	}
+	treasury, err := client.New("fake_s3_bucket", dummyClientOptions)
+	if err != nil {
+		t.Error(err)
+	}
+	secret, err := treasury.ReadValue(test.Key1)
+	if err != nil {
+		t.Error(err)
+	}
+	if secret != test.KeyValueMap[test.Key1] {
+		t.Errorf("ReadValue returns wrong secret")
 	}
 }
 

@@ -32,6 +32,15 @@ func (c *Client) Read(key string) (*Secret, error) {
 	return secret, nil
 }
 
+// ReadValue returns secret as a string for given key.
+func (c *Client) ReadValue(key string) (string, error) {
+	secret, err := c.Read(key)
+	if err != nil {
+		return "", err
+	}
+	return secret.Value, nil
+}
+
 // ReadGroup returns list of secrets for given key prefix
 func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
 	if err := utils.ValidateInputKeyPattern(keyPrefix); err != nil {

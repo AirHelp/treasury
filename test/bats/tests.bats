@@ -104,7 +104,7 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 }
 
 @test "template" {
-  run $treasury template --src tmp.tpl --destination.env
+  run $treasury template --src test/resources/source.secret.tpl --dst test/output/bats-output.secret
   [ $status -eq 0 ]
   [[ ${lines[0]} == "File with secrets successfully generated" ]]
 }
