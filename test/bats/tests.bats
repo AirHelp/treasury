@@ -103,6 +103,12 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
   [[ ${lines[0]} =~ "secret4" ]]
 }
 
+@test "template" {
+  run $treasury template --src tmp.tpl --destination.env
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "File with secrets successfully generated" ]]
+}
+
 @test "check version" {
   run $treasury version
   [ $status -eq 0 ]

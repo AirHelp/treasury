@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	success = "Import successful"
+	importSuccessMsg = "Import successful"
 )
 
 var importCmd = &cobra.Command{
@@ -42,6 +42,6 @@ func importFunc(cmd *cobra.Command, args []string) error {
 	if err := treasury.Import(keyPrefix, secretsFilePath, force); err != nil {
 		return err
 	}
-	fmt.Println(success)
+	fmt.Println(importSuccessMsg)
 	return nil
 }
