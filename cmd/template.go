@@ -10,9 +10,12 @@ import (
 )
 
 const (
-	templateSuccessMsg                  = "File with secrets successfully generated"
-	templateErrorMissingSourceFile      = "Missing source file path"
-	templateErrorMissingDestinationFile = "Missing destination file path"
+	templateSuccessMsg                     = "File with secrets successfully generated"
+	templateErrorMissingSourceFile         = "Missing source file path"
+	templateErrorMissingDestinationFile    = "Missing destination file path"
+	templateCommandSourceFileArgument      = "src"
+	templateCommandDestinationFileArgument = "dst"
+	templateCommandPermissionFileArgument  = "perms"
 )
 
 var templateCmd = &cobra.Command{
@@ -24,14 +27,14 @@ var templateCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(templateCmd)
-	templateCmd.PersistentFlags().String("src", "", "template file path")
-	templateCmd.PersistentFlags().String("dst", "", "destination file path")
-	templateCmd.PersistentFlags().Int("perms", 0, "destination file permission, e.g.: 0644")
+	templateCmd.PersistentFlags().String(templateCommandSourceFileArgument, "", "template file path")
+	templateCmd.PersistentFlags().String(templateCommandDestinationFileArgument, "", "destination file path")
+	templateCmd.PersistentFlags().Int(templateCommandPermissionFileArgument, 0, "destination file permission, e.g.: 0644")
 
 }
 
 func template(cmd *cobra.Command, args []string) error {
-	sourceFilePath, err := cmd.Flags().GetString("src")
+	sourceFilePath, err := cmd.Flags().GetString(templateCommandSourceFileArgument)
 	if err != nil {
 		return err
 	}
@@ -39,7 +42,7 @@ func template(cmd *cobra.Command, args []string) error {
 		return errors.New(templateErrorMissingSourceFile)
 	}
 
-	destinationFilePath, err := cmd.Flags().GetString("dst")
+	destinationFilePath, err := cmd.Flags().GetString(templateCommandDestinationFileArgument)
 	if err != nil {
 		return err
 	}
@@ -47,7 +50,7 @@ func template(cmd *cobra.Command, args []string) error {
 		return errors.New(templateErrorMissingDestinationFile)
 	}
 
-	perms, err := cmd.Flags().GetInt("perms")
+	perms, err := cmd.Flags().GetInt(templateCommandPermissionFileArgument)
 	if err != nil {
 		return err
 	}
