@@ -31,7 +31,7 @@ func (c *Client) renderTemplate(templateText string) (templateResultBuffer bytes
 		"read": c.ReadValue,
 	}
 	// Create a template, add the function map, and parse the text.
-	tmpl, err := template.New("").Funcs(funcMap).Parse(templateText)
+	tmpl, err := template.New("templateCli").Funcs(funcMap).Parse(templateText)
 	if err != nil {
 		return
 	}
