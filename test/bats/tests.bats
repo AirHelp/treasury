@@ -103,6 +103,18 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
   [[ ${lines[0]} =~ "secret4" ]]
 }
 
+@test "template" {
+  run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "File with secrets successfully generated" ]]
+}
+
+@test "template wrong key" {
+  run $treasury template --src test/resources/bats-wrong-source.secret.tpl --dst test/output/bats-output.secret
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error" ]]
+}
+
 @test "check version" {
   run $treasury version
   [ $status -eq 0 ]

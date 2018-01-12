@@ -25,7 +25,51 @@ func TestRead(t *testing.T) {
 		t.Error(err)
 	}
 	if secret.Value != test.KeyValueMap[test.Key1] {
-		t.Errorf("Reads returns wrong secret")
+		t.Errorf("Read returns wrong secret")
+	}
+}
+
+func TestReadValue(t *testing.T) {
+	dummyClientOptions := &client.Options{
+		AwsClient: &aws.Client{
+			S3Svc: &test.MockS3Client{},
+		},
+	}
+	treasury, err := client.New("fake_s3_bucket", dummyClientOptions)
+	if err != nil {
+		t.Error(err)
+	}
+
+	tests := []struct {
+		name    string
+		key     string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "test valid key",
+			key:     test.Key1,
+			want:    test.KeyValueMap[test.Key1],
+			wantErr: false,
+		},
+		{
+			name:    "test non existing key",
+			key:     "nonExistingKey",
+			want:    "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := treasury.ReadValue(tt.key)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Client.ReadValue() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Client.ReadValue() = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
 
