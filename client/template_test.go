@@ -1,6 +1,7 @@
 package client_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/AirHelp/treasury/aws"
@@ -9,8 +10,9 @@ import (
 )
 
 const (
-	templateTestSourceFile      = "../test/resources/source.secret.tpl"
-	templateTestDestinationFile = "../test/output/destination.secret"
+	templateTestSourceFile           = "../test/resources/source.secret.tpl"
+	templateTestDestinationFile      = "../test/output/destination.secret"
+	templateTestDestinationParentDir = "../test/output"
 )
 
 func TestTemplate(t *testing.T) {
@@ -25,5 +27,9 @@ func TestTemplate(t *testing.T) {
 	}
 	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile, 0); err != nil {
 		t.Error("Could not generate secret file from template. Error: ", err.Error())
+	}
+	_, err = os.Stat(templateTestDestinationParentDir)
+	if err != nil {
+		t.Error("Destination directory does not exist. Error: ", err.Error())
 	}
 }
