@@ -237,6 +237,27 @@ To export them into shell environment variables:
 eval $(treasury export development/webapp/)
 ```
 
+#### Teamplate usage
+
+Render the template on disk at /tmp/template.tpl to /tmp/result:
+
+```bash
+treasury template --src /tmp/template.tpl --dst /tmp/result
+```
+
+Treasury parses file in the Go Template format. The input text for a template is UTF-8-encoded text in any format. "Actions"--data evaluations or control structures--are delimited by "{{" and "}}"; all text outside actions is copied to the output unchanged.
+
+Currently, only `read` action is implemented.
+
+```
+{{ read "ENVIRONMENT/APPLICATION/SECRET_NAME" }}
+```
+
+Example of webapp configuration template:
+```
+COCKPIT_API_PASSWORD={{ read "production/cockpit/cockpit_api_password" }}
+```
+
 ## Go Client
 
 Example:
