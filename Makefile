@@ -1,6 +1,6 @@
 GOFMT_FILES = $(shell find . -type f -name '*.go' | grep -v vendor)
 TREASURY_S3 ?= ah-dev-treasury-development
-GO_VERSION ?= 1.9.2-alpine
+GO_VERSION ?= 1.9.3-alpine
 DOCKER_WORKING_DIR := /go/src/github.com/AirHelp/treasury
 DOCKER_CMD = docker run --rm -i \
 	-e GOOS \
