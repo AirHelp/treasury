@@ -3,7 +3,7 @@ package backend
 import (
 	"errors"
 
-	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/backend/s3"
 )
 
 // Options for backend
@@ -17,5 +17,5 @@ func New(options Options) (BackendAPI, error) {
 	if options.S3BucketName == "" {
 		return nil, errors.New("S3 bucket name is missing")
 	}
-	return aws.New(options.Region, options.S3BucketName)
+	return s3.New(options.Region, options.S3BucketName)
 }
