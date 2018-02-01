@@ -1,4 +1,4 @@
-package test
+package s3
 
 import (
 	"bytes"

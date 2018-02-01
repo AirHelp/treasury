@@ -35,7 +35,7 @@ test: fmt vet
 	@TREASURY_S3=${TREASURY_S3} \
 	${DOCKER_CMD} go test -cover -v ./...
 
-testall: build
+testall: test dev
 	bats test/bats/tests.bats
 
 build: test

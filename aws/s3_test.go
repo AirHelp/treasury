@@ -4,13 +4,13 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/AirHelp/treasury/test"
+	test "github.com/AirHelp/treasury/test/s3"
+	"github.com/AirHelp/treasury/types"
 )
 
 func TestPutObject(t *testing.T) {
-	dummyClient := &Client{S3Svc: &test.MockS3Client{}}
-	object := &PutObjectInput{
-		Bucket:      "dummyBucket",
+	dummyClient := &Client{S3Svc: &test.MockS3Client{}, bucket: "dummyBucket"}
+	object := &types.PutObjectInput{
 		Key:         test.Key1,
 		Value:       "secret",
 		Application: "application",
@@ -22,11 +22,8 @@ func TestPutObject(t *testing.T) {
 }
 
 func TestGetObject(t *testing.T) {
-	dummyClient := &Client{S3Svc: &test.MockS3Client{}}
-	s3objectInput := &GetObjectInput{
-		Bucket: "dummyBucket",
-		Key:    test.Key1,
-	}
+	dummyClient := &Client{S3Svc: &test.MockS3Client{}, bucket: "dummyBucket"}
+	s3objectInput := &types.GetObjectInput{Key: test.Key1}
 	resp, err := dummyClient.GetObject(s3objectInput)
 	if err != nil {
 		t.Fatal(err)
@@ -37,21 +34,19 @@ func TestGetObject(t *testing.T) {
 }
 
 func TestGetObjects(t *testing.T) {
-	dummyClient := &Client{S3Svc: &test.MockS3Client{}}
+	dummyClient := &Client{S3Svc: &test.MockS3Client{}, bucket: "dummyBucket"}
 	scenarios := []struct {
-		input         *GetObjectsInput
+		input         *types.GetObjectsInput
 		responsePairs int
 	}{
 		{
-			input: &GetObjectsInput{
-				Bucket: "dummyBucket",
+			input: &types.GetObjectsInput{
 				Prefix: filepath.Dir(test.Key1) + "/",
 			},
 			responsePairs: 2,
 		},
 		{
-			input: &GetObjectsInput{
-				Bucket: "dummyBucket",
+			input: &types.GetObjectsInput{
 				Prefix: test.Key1,
 			},
 			responsePairs: 1,

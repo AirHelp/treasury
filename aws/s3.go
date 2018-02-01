@@ -4,36 +4,10 @@ import (
 	"bytes"
 	"fmt"
 
+	"github.com/AirHelp/treasury/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
-
-// PutObjectInput structure for PutObject
-type PutObjectInput struct {
-	Bucket      string
-	Key         string
-	Value       string
-	Application string
-	Environment string
-}
-
-// GetObjectInput structure for GetObject
-type GetObjectInput struct {
-	Bucket  string
-	Key     string
-	Version string
-}
-
-// GetObjectsInput structure for ListObjectsInput
-type GetObjectsInput struct {
-	Bucket string
-	Prefix string
-}
-
-// GetObjectsOuput structure for ListObjectsOutput
-type GetObjectsOuput struct {
-	Secrets map[string]string
-}
 
 const (
 	// http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
@@ -48,7 +22,7 @@ const (
 
 // PutObject copy secret data on S3 bucket
 // https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
-func (c *Client) PutObject(object *PutObjectInput) error {
+func (c *Client) PutObject(object *types.PutObjectInput) error {
 
 	tags := fmt.Sprintf(
 		"%s=%s&%s=%s",
@@ -59,7 +33,7 @@ func (c *Client) PutObject(object *PutObjectInput) error {
 	)
 
 	params := &s3.PutObjectInput{
-		Bucket: aws.String(object.Bucket),
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(object.Key),
 		ACL:    aws.String(s3ACL),
 		Body:   bytes.NewReader([]byte(object.Value)),
@@ -80,10 +54,10 @@ func (c *Client) PutObject(object *PutObjectInput) error {
 // GetObject reads secret from S3 bucket
 // http://docs.aws.amazon.com/sdk-for-go/api/service/s3/#S3.GetObject
 // https://docs.aws.amazon.com/goto/WebAPI/s3-2006-03-01/GetObject
-func (c *Client) GetObject(object *GetObjectInput) (*s3.GetObjectOutput, error) {
+func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput, error) {
 
 	params := &s3.GetObjectInput{
-		Bucket: aws.String(object.Bucket),
+		Bucket: aws.String(c.bucket),
 		Key:    aws.String(object.Key),
 	}
 
@@ -92,13 +66,13 @@ func (c *Client) GetObject(object *GetObjectInput) (*s3.GetObjectOutput, error) 
 		return nil, err
 	}
 
-	return resp, nil
+	return &types.GetObjectOutput{Body: resp.Body}, nil
 }
 
 // GetObjects returns key value map for given pattern
-func (c *Client) GetObjects(object *GetObjectsInput) (*GetObjectsOuput, error) {
+func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
 	params := &s3.ListObjectsInput{
-		Bucket: aws.String(object.Bucket),
+		Bucket: aws.String(c.bucket),
 		Prefix: aws.String(object.Prefix),
 	}
 
@@ -110,7 +84,7 @@ func (c *Client) GetObjects(object *GetObjectsInput) (*GetObjectsOuput, error) {
 	keyValuePairs := make(map[string]string, len(resp.Contents))
 	for _, keyObject := range resp.Contents {
 		key := *keyObject.Key
-		s3Object, err := c.GetObject(&GetObjectInput{Bucket: object.Bucket, Key: key})
+		s3Object, err := c.GetObject(&types.GetObjectInput{Key: key})
 		if err != nil {
 			return nil, err
 		}
@@ -118,5 +92,5 @@ func (c *Client) GetObjects(object *GetObjectsInput) (*GetObjectsOuput, error) {
 		buf.ReadFrom(s3Object.Body)
 		keyValuePairs[key] = buf.String()
 	}
-	return &GetObjectsOuput{Secrets: keyValuePairs}, nil
+	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
 }

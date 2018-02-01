@@ -11,22 +11,16 @@ import (
 
 // Client with AWS services
 type Client struct {
-	sess  *session.Session
-	S3Svc s3iface.S3API
-}
-
-// Options for AWS services
-type Options struct {
-	Region string
+	sess   *session.Session
+	S3Svc  s3iface.S3API
+	bucket string
 }
 
 // New returns clients for AWS services
-func New(options Options) (*Client, error) {
-
+func New(region, bucket string) (*Client, error) {
 	config := aws.Config{}
-
-	if options.Region != "" {
-		config.Region = aws.String(options.Region)
+	if region != "" {
+		config.Region = aws.String(region)
 	}
 
 	sess, err := session.NewSession(&config)
@@ -37,7 +31,8 @@ func New(options Options) (*Client, error) {
 	s3Svc := s3.New(sess)
 
 	return &Client{
-		sess:  sess,
-		S3Svc: s3Svc,
+		sess:   sess,
+		S3Svc:  s3Svc,
+		bucket: bucket,
 	}, nil
 }

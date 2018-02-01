@@ -6,19 +6,17 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AirHelp/treasury/aws"
 	"github.com/AirHelp/treasury/client"
 	"github.com/AirHelp/treasury/cmd"
-	"github.com/AirHelp/treasury/test"
+	test "github.com/AirHelp/treasury/test/backend"
 )
 
 func TestExport(t *testing.T) {
 	dummyClientOptions := &client.Options{
-		AwsClient: &aws.Client{
-			S3Svc: &test.MockS3Client{},
-		},
+		Backend:      &test.MockBackendClient{},
+		S3BucketName: "fake_s3_bucket",
 	}
-	treasury, err := client.New("fake_s3_bucket", dummyClientOptions)
+	treasury, err := client.New(dummyClientOptions)
 	if err != nil {
 		t.Error(err)
 	}

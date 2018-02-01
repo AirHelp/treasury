@@ -265,11 +265,10 @@ Example:
 import "github.com/AirHelp/treasury/client"
 
 // use default client options
-treasuryOptions := client.Options{}
-treasury, err := client.NewClient(treasuryURL, treasuryOptions)
-if err != nil {
-  return err
-}
+treasury, err := client.New(&client.Options{
+    Region:       "AWS_REGION",
+    S3BucketName: "TREASURY_S3_BUCKET_NAME,
+})
 secret, err := treasury.Read(key)
 if err != nil {
   return err

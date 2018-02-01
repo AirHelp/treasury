@@ -2,6 +2,8 @@
 
 treasury=$PWD/treasury
 randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
+valid_aws_region=eu-west-1
+invalid_aws_region=us-west-1
 
 @test "Check that the treasury binary is available" {
     command $treasury
@@ -63,6 +65,18 @@ randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
   run $treasury read development/treasury/key1
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "secret" ]]
+}
+
+@test "read-with-valid-region" {
+  run $treasury read development/treasury/key1 -r $valid_aws_region
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "secret" ]]
+}
+
+@test "read-with-wrong-region" {
+  run $treasury read development/treasury/key1 -r $invalid_aws_region
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error: BucketRegionError: incorrect region, the bucket is not in 'us-west-1' region" ]]
 }
 
 @test "read-wrong-data" {

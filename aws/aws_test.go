@@ -1,9 +1,7 @@
-package aws_test
+package aws
 
 import (
 	"testing"
-
-	"github.com/AirHelp/treasury/aws"
 )
 
 func TestAws(t *testing.T) {
@@ -15,7 +13,7 @@ func TestAws(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		if _, got := aws.New(aws.Options{Region: test.region}); got != nil {
+		if _, got := New(test.region, "fakeBuckeName"); got != nil {
 			t.Error(got)
 		}
 	}

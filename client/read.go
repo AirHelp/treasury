@@ -3,7 +3,7 @@ package client
 import (
 	"bytes"
 
-	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 )
 
@@ -13,11 +13,10 @@ func (c *Client) Read(key string) (*Secret, error) {
 		return nil, err
 	}
 
-	s3objectInput := &aws.GetObjectInput{
-		Bucket: c.bucketName,
-		Key:    key,
+	s3objectInput := &types.GetObjectInput{
+		Key: key,
 	}
-	s3object, err := c.AwsClient.GetObject(s3objectInput)
+	s3object, err := c.Backend.GetObject(s3objectInput)
 	if err != nil {
 		return nil, err
 	}
@@ -46,11 +45,10 @@ func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
 	if err := utils.ValidateInputKeyPattern(keyPrefix); err != nil {
 		return nil, err
 	}
-	params := &aws.GetObjectsInput{
-		Bucket: c.bucketName,
+	params := &types.GetObjectsInput{
 		Prefix: keyPrefix,
 	}
-	resp, err := c.AwsClient.GetObjects(params)
+	resp, err := c.Backend.GetObjects(params)
 
 	if err != nil {
 		return nil, err

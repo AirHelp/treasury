@@ -1,7 +1,7 @@
 package client
 
 import (
-	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 )
@@ -34,15 +34,14 @@ func (c *Client) Write(key, secret string, force bool) error {
 		}
 	}
 
-	body := &aws.PutObjectInput{
-		Bucket:      c.bucketName,
+	body := &types.PutObjectInput{
 		Key:         key,
 		Value:       secret,
 		Application: application,
 		Environment: environment,
 	}
 
-	err = c.AwsClient.PutObject(body)
+	err = c.Backend.PutObject(body)
 	if err != nil {
 		return err
 	}
