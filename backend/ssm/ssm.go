@@ -55,7 +55,8 @@ aws ssm get-parameter --name "/development/cockpit/pas3" --with-decryption
 */
 func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput, error) {
 	params := &ssm.GetParameterInput{
-		Name:           aws.String(object.Key),
+		Name: aws.String(object.Key),
+		// Retrieve all parameters in a hierarchy with their value decrypted.
 		WithDecryption: aws.Bool(true),
 	}
 
@@ -73,6 +74,8 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
 	getParametersByPathInput := &ssm.GetParametersByPathInput{
 		Path: aws.String(object.Prefix),
+		// Retrieve all parameters in a hierarchy with their value decrypted.
+		WithDecryption: aws.Bool(true),
 	}
 
 	// we're only interested with GetParametersByPathOutput.Parameters

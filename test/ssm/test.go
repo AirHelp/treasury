@@ -60,6 +60,9 @@ func (m *MockSSMClient) GetParameter(input *ssm.GetParameterInput) (*ssm.GetPara
 // https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
 // https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#GetParametersByPathInput
 func (m *MockSSMClient) GetParametersByPath(input *ssm.GetParametersByPathInput) (*ssm.GetParametersByPathOutput, error) {
+	if !*input.WithDecryption {
+		return nil, fmt.Errorf("Missing decryption field")
+	}
 	var contents []*ssm.Parameter
 	for key, value := range KeyValueMap {
 		key := key
