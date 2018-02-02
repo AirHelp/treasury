@@ -6,15 +6,18 @@ import (
 
 func TestAws(t *testing.T) {
 	var tests = []struct {
-		region string
+		region  string
+		wantErr bool
 	}{
-		{""},
-		{"eu-west-1"},
+		{"", false},
+		{"eu-west-1", false},
 	}
 
 	for _, test := range tests {
-		if _, got := New(test.region, "fakeBuckeName"); got != nil {
-			t.Error(got)
+		_, err := New(test.region, "fakeBuckeName")
+		if (err != nil) != test.wantErr {
+			t.Errorf("New() error = %v, wantErr %v", err, test.wantErr)
+			return
 		}
 	}
 }

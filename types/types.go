@@ -1,7 +1,5 @@
 package types
 
-import "io"
-
 // PutObjectInput structure for PutObject
 type PutObjectInput struct {
 	Key         string
@@ -23,7 +21,7 @@ type GetObjectsInput struct {
 
 // GetObjectOuput structure for GetObject
 type GetObjectOutput struct {
-	Body io.ReadCloser
+	Value string
 }
 
 // GetObjectsOuput structure for ListObjectsOutput

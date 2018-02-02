@@ -65,8 +65,10 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	if err != nil {
 		return nil, err
 	}
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(resp.Body)
 
-	return &types.GetObjectOutput{Body: resp.Body}, nil
+	return &types.GetObjectOutput{Value: buf.String()}, nil
 }
 
 // GetObjects returns key value map for given pattern
@@ -84,13 +86,11 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 	keyValuePairs := make(map[string]string, len(resp.Contents))
 	for _, keyObject := range resp.Contents {
 		key := *keyObject.Key
-		s3Object, err := c.GetObject(&types.GetObjectInput{Key: key})
+		object, err := c.GetObject(&types.GetObjectInput{Key: key})
 		if err != nil {
 			return nil, err
 		}
-		buf := new(bytes.Buffer)
-		buf.ReadFrom(s3Object.Body)
-		keyValuePairs[key] = buf.String()
+		keyValuePairs[key] = object.Value
 	}
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
 }

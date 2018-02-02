@@ -1,8 +1,6 @@
 package client
 
 import (
-	"bytes"
-
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 )
@@ -21,14 +19,10 @@ func (c *Client) Read(key string) (*Secret, error) {
 		return nil, err
 	}
 
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(s3object.Body)
-
-	secret := &Secret{
+	return &Secret{
 		Key:   key,
-		Value: buf.String(),
-	}
-	return secret, nil
+		Value: s3object.Value,
+	}, nil
 }
 
 // ReadValue returns secret as a string for given key.
@@ -49,7 +43,6 @@ func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
 		Prefix: keyPrefix,
 	}
 	resp, err := c.Backend.GetObjects(params)
-
 	if err != nil {
 		return nil, err
 	}

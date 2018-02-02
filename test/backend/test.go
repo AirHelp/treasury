@@ -1,10 +1,8 @@
 package backend
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"strings"
 
 	"github.com/AirHelp/treasury/backend"
@@ -37,9 +35,7 @@ func (m *MockBackendClient) PutObject(input *types.PutObjectInput) error {
 
 func (m *MockBackendClient) GetObject(input *types.GetObjectInput) (*types.GetObjectOutput, error) {
 	return &types.GetObjectOutput{
-		Body: ioutil.NopCloser(
-			bytes.NewReader(
-				[]byte(KeyValueMap[input.Key]))),
+		Value: KeyValueMap[input.Key],
 	}, nil
 }
 
