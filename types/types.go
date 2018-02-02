@@ -14,7 +14,7 @@ type GetObjectInput struct {
 	Version string
 }
 
-// GetObjectsInput structure for ListObjectsInput
+// GetObjectsInput structure for GetObjects
 type GetObjectsInput struct {
 	Prefix string
 }
@@ -24,7 +24,7 @@ type GetObjectOutput struct {
 	Value string
 }
 
-// GetObjectsOuput structure for ListObjectsOutput
+// GetObjectsOuput structure for GetObjects
 type GetObjectsOuput struct {
 	Secrets map[string]string
 }
