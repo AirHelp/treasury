@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -18,6 +19,9 @@ type Client struct {
 
 // New returns clients for AWS services
 func New(region, bucket string) (*Client, error) {
+	if bucket == "" {
+		return nil, errors.New("S3 bucket name is missing")
+	}
 	config := aws.Config{}
 	if region != "" {
 		config.Region = aws.String(region)
