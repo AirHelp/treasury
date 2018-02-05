@@ -53,8 +53,4 @@ func init() {
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
 	treasuryS3 = os.Getenv("TREASURY_S3")
-	if treasuryS3 == "" {
-		fmt.Println("TREASURY_S3 environment variable is missing")
-		os.Exit(-1)
-	}
 }

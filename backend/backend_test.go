@@ -13,26 +13,56 @@ func TestNew(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "happy path with all options",
+			name:    "ssm backend with no options",
+			args:    backend.Options{},
+			wantErr: false,
+		},
+		{
+			name: "bo backend with bucket",
 			args: backend.Options{
-				Region:       "",
 				S3BucketName: "fake_bucket_name",
 			},
 			wantErr: false,
 		},
 		{
-			name: "no S3BucketName option set",
+			name: "ssm backend with Region",
 			args: backend.Options{
-				Region: "",
+				Backend: "ssm",
+				Region:  "eu-west-1",
+			},
+			wantErr: false,
+		},
+		{
+			name: "s3 backend without Bucket",
+			args: backend.Options{
+				Backend: "s3",
+				Region:  "",
 			},
 			wantErr: true,
 		},
 		{
-			name: "no region in options",
+			name: "s3 backend with Bucket",
 			args: backend.Options{
+				Backend:      "s3",
 				S3BucketName: "fake_bucket_name",
 			},
 			wantErr: false,
+		},
+		{
+			name: "s3 backend with Bucket and Region",
+			args: backend.Options{
+				Backend:      "s3",
+				S3BucketName: "fake_bucket_name",
+				Region:       "eu-west-1",
+			},
+			wantErr: false,
+		},
+		{
+			name: "invalid backend",
+			args: backend.Options{
+				Backend: "consul",
+			},
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
