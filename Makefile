@@ -1,11 +1,11 @@
 GOFMT_FILES = $(shell find . -type f -name '*.go' | grep -v vendor)
 TREASURY_S3 ?= ah-dev-treasury-development
-GO_VERSION ?= 1.9.3-alpine
+DOCKER_TEST_IMAGE := airhelp/treasury-test
 DOCKER_WORKING_DIR := /go/src/github.com/AirHelp/treasury
 DOCKER_CMD = docker run --rm -i \
 	-e GOOS \
 	-v "$(shell pwd)":${DOCKER_WORKING_DIR} \
-	-w ${DOCKER_WORKING_DIR} golang:${GO_VERSION}
+	-w ${DOCKER_WORKING_DIR} ${DOCKER_TEST_IMAGE}
 
 BUILD_TIME = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 BUILD_DISTROS = darwin linux
@@ -20,6 +20,9 @@ TREASURY_VERSION?=$(shell awk -F\" '/^const version/ { print $$2; exit }' versio
 
 default: test
 
+docker-test-build:
+	docker build -t $(DOCKER_TEST_IMAGE) -f Dockerfile-test .
+
 fmt:
 	@echo 'run Go autoformat'
 	@${DOCKER_CMD} gofmt -w $(GOFMT_FILES)
@@ -30,7 +33,7 @@ vet:
 	@echo 'run the code static analysis tool'
 	@${DOCKER_CMD} go tool vet -all $$(ls -d */ | grep -v vendor)
 
-test: fmt vet
+test: docker-test-build fmt vet
 	@echo 'run the unit tests'
 	@TREASURY_S3=${TREASURY_S3} \
 	${DOCKER_CMD} go test -cover -v ./...

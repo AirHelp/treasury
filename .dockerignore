@@ -1,0 +1,8 @@
+treasury
+pkg
+test/output
+.*
+
+Dockerfile*
+Makefile
+vendor/**
