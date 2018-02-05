@@ -5,4 +5,8 @@ test/output
 
 Dockerfile*
 Makefile
+# Go vendor directory
 vendor/
+
+# binary file
+treasury
