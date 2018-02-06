@@ -10,9 +10,23 @@ func TestAws(t *testing.T) {
 		bucket  string
 		wantErr bool
 	}{
-		{"", "fakeBuckeName", false},
-		{"eu-west-1", "fakeBuckeName", false},
-		{"eu-west-1", "", true},
+		{
+			region:  "",
+			bucket:  "fakeBuckeName",
+			wantErr: false,
+		},
+		{
+			region:  "eu-west-1",
+			bucket:  "fakeBuckeName",
+			wantErr: false,
+		},
+		{
+			region:  "eu-west-1",
+			wantErr: true,
+		},
+		{
+			wantErr: true,
+		},
 	}
 
 	for _, test := range tests {
