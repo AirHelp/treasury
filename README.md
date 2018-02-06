@@ -1,6 +1,6 @@
 # treasury
 
-Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html)) service to store secrets. By default, Treasury uses SSM as a backend. The secrets are encrypted before saving them on disks in their data centers and decrypted when we read the secrets. Treasury uses Server-Side Encryption with AWS KMS-Managed Keys ([SSE-KMS](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html)).
+Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html)) service to store secrets. By default, Treasury uses SSM as a backend. The secrets are encrypted before saving them on disks in Amazon data centers and decrypted when being read. Treasury uses Server-Side Encryption with AWS KMS-Managed Keys ([SSE-KMS](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html)).
 
 ## Architecture
 
@@ -53,6 +53,8 @@ For example:
 export TREASURY_S3=ah-dev-treasury-development
 export AWS_REGION=eu-west-1
 ```
+
+The AWS_REGION environment variable is optional. If not set, it'd be read from `.aws/config`.
 
 In order to use SSM as a store, unset previously configured TREASURY_S3 environment variable.
 
@@ -266,7 +268,7 @@ import "github.com/AirHelp/treasury/client"
 
 // use default client options
 treasury, err := client.New(&client.Options{
-    Region:       "AWS_REGION",
+    Backend: "s3",
     S3BucketName: "TREASURY_S3_BUCKET_NAME,
 })
 secret, err := treasury.Read(key)
@@ -276,6 +278,8 @@ if err != nil {
 
 fmt.Println(secret.Value)
 ```
+
+`TREASURY_S3_BUCKET_NAME` is a S3 bucket name dedicated for treasury use.
 
 Example for SSM as a store:
 ```go
