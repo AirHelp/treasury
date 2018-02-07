@@ -76,7 +76,7 @@ invalid_aws_region=us-west-1
 @test "read-with-wrong-region" {
   run $treasury read development/treasury/key1 -r $invalid_aws_region
   [ $status -eq 255 ]
-  [[ ${lines[0]} =~ "Error: BucketRegionError: incorrect region, the bucket is not in 'us-west-1' region" ]]
+  [[ ${lines[0]} =~ "Error:" ]]
 }
 
 @test "read-wrong-data" {
