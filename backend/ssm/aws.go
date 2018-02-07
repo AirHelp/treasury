@@ -16,13 +16,13 @@ type Client struct {
 
 // New returns clients for AWS services
 func New(region string) (*Client, error) {
-	sess, err := session.NewSession()
+	sess, err := session.NewSession(&aws.Config{Region: aws.String(region)})
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
 	}
 
 	// Create a SSM client with additional configuration
-	svc := ssm.New(sess, aws.NewConfig().WithRegion(region))
+	svc := ssm.New(sess)
 
 	return &Client{
 		svc: svc,
