@@ -7,7 +7,8 @@ import (
 )
 
 const (
-	noSuchKey = "NoSuchKey"
+	noSuchKey       = "NoSuchKey"
+	noSuchParameter = "ParameterNotFound"
 )
 
 // Write secret to Treasure
@@ -23,7 +24,7 @@ func (c *Client) Write(key, secret string, force bool) error {
 			if aerr, ok := err.(awserr.Error); ok {
 				// in this case 404 is ok for us
 				// so we'd proceed if 404 occurs
-				if aerr.Code() != noSuchKey {
+				if aerr.Code() != noSuchKey && aerr.Code() != noSuchParameter {
 					return err
 				}
 			} else {

@@ -2,6 +2,7 @@ package ssm
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/service/ssm"
@@ -18,6 +19,18 @@ var KeyValueMap = map[string]string{
 	Key1: "as9@#$%^&*(/2hdiwnf",
 	Key2: "as9@#$&*(/2saddsahdiwnf",
 	Key3: "#$&*(/2saddsah&as",
+}
+
+const (
+	SSMKey1 = "/" + Key1
+	SSMKey2 = "/" + Key2
+	SSMKey3 = "/" + Key3
+)
+
+var SSMKeyValueMap = map[string]string{
+	SSMKey1: KeyValueMap[Key1],
+	SSMKey2: KeyValueMap[Key2],
+	SSMKey3: KeyValueMap[Key3],
 }
 
 // MockSSMClient fake SSMAPI
@@ -41,13 +54,14 @@ func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutPara
 }
 
 func (m *MockSSMClient) GetParameter(input *ssm.GetParameterInput) (*ssm.GetParameterOutput, error) {
-	if _, ok := KeyValueMap[*input.Name]; !ok {
+	log.Println("input.Name:", input.Name)
+	if _, ok := SSMKeyValueMap[*input.Name]; !ok {
 		return nil, fmt.Errorf("Missing key:%s in KeyValue map", *input.Name)
 	}
 	if !*input.WithDecryption {
 		return nil, fmt.Errorf("Missing decryption field")
 	}
-	value := KeyValueMap[*input.Name]
+	value := SSMKeyValueMap[*input.Name]
 	return &ssm.GetParameterOutput{
 		// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#Parameter
 		Parameter: &ssm.Parameter{
