@@ -18,6 +18,10 @@ func TestNew(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "region not defined",
+			wantErr: false,
+		},
+		{
 			name:    "valid region",
 			region:  "eu-west-1",
 			wantErr: false,
