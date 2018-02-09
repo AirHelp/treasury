@@ -7,7 +7,9 @@ import (
 	"sort"
 )
 
-// Export returns command exporting found secrets
+// Export returns secrets in given format
+// format should be provided in singleKeyExportFormat
+// e.g.: singleKeyExportFormat = "export %s='%s'\n"
 func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 	secrets, err := c.ReadGroup(key)
 	if err != nil {
