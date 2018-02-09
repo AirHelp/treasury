@@ -90,7 +90,8 @@ func TestClient_GetObjects(t *testing.T) {
 			input: &types.GetObjectsInput{
 				Prefix: "test/webapp/",
 			},
-			want: &types.GetObjectsOuput{secrets},
+			want:    &types.GetObjectsOuput{secrets},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -102,6 +103,39 @@ func TestClient_GetObjects(t *testing.T) {
 			}
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("Client.GetObjects() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_unSlash(t *testing.T) {
+	type args struct {
+		input string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "correct input",
+			args: args{
+				input: "/test/webapp/cocpit_api_pass",
+			},
+			want: "test/webapp/cocpit_api_pass",
+		},
+		{
+			name: "input without slash",
+			args: args{
+				input: "test/webapp/cocpit_api_pass",
+			},
+			want: "test/webapp/cocpit_api_pass",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := unSlash(tt.args.input); got != tt.want {
+				t.Errorf("unSlash() = %v, want %v", got, tt.want)
 			}
 		})
 	}

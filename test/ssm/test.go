@@ -78,7 +78,7 @@ func (m *MockSSMClient) GetParametersByPath(input *ssm.GetParametersByPathInput)
 		return nil, fmt.Errorf("Missing decryption field")
 	}
 	var contents []*ssm.Parameter
-	for key, value := range KeyValueMap {
+	for key, value := range SSMKeyValueMap {
 		key := key
 		value := value
 		if strings.Contains(key, *input.Path) {

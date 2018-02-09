@@ -75,7 +75,7 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
 	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
 	getParametersByPathInput := &ssm.GetParametersByPathInput{
-		Path: aws.String(object.Prefix),
+		Path: aws.String("/" + object.Prefix),
 		// Retrieve all parameters in a hierarchy with their value decrypted.
 		WithDecryption: aws.Bool(true),
 	}
@@ -90,7 +90,17 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 
 	keyValuePairs := make(map[string]string, len(resp.Parameters))
 	for _, parameter := range resp.Parameters {
-		keyValuePairs[*parameter.Name] = *parameter.Value
+		keyValuePairs[unSlash(*parameter.Name)] = *parameter.Value
 	}
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
+}
+
+// unShash removes 1st char from a string
+// GetParametersByPath from SSM returns key path with "/" at the beginning
+// but we don't need it :)
+func unSlash(input string) string {
+	if string(input[0]) == "/" {
+		return input[1:]
+	}
+	return input
 }
