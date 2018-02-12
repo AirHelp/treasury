@@ -11,22 +11,15 @@ const defaultParameterType = "SecureString"
 // PutObject writes a given secret value on SSM
 // it uses PutParameter API call
 // https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_PutParameter.html
-// corresponding aws cli command
-// aws ssm put-parameter --name "/development/cockpit/pass" --value "secret" --type "SecureString"
 func (c *Client) PutObject(object *types.PutObjectInput) error {
 	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#PutParameterInput
 	putParameterInput := &ssm.PutParameterInput{
 		KeyId: aws.String("alias/" + object.Environment),
 		// we decided to use path based keys without `/` at the begining
 		// so we need to add it here
-		Name:  aws.String("/" + object.Key),
-		Type:  aws.String(defaultParameterType),
-		Value: aws.String(object.Value),
-		/* This will not overwrite current parameter, just bump the version
-		  but the doc says something different :/
-			aws ssm put-parameter --name "/development/cockpit/pass" --value "secret" \
-			--type "SecureString" --overwrite
-		{"Version": 2}*/
+		Name:      aws.String("/" + object.Key),
+		Type:      aws.String(defaultParameterType),
+		Value:     aws.String(object.Value),
 		Overwrite: aws.Bool(true),
 	}
 
@@ -40,19 +33,7 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 	return nil
 }
 
-/*
-GetObject returns a secret for given key
-
-aws ssm get-parameter --name "/development/cockpit/pas3" --with-decryption
-{
-	"Parameter": {
-			"Name": "/development/cockpit/pas3",
-			"Type": "SecureString",
-			"Value": "secret",
-			"Version": 1
-	}
-}
-*/
+// GetObject returns a secret for given key
 func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput, error) {
 	params := &ssm.GetParameterInput{
 		// we decided to use path based keys without `/` at the begining
@@ -70,8 +51,7 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	return &types.GetObjectOutput{Value: *resp.Parameter.Value}, nil
 }
 
-//GetObjects returns key value map for given pattern/prefix
-//aws ssm get-parameters-by-path --path "/development/cockpit/"
+// GetObjects returns key value map for given pattern/prefix
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
 	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
 	getParametersByPathInput := &ssm.GetParametersByPathInput{
