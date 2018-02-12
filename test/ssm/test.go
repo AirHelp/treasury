@@ -42,7 +42,7 @@ func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutPara
 	if input == nil {
 		return nil, fmt.Errorf("PutParameterInput is empty")
 	}
-	if input.Name == nil {
+	if *input.Name == "" {
 		return nil, fmt.Errorf("Name in PutParameterInput is not set")
 	}
 	// SSM path based key needs to start from "/"
@@ -50,7 +50,7 @@ func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutPara
 	if string(name[0]) != "/" {
 		return nil, fmt.Errorf("SSM Name needs to start from /")
 	}
-	if input.Value == nil {
+	if *input.Value == "" {
 		return nil, fmt.Errorf("Value in PutParameterInput is not set")
 	}
 	var version int64 = 1

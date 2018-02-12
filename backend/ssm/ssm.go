@@ -1,6 +1,8 @@
 package ssm
 
 import (
+	"errors"
+
 	"github.com/AirHelp/treasury/types"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/ssm"
@@ -12,6 +14,9 @@ const defaultParameterType = "SecureString"
 // it uses PutParameter API call
 // https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_PutParameter.html
 func (c *Client) PutObject(object *types.PutObjectInput) error {
+	if object.Key == "" {
+		return errors.New("The key name is not valid.")
+	}
 	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#PutParameterInput
 	putParameterInput := &ssm.PutParameterInput{
 		KeyId: aws.String("alias/" + object.Environment),

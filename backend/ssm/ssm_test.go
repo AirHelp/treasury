@@ -27,6 +27,24 @@ func TestClient_PutObject(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "missing key in input",
+			input: &types.PutObjectInput{
+				Value:       test.KeyValueMap[test.Key1],
+				Application: "application",
+				Environment: "test",
+			},
+			wantErr: true,
+		},
+		{
+			name: "missing value in input",
+			input: &types.PutObjectInput{
+				Key:         test.Key1,
+				Application: "application",
+				Environment: "test",
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
