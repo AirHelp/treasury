@@ -73,7 +73,7 @@ Treasury uses SSM store by default. No additional configuration is required.
 
 ### S3 store configuration
 
-In order to use S3 as a store, export environment variable: treasury S3 bucket:
+In order to use S3 as a store, set TREASURY_S3 environment variable with S3 bucket name.
 
 For example:
 
@@ -131,7 +131,7 @@ Note: Using `=` in secret value is not allowed.
       If secret value is equal to existing one, import skips this value. `--force` flag can be used to overwrite.
 
 ### Export secrets
-Assuming stored secrets pairs on s3
+Assuming stored secrets pairs on treasury store
 ```bash
 development/webapp/key1 => superSecretPassword1
 development/webapp/key2 => superSecretPassword2

@@ -45,7 +45,7 @@ func TestExport(t *testing.T) {
 		}
 		for _, exportValue := range scenario.responseStrings {
 			if !strings.Contains(exportString, exportValue) {
-				t.Errorf("Wrong export string returned:\n%s, \nshoudl contain:\n%s", exportString, exportValue)
+				t.Errorf("Wrong export string returned:\n%s, \nshould contain:\n%s", exportString, exportValue)
 			}
 		}
 	}

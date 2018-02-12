@@ -79,6 +79,9 @@ func TestClient_GetObjects(t *testing.T) {
 	secrets := make(map[string]string)
 	secrets[test.Key1] = test.KeyValueMap[test.Key1]
 	secrets[test.Key2] = test.KeyValueMap[test.Key2]
+
+	oneSecret := make(map[string]string)
+	oneSecret[test.Key1] = test.KeyValueMap[test.Key1]
 	tests := []struct {
 		name    string
 		input   *types.GetObjectsInput
@@ -91,6 +94,14 @@ func TestClient_GetObjects(t *testing.T) {
 				Prefix: "test/webapp/",
 			},
 			want:    &types.GetObjectsOuput{secrets},
+			wantErr: false,
+		},
+		{
+			name: "correct full path to key",
+			input: &types.GetObjectsInput{
+				Prefix: test.Key1,
+			},
+			want:    &types.GetObjectsOuput{oneSecret},
 			wantErr: false,
 		},
 	}
