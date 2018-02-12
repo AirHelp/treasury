@@ -48,7 +48,7 @@ func TestClient_GetObject(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "correct values",
+			name: "correct value",
 			input: &types.GetObjectInput{
 				Key: test.Key1,
 			},
@@ -56,6 +56,14 @@ func TestClient_GetObject(t *testing.T) {
 				Value: test.KeyValueMap[test.Key1],
 			},
 			wantErr: false,
+		},
+		{
+			name: "incorrect value",
+			input: &types.GetObjectInput{
+				Key: "test/nonexisting/key",
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -82,6 +90,9 @@ func TestClient_GetObjects(t *testing.T) {
 
 	oneSecret := make(map[string]string)
 	oneSecret[test.Key1] = test.KeyValueMap[test.Key1]
+
+	emptySecretMap := make(map[string]string)
+
 	tests := []struct {
 		name    string
 		input   *types.GetObjectsInput
@@ -102,6 +113,22 @@ func TestClient_GetObjects(t *testing.T) {
 				Prefix: test.Key1,
 			},
 			want:    &types.GetObjectsOuput{oneSecret},
+			wantErr: false,
+		},
+		{
+			name: "non existing key",
+			input: &types.GetObjectsInput{
+				Prefix: "test/nonexisting/key",
+			},
+			want:    &types.GetObjectsOuput{Secrets: emptySecretMap},
+			wantErr: false,
+		},
+		{
+			name: "non existing prefix",
+			input: &types.GetObjectsInput{
+				Prefix: "test/nonexisting/",
+			},
+			want:    &types.GetObjectsOuput{Secrets: emptySecretMap},
 			wantErr: false,
 		},
 	}
