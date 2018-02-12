@@ -26,11 +26,7 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 	// PutParameter returns Version of the parameter
 	// shall we validate this version?
 	_, err := c.svc.PutParameter(putParameterInput)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return err
 }
 
 // GetObject returns a secret for given key
