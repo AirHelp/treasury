@@ -19,6 +19,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
         - [Teamplate usage](#teamplate-usage)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
         - [IAM Policy for S3 store](#iam-policy-for-s3-store)
+        - [IAM Policy for SSM Store](#iam-policy-for-ssm-store)
     - [Go Client](#go-client)
     - [Development](#development)
     - [Build for development](#build-for-development)
@@ -174,7 +175,7 @@ COCKPIT_API_PASSWORD={{ read "production/cockpit/cockpit_api_password" }}
 
 ### IAM Policy for S3 store
 
-* Read and Write policy to `test/test/*` and `test/cockpit/*` keys
+* Read and Write policy for `test/test/*` and `test/cockpit/*` keys
 
 ```json
 {
@@ -294,6 +295,85 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
       }
     }
   ]
+}
+```
+
+### IAM Policy for SSM Store
+
+* Read only policy for `development/cockpit/*` keys
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Effect": "Allow",
+          "Action": [
+              "ssm:DescribeParameters",
+              "ssm:GetParameterHistory",
+              "ssm:ListTagsForResource"
+          ],
+          "Resource": "*"
+      },
+      {
+          "Effect": "Allow",
+          "Action": [
+              "ssm:GetParameter*"
+          ],
+          "Resource": [
+              "arn:aws:ssm:eu-west-1:064764542321:parameter/development/cockpit/*"
+          ]
+      },
+      {
+          "Effect": "Allow",
+          "Action": [
+              "kms:Decrypt"
+          ],
+          "Resource": [
+              "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8"
+          ]
+      }
+  ]
+}
+```
+
+* Read and Write policy for `/development/application/*` keys
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:DescribeParameters",
+                "ssm:GetParameterHistory",
+                "ssm:ListTagsForResource"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ssm:GetParameter*",
+                "ssm:PutParameter"
+            ],
+            "Resource": [
+                "arn:aws:ssm:eu-west-1:064764542321:parameter/development/application/*"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:GenerateDataKey*"
+            ],
+            "Resource": [
+                "arn:aws:kms:eu-west-1:064764542321:key/14b4a163-6c9d-4edb-a4bf-5adc4cd50ad8"
+            ]
+        }
+    ]
 }
 ```
 
