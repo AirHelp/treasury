@@ -20,7 +20,10 @@
     "aws/request",
     "aws/session",
     "aws/signer/v4",
+    "internal/shareddefaults",
     "private/protocol",
+    "private/protocol/json/jsonutil",
+    "private/protocol/jsonrpc",
     "private/protocol/query",
     "private/protocol/query/queryutil",
     "private/protocol/rest",
@@ -28,9 +31,12 @@
     "private/protocol/xml/xmlutil",
     "service/s3",
     "service/s3/s3iface",
+    "service/ssm",
+    "service/ssm/ssmiface",
     "service/sts"
   ]
-  revision = "4c307b6c988d40b9601a86768b29c28e8fb033eb"
+  revision = "1b176c5c6b57adb03bb982c21930e708ebca5a77"
+  version = "v1.12.70"
 
 [[projects]]
   name = "github.com/go-ini/ini"
@@ -47,22 +53,23 @@
 [[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
-  revision = "3433f3ea46d9f8019119e7dd41274e112a2359a9"
-  version = "0.2.2"
+  revision = "0b12d6b5"
 
 [[projects]]
   name = "github.com/spf13/cobra"
   packages = ["."]
-  revision = "801364aa1521eb0ac9735f138901d5fe0f37b4b8"
+  revision = "7b2c5ac9fc04fc5efafb60700713d4fa609b777b"
+  version = "v0.0.1"
 
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "7f60f83a2c81bc3c3c0d5297f61ddfa68da9d3b7"
+  revision = "e57e3eeb33f795204c1ca35f56c44f83227c6e66"
+  version = "v1.0.0"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6362a24b45858e99b7a1431e7c3ba79f456654de58c93caae28301d1eb21ced8"
+  inputs-digest = "e95296286db5e32cd9a551b7ec22d720bcf9cbbfba1a4a258a33ab2e46f552f7"
   solver-name = "gps-cdcl"
   solver-version = 1

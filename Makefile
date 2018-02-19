@@ -1,12 +1,3 @@
-GOFMT_FILES = $(shell find . -type f -name '*.go' | grep -v vendor)
-TREASURY_S3 ?= ah-dev-treasury-development
-GO_VERSION ?= 1.9.3-alpine
-DOCKER_WORKING_DIR := /go/src/github.com/AirHelp/treasury
-DOCKER_CMD = docker run --rm -i \
-	-e GOOS \
-	-v "$(shell pwd)":${DOCKER_WORKING_DIR} \
-	-w ${DOCKER_WORKING_DIR} golang:${GO_VERSION}
-
 BUILD_TIME = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 BUILD_DISTROS = darwin linux
 GIT_COMMIT = $(shell git rev-parse HEAD)
@@ -20,29 +11,28 @@ TREASURY_VERSION?=$(shell awk -F\" '/^const version/ { print $$2; exit }' versio
 
 default: test
 
+docker-test-build:
+	docker-compose -f docker-compose.test.yml build --pull
+
 fmt:
-	@echo 'run Go autoformat'
-	@${DOCKER_CMD} gofmt -w $(GOFMT_FILES)
+	docker-compose -f docker-compose.test.yml run tests gofmt -s -w .
 
 # vet runs the Go source code static analysis tool `vet` to find
 # any common errors.
 vet:
-	@echo 'run the code static analysis tool'
-	@${DOCKER_CMD} go tool vet -all $$(ls -d */ | grep -v vendor)
+	docker-compose -f docker-compose.test.yml run tests go vet -v ./...
 
-test: fmt vet
-	@echo 'run the unit tests'
-	@TREASURY_S3=${TREASURY_S3} \
-	${DOCKER_CMD} go test -cover -v ./...
+test: docker-test-build fmt vet 
+	docker-compose -f docker-compose.test.yml run --rm tests
 
-testall: build
+testall: test dev
 	bats test/bats/tests.bats
 
 build: test
 	@rm -fr pkg
 	@mkdir pkg
 	@for distro in ${BUILD_DISTROS}; do \
-		GOOS=$${distro} ${DOCKER_CMD} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
+		GOOS=$${distro} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
 		cd pkg/$${distro}; \
 		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
 		cd ../..; \

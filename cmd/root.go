@@ -21,6 +21,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const treasuryS3EnvVariable = "TREASURY_S3"
+
 var (
 	// TO DO: CLI config
 	// if we decided to use config file we should use https://github.com/spf13/viper
@@ -52,9 +54,5 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	treasuryS3 = os.Getenv("TREASURY_S3")
-	if treasuryS3 == "" {
-		fmt.Println("TREASURY_S3 environment variable is missing")
-		os.Exit(-1)
-	}
+	treasuryS3 = os.Getenv(treasuryS3EnvVariable)
 }

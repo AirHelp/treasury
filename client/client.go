@@ -1,9 +1,7 @@
 package client
 
 import (
-	"errors"
-
-	"github.com/AirHelp/treasury/aws"
+	"github.com/AirHelp/treasury/backend"
 )
 
 const (
@@ -13,44 +11,42 @@ const (
 
 // Client is the client that performs all operations against a treasury backend
 type Client struct {
-	// s3 bucket name
-	bucketName string
-
 	// version of the Client
 	version string
 
-	// AWS shared client
-	AwsClient *aws.Client
+	// Backend interface
+	Backend backend.BackendAPI
 }
 
 // Options for client
 type Options struct {
-	Version, Region string
-	AwsClient       *aws.Client
+	Version string
+	// backend region where we keep secrets
+	Region       string
+	S3BucketName string
+	Backend      backend.BackendAPI
 }
 
 // New initializes a new client for the given AWS account with S3 bucket
-func New(bucketName string, options *Options) (*Client, error) {
-	if bucketName == "" {
-		return nil, errors.New("S3 bucket name is missing")
-	}
-
+func New(options *Options) (*Client, error) {
 	if options.Version == "" {
 		options.Version = version
 	}
 
-	// AWS connection
+	// backend connection
 	var err error
-	if options.AwsClient == nil {
-		options.AwsClient, err = aws.New(aws.Options{Region: options.Region})
+	if options.Backend == nil {
+		options.Backend, err = backend.New(backend.Options{
+			Region:       options.Region,
+			S3BucketName: options.S3BucketName,
+		})
 		if err != nil {
 			return nil, err
 		}
 	}
 
 	return &Client{
-		bucketName: bucketName,
-		version:    options.Version,
-		AwsClient:  options.AwsClient,
+		version: options.Version,
+		Backend: options.Backend,
 	}, nil
 }

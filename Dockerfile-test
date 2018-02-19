@@ -1,0 +1,11 @@
+FROM golang:1.9.4-alpine
+
+WORKDIR /go/src/github.com/AirHelp/treasury
+RUN apk add --no-cache git && go get github.com/golang/dep/cmd/dep
+
+# copies the Gopkg.toml and Gopkg.lock to WORKDIR
+COPY Gopkg.toml Gopkg.lock ./
+# install the dependencies without checking for go code
+RUN dep ensure -v -vendor-only
+COPY . .
+CMD ["go", "test", "-cover", "-v", "./..."]

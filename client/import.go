@@ -4,7 +4,7 @@ import (
 	"github.com/AirHelp/treasury/utils"
 )
 
-// Import imports secrets from file into s3, if value does not change it is not overridden
+// Import imports secrets from file into treasury store, if value does not change it is not overridden
 func (c *Client) Import(prefix, secretsFilePath string, force bool) error {
 	secrets, err := utils.ReadSecrets(secretsFilePath)
 	if err != nil {
