@@ -386,7 +386,7 @@ import "github.com/AirHelp/treasury/client"
 // use default client options
 treasury, err := client.New(&client.Options{
     Backend: "s3",
-    S3BucketName: "TREASURY_S3_BUCKET_NAME,
+    S3BucketName: TREASURY_S3_BUCKET_NAME,
 })
 secret, err := treasury.Read(key)
 if err != nil {
