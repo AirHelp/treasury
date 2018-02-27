@@ -15,14 +15,14 @@ docker-test-build:
 	docker-compose -f docker-compose.test.yml build --pull
 
 fmt:
-	docker-compose -f docker-compose.test.yml run tests gofmt -s -w .
+	docker-compose -f docker-compose.test.yml run --rm tests gofmt -s -w .
 
 # vet runs the Go source code static analysis tool `vet` to find
 # any common errors.
 vet:
-	docker-compose -f docker-compose.test.yml run tests go vet -v ./...
+	docker-compose -f docker-compose.test.yml run --rm tests go vet -v ./...
 
-test: docker-test-build fmt vet 
+test: docker-test-build fmt vet
 	docker-compose -f docker-compose.test.yml run --rm tests
 
 testall: test dev
