@@ -28,7 +28,9 @@ func (c *Client) renderTemplate(templateText string) (templateResultBuffer bytes
 	// Create a FuncMap with which to register the function.
 	funcMap := template.FuncMap{
 		// The name "read" is what the function will be called in the template text.
-		"read": c.ReadValue,
+		"read":      c.ReadValue,
+		"exportMap": c.ExportMap,
+		"export":    c.ExportToTemplate,
 	}
 	// Create a template, add the function map, and parse the text.
 	tmpl, err := template.New("templateCli").Funcs(funcMap).Parse(templateText)

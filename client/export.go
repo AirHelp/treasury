@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/AirHelp/treasury/utils"
 )
@@ -44,10 +45,28 @@ func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 	return buffer.String(), nil
 }
 
+func (c *Client) ExportToTemplate(key string) (string, error) {
+	return c.Export(key, "%s=%s\n")
+}
+
 // validPrefix returns true if correct Prefix is given as an input
 // e.g.: test/key/ is an correct prefix
 // test/key/var is a full key path not a prefix
 func validPrefix(input string) bool {
 	err := utils.ValidateInputKey(input)
 	return (err != nil) == true
+}
+
+// ExportMap returns map of Key=Value secrets (Key is without full path)
+func (c *Client) ExportMap(key string) (map[string]string, error) {
+	results := make(map[string]string)
+	secrets, err := c.ReadGroup(key)
+	if err != nil {
+		return results, err
+	}
+	for _, secret := range secrets {
+		splitKey := strings.Split(secret.Key, "/")
+		results[splitKey[2]] = secret.Value
+	}
+	return results, nil
 }
