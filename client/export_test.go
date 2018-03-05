@@ -110,7 +110,6 @@ func TestClient_ExportMap(t *testing.T) {
 			gotResult, err := c.ExportMap(tt.key)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportMap() error = %v, wantErr %v", err, tt.wantErr)
-				return
 			}
 			if !reflect.DeepEqual(gotResult, tt.wantResult) {
 				t.Errorf("Client.ExportMap() = %v, want %v", gotResult, tt.wantResult)
@@ -154,7 +153,6 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			got, err := c.ExportToTemplate(tt.key)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)
-				return
 			}
 			if got != tt.want {
 				t.Errorf("Client.ExportToTemplate() = %v, want %v", got, tt.want)
