@@ -147,6 +147,12 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			),
 			wantErr: false,
 		},
+		{
+			name:    "incorrect prefix key",
+			key:     "bla_bla_bla",
+			want:    "",
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
