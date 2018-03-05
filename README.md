@@ -17,6 +17,9 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
         - [Import secrets](#import-secrets)
         - [Export secrets](#export-secrets)
         - [Teamplate usage](#teamplate-usage)
+            - [read](#read)
+            - [export](#export)
+            - [exportMap](#exportmap)
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
         - [IAM Policy for S3 store](#iam-policy-for-s3-store)
         - [IAM Policy for SSM Store](#iam-policy-for-ssm-store)
@@ -160,15 +163,47 @@ treasury template --src /tmp/template.tpl --dst /tmp/result
 
 Treasury parses file in the Go Template format. The input text for a template is UTF-8-encoded text in any format. "Actions"--data evaluations or control structures--are delimited by "{{" and "}}"; all text outside actions is copied to the output unchanged.
 
-Currently, only `read` action is implemented.
+Supported actions:
+
+#### read 
+Returns single value for given key
 
 ```
 {{ read "ENVIRONMENT/APPLICATION/SECRET_NAME" }}
 ```
 
-Example of webapp configuration template:
+Example:
 ```
 COCKPIT_API_PASSWORD={{ read "production/cockpit/cockpit_api_password" }}
+```
+
+#### export
+Returns all values for a given path in `key=value` format
+
+```
+{{ export "development/treasury/" }}
+```
+
+will generate:
+```
+key1=secret1
+key2=secret2
+key3=secret3
+key4=secret4
+```
+
+#### exportMap
+Returns all values for a given path in Go map structure
+
+{{ range $key, $value := exportMap "development/treasury/" }}
+{{ $key }}: {{ $value }}{{ end }}
+
+will generate:
+```
+key1: secret1
+key2: secret2
+key3: secret3
+key4: secret4
 ```
 
 ## Setting up the infrastructure

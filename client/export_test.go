@@ -3,6 +3,7 @@ package client_test
 import (
 	"fmt"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 
@@ -58,4 +59,110 @@ func formatExportString(keyValue map[string]string) []string {
 		exportStrings = append(exportStrings, valueToExport)
 	}
 	return exportStrings
+}
+
+func TestClient_ExportMap(t *testing.T) {
+	dummyClientOptions := &client.Options{
+		Backend: &test.MockBackendClient{},
+	}
+	c, err := client.New(dummyClientOptions)
+	if err != nil {
+		t.Error(err)
+	}
+	tests := []struct {
+		name       string
+		key        string
+		wantResult map[string]string
+		wantErr    bool
+	}{
+		{
+			name: "correct key",
+			key:  "test/webapp/",
+			wantResult: map[string]string{
+				test.ShortKey1: test.KeyValueMap[test.Key1],
+				test.ShortKey2: test.KeyValueMap[test.Key2],
+			},
+			wantErr: false,
+		},
+		{
+			name: "key with only 1 result",
+			key:  "test/cockpit/",
+			wantResult: map[string]string{
+				test.ShortKey3: test.KeyValueMap[test.Key3],
+			},
+			wantErr: false,
+		},
+		{
+			name:       "wrong key to export",
+			key:        "test/webapp",
+			wantResult: map[string]string{},
+			wantErr:    true,
+		},
+		{
+			name:       "correct key with no results",
+			key:        "test/dummyApplication/",
+			wantResult: map[string]string{},
+			wantErr:    false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotResult, err := c.ExportMap(tt.key)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Client.ExportMap() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if !reflect.DeepEqual(gotResult, tt.wantResult) {
+				t.Errorf("Client.ExportMap() = %v, want %v", gotResult, tt.wantResult)
+			}
+		})
+	}
+}
+
+func TestClient_ExportToTemplate(t *testing.T) {
+	dummyClientOptions := &client.Options{
+		Backend: &test.MockBackendClient{},
+	}
+	c, err := client.New(dummyClientOptions)
+	if err != nil {
+		t.Error(err)
+	}
+	tests := []struct {
+		name    string
+		key     string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "full key path",
+			key:     test.Key1,
+			want:    fmt.Sprintf("%s=%s\n", test.ShortKey1, test.KeyValueMap[test.Key1]),
+			wantErr: false,
+		},
+		{
+			name: "correct prefix key",
+			key:  "test/webapp/",
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey1, test.KeyValueMap[test.Key1],
+				test.ShortKey2, test.KeyValueMap[test.Key2],
+			),
+			wantErr: false,
+		},
+		{
+			name:    "incorrect prefix key",
+			key:     "bla_bla_bla",
+			want:    "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := c.ExportToTemplate(tt.key)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+			if got != tt.want {
+				t.Errorf("Client.ExportToTemplate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
 }

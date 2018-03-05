@@ -122,7 +122,7 @@ func TestClient_GetObjects(t *testing.T) {
 			input: &types.GetObjectsInput{
 				Prefix: "test/webapp/",
 			},
-			want:    &types.GetObjectsOuput{secrets},
+			want:    &types.GetObjectsOuput{Secrets: secrets},
 			wantErr: false,
 		},
 		{
@@ -130,7 +130,7 @@ func TestClient_GetObjects(t *testing.T) {
 			input: &types.GetObjectsInput{
 				Prefix: test.Key1,
 			},
-			want:    &types.GetObjectsOuput{oneSecret},
+			want:    &types.GetObjectsOuput{Secrets: oneSecret},
 			wantErr: false,
 		},
 		{

@@ -10,9 +10,12 @@ import (
 )
 
 const (
-	Key1 = "test/webapp/cocpit_api_pass"
-	Key2 = "test/webapp/user_api_pass"
-	Key3 = "test/cockpit/user_api_pass"
+	Key1      = "test/webapp/cocpit_api_pass"
+	ShortKey1 = "cocpit_api_pass"
+	Key2      = "test/webapp/user_api_pass"
+	ShortKey2 = "user_api_pass"
+	Key3      = "test/cockpit/user_api_pass"
+	ShortKey3 = "user_api_pass"
 )
 
 var KeyValueMap = map[string]string{
@@ -46,5 +49,5 @@ func (m *MockBackendClient) GetObjects(input *types.GetObjectsInput) (*types.Get
 			response[key] = KeyValueMap[key]
 		}
 	}
-	return &types.GetObjectsOuput{response}, nil
+	return &types.GetObjectsOuput{Secrets: response}, nil
 }
