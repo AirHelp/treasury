@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	environmentApplicationKeyRegex = `^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_0-9]+$`
-	environmentApplicationRegex    = `^[a-zA-Z-_]+\/[a-zA-Z-_]+\/[a-zA-Z-_0-9]*$`
+	environmentApplicationKeyRegex = `^[a-zA-Z-_]+\/[a-zA-Z-_0-9]+\/[a-zA-Z-_0-9]+$`
+	environmentApplicationRegex    = `^[a-zA-Z-_]+\/[a-zA-Z-_0-9]+\/[a-zA-Z-_0-9]*$`
 )
 
 // ValidateInputKey checks if cli input is valid

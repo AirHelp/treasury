@@ -8,6 +8,7 @@ func TestValidateInputKey(t *testing.T) {
 		"STAGING/WeBapp/cockpit_api-pass",
 		"Integration/claim-score/elasticsearch_url",
 		"staging/webapp/1coc3_k--pit123",
+		"staging/wordpress-v2/WP_MIXPANEL_API_KEY",
 	}
 	for _, testString := range validTestStrings {
 		if err := ValidateInputKey(testString); err != nil {
@@ -18,8 +19,8 @@ func TestValidateInputKey(t *testing.T) {
 	invalidTestStrings := []string{
 		"staging/webapp",
 		"45678901jbf",
-		"asasa/12312/312313",
-		"1231/12312/312313",
+		"asasa/123!12/312313",
+		"1231/1231*2/312313",
 	}
 	for _, testString := range invalidTestStrings {
 		if err := ValidateInputKey(testString); err == nil {
@@ -44,8 +45,8 @@ func TestValidateInputKeyPattern(t *testing.T) {
 
 	invalidTestStrings := []string{
 		"45678901jbf",
-		"asasa/12312/312313",
-		"1231/12312/312313",
+		"asasa/123/12/312313",
+		"1231/123!12/312313",
 	}
 	for _, testString := range invalidTestStrings {
 		if err := ValidateInputKeyPattern(testString); err == nil {
@@ -80,7 +81,7 @@ func TestFindEnvironmentApplicationName(t *testing.T) {
 	invalidTestStrings := []string{
 		"stupid string",
 		"%/&/@#$%^&*",
-		"asdad/asdad1/1adads",
+		"asdad/asdad1!/1adads",
 	}
 	for _, testString := range invalidTestStrings {
 		if _, _, err := FindEnvironmentApplicationName(testString); err == nil {
