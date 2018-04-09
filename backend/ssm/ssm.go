@@ -54,23 +54,37 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 
 // GetObjects returns key value map for given pattern/prefix
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
-	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
-	getParametersByPathInput := &ssm.GetParametersByPathInput{
-		Path: aws.String("/" + object.Prefix),
-		// Retrieve all parameters in a hierarchy with their value decrypted.
-		WithDecryption: aws.Bool(true),
+	var nextToken *string
+	var parameters []*ssm.Parameter
+	for {
+		// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
+		getParametersByPathInput := &ssm.GetParametersByPathInput{
+			Path: aws.String("/" + object.Prefix),
+			// Retrieve all parameters in a hierarchy with their value decrypted.
+			WithDecryption: aws.Bool(true),
+			MaxResults:     aws.Int64(10),
+			NextToken:      nextToken,
+		}
+
+		// we're only interested with GetParametersByPathOutput.Parameters
+		// Parameters []*Parameter `type:"list"`
+		// See also, https://docs.aws.amazon.com/goto/WebAPI/ssm-2014-11-06/Parameter
+		resp, err := c.svc.GetParametersByPath(getParametersByPathInput)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, parameter := range resp.Parameters {
+			parameters = append(parameters, parameter)
+		}
+		if resp.NextToken == nil {
+			break
+		}
+		nextToken = resp.NextToken
 	}
 
-	// we're only interested with GetParametersByPathOutput.Parameters
-	// Parameters []*Parameter `type:"list"`
-	// See also, https://docs.aws.amazon.com/goto/WebAPI/ssm-2014-11-06/Parameter
-	resp, err := c.svc.GetParametersByPath(getParametersByPathInput)
-	if err != nil {
-		return nil, err
-	}
-
-	keyValuePairs := make(map[string]string, len(resp.Parameters))
-	for _, parameter := range resp.Parameters {
+	keyValuePairs := make(map[string]string, len(parameters))
+	for _, parameter := range parameters {
 		keyValuePairs[unSlash(*parameter.Name)] = *parameter.Value
 	}
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
