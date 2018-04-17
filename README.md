@@ -14,6 +14,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
     - [CLI Usage](#cli-usage)
         - [Write secret](#write-secret)
         - [Read secret](#read-secret)
+        - [List secrets](#list-secrets)
         - [Import secrets](#import-secrets)
         - [Export secrets](#export-secrets)
         - [Teamplate usage](#teamplate-usage)
@@ -118,6 +119,15 @@ Note: if secret value is equal to existing one, write is skipped. `--force` flag
 ```
 > treasury read development/webapp/cockpit_api_pass
 superSecretPassword
+```
+
+### List secrets
+List the secrets set for a path
+
+```
+> treasury list development/application/
+development/application/app_api_pass
+development/application/test
 ```
 
 ### Import secrets
