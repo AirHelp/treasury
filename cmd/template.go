@@ -58,6 +58,7 @@ func template(cmd *cobra.Command, args []string) error {
 	treasury, err := client.New(&client.Options{
 		Region:       s3Region,
 		S3BucketName: treasuryS3,
+		AddTo:        addToArray,
 	})
 	if err != nil {
 		return err

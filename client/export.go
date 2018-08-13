@@ -36,10 +36,19 @@ func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 		sortedKeys = append(sortedKeys, secret.Key)
 		keySecretMap[secret.Key] = secret
 	}
+
+	var AddToMap map[string]string
+	AddToMap = make(map[string]string)
+	for _, val := range c.AddTo {
+		parts := strings.Split(val, ":")
+		AddToMap[parts[0]] = parts[1]
+	}
+
 	sort.Strings(sortedKeys)
 	var buffer bytes.Buffer
 	for _, key := range sortedKeys {
 		secret := keySecretMap[key]
+		secret.Value = fmt.Sprintf("%s%s", secret.Value, AddToMap[filepath.Base(secret.Key)])
 		buffer.WriteString(fmt.Sprintf(singleKeyExportFormat, filepath.Base(secret.Key), secret.Value))
 	}
 	return buffer.String(), nil
