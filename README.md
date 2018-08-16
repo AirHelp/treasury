@@ -174,6 +174,12 @@ treasury template --src /tmp/template.tpl --dst /tmp/result
 
 Treasury parses file in the Go Template format. The input text for a template is UTF-8-encoded text in any format. "Actions"--data evaluations or control structures--are delimited by "{{" and "}}"; all text outside actions is copied to the output unchanged.
 
+#### Template usage with string append to secret value
+```bash
+treasury template --src /tmp/template.tpl --dst /tmp/result --append key1:string
+```
+This command ends up with output file where the value of variable key1 has a "string" append
+
 Supported actions:
 
 #### read 
