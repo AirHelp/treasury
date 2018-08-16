@@ -121,6 +121,7 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
+		AddTo:   []string{"DATABASE_URL:?pool=10"},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {
@@ -144,6 +145,15 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey1, test.KeyValueMap[test.Key1],
 				test.ShortKey2, test.KeyValueMap[test.Key2],
+			),
+			wantErr: false,
+		},
+		{
+			name: "merged variable",
+			key:  "test/airmail/",
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey4, test.KeyValueMap[test.Key4]+"?pool=10",
+				test.ShortKey5, test.KeyValueMap[test.Key5],
 			),
 			wantErr: false,
 		},

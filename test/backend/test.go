@@ -16,12 +16,18 @@ const (
 	ShortKey2 = "user_api_pass"
 	Key3      = "test/cockpit/user_api_pass"
 	ShortKey3 = "user_api_pass"
+	Key4      = "test/airmail/DATABASE_URL"
+	ShortKey4 = "DATABASE_URL"
+	Key5      = "test/airmail/user_api_pass"
+	ShortKey5 = "user_api_pass"
 )
 
 var KeyValueMap = map[string]string{
 	Key1: "as9@#$%^&*(/2hdiwnf",
 	Key2: "as9@#$&*(/2saddsahdiwnf",
 	Key3: "#$&*(/2saddsah&as",
+	Key4: "postgres://user:password@ip:port/db",
+	Key5: "2oui3yrwohsf",
 }
 
 // MockBackendClient fake backendAPI
