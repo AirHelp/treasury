@@ -20,6 +20,10 @@ const (
 	ShortKey4 = "DATABASE_URL"
 	Key5      = "test/airmail/user_api_pass"
 	ShortKey5 = "user_api_pass"
+	Key6      = "test/aircom/TWILIO_AUTH_TOKEN"
+	ShortKey6 = "TWILIO_AUTH_TOKEN"
+	Key7      = "test/aircom/NEW_RELIC_LICENSE_KEY"
+	ShortKey7 = "NEW_RELIC_LICENSE_KEY"
 )
 
 var KeyValueMap = map[string]string{
@@ -28,6 +32,8 @@ var KeyValueMap = map[string]string{
 	Key3: "#$&*(/2saddsah&as",
 	Key4: "postgres://user:password@ip:port/db",
 	Key5: "2oui3yrwohsf",
+	Key6: "weoirgfhdh",
+	Key7: "sfjsoidhgi340j",
 }
 
 // MockBackendClient fake backendAPI

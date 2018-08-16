@@ -121,7 +121,7 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
-		Append:  []string{"DATABASE_URL:?pool=10"},
+		Append:  []string{"DATABASE_URL:?pool=10", "TWILIO_AUTH_TOKEN:test1", "NEW_RELIC_LICENSE_KEY:test2"},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {
@@ -154,6 +154,24 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey4, test.KeyValueMap[test.Key4]+"?pool=10",
 				test.ShortKey5, test.KeyValueMap[test.Key5],
+			),
+			wantErr: false,
+		},
+		{
+			name: "merged variable - negative test",
+			key:  "test/airmail/",
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey4, test.KeyValueMap[test.Key4],
+				test.ShortKey5, test.KeyValueMap[test.Key5],
+			),
+			wantErr: true,
+		},
+		{
+			name: "merged variable - multiple vars",
+			key:  "test/airmail/",
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey6, test.KeyValueMap[test.Key6]+"test1",
+				test.ShortKey7, test.KeyValueMap[test.Key7]+"test2",
 			),
 			wantErr: false,
 		},
