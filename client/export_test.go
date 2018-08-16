@@ -121,7 +121,7 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
-		AddTo:   []string{"DATABASE_URL:?pool=10"},
+		Append:  []string{"DATABASE_URL:?pool=10"},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {

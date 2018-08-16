@@ -124,7 +124,7 @@ invalid_aws_region=us-west-1
 }
 
 @test "template-and-var-append" {
-  run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret --addto 'key1:treasury'
+  run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret --append 'key1:treasury'
   [ $status -eq 0 ]
   run grep "key1=secret1treasury" test/output/bats-output.secret
   [ $status -eq 0 ]

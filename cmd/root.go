@@ -28,7 +28,7 @@ var (
 	// if we decided to use config file we should use https://github.com/spf13/viper
 	treasuryS3 string
 	s3Region   string
-	addToArray []string
+	append     []string
 )
 
 var RootCmd = &cobra.Command{
@@ -51,7 +51,7 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 	RootCmd.PersistentFlags().StringVarP(&s3Region, "region", "r", "", "s3 region")
-	RootCmd.PersistentFlags().StringArrayVar(&addToArray, "addto", []string{}, "variable suffix, e.g: --addto \"DATABASE_URL:?pool=10\"")
+	RootCmd.PersistentFlags().StringArrayVar(&append, "append", []string{}, "variable suffix, e.g: --addto \"DATABASE_URL:?pool=10\"")
 }
 
 // initConfig reads in config file and ENV variables if set.
