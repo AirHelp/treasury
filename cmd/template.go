@@ -16,6 +16,7 @@ const (
 	templateCommandSourceFileArgument      = "src"
 	templateCommandDestinationFileArgument = "dst"
 	templateCommandPermissionFileArgument  = "perms"
+	templateCommandAppendArgument          = "append"
 )
 
 var (
@@ -33,7 +34,7 @@ func init() {
 	templateCmd.PersistentFlags().String(templateCommandSourceFileArgument, "", "template file path")
 	templateCmd.PersistentFlags().String(templateCommandDestinationFileArgument, "", "destination file path")
 	templateCmd.PersistentFlags().Int(templateCommandPermissionFileArgument, 0, "destination file permission, e.g.: 0644")
-	templateCmd.PersistentFlags().StringArrayVar(&append, "append", []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
+	templateCmd.PersistentFlags().StringArrayVar(&append, templateCommandAppendArgument, []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
 }
 
 func template(cmd *cobra.Command, args []string) error {
