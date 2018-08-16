@@ -123,6 +123,13 @@ invalid_aws_region=us-west-1
   [[ ${lines[0]} == "File with secrets successfully generated" ]]
 }
 
+@test "template-and-var-append" {
+  run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret --addto 'key1:treasury'
+  [ $status -eq 0 ]
+  run grep "key1=secret1treasury" test/output/bats-output.secret
+  [ $status -eq 0 ]
+}   
+
 @test "template wrong key" {
   run $treasury template --src test/resources/bats-wrong-source.secret.tpl --dst test/output/bats-output.secret
   [ $status -eq 255 ]
