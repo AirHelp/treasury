@@ -18,19 +18,22 @@ const (
 	templateCommandPermissionFileArgument  = "perms"
 )
 
-var templateCmd = &cobra.Command{
-	Use:   "template --src TEMPLATE_FILE --dst DESTINATION_FILE",
-	Short: "Generates a file with secrets from given template",
-	Long:  `Generates a file with secrets from given template`,
-	RunE:  template,
-}
+var (
+	templateCmd = &cobra.Command{
+		Use:   "template --src TEMPLATE_FILE --dst DESTINATION_FILE",
+		Short: "Generates a file with secrets from given template",
+		Long:  `Generates a file with secrets from given template`,
+		RunE:  template,
+	}
+	append []string
+)
 
 func init() {
 	RootCmd.AddCommand(templateCmd)
 	templateCmd.PersistentFlags().String(templateCommandSourceFileArgument, "", "template file path")
 	templateCmd.PersistentFlags().String(templateCommandDestinationFileArgument, "", "destination file path")
 	templateCmd.PersistentFlags().Int(templateCommandPermissionFileArgument, 0, "destination file permission, e.g.: 0644")
-
+	templateCmd.PersistentFlags().StringArrayVar(&append, "append", []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
 }
 
 func template(cmd *cobra.Command, args []string) error {
