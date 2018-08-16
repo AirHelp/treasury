@@ -121,7 +121,8 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
-		Append:  []string{"DATABASE_URL:?pool=10", "TWILIO_AUTH_TOKEN:test1", "NEW_RELIC_LICENSE_KEY:test2"},
+		//	Append:  []string{"DATABASE_URL:?pool=10", "TWILIO_AUTH_TOKEN:test1", "NEW_RELIC_LICENSE_KEY:test2"},
+		Append: []string{},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {
@@ -131,6 +132,7 @@ func TestClient_ExportToTemplate(t *testing.T) {
 		name    string
 		key     string
 		want    string
+		append  []string
 		wantErr bool
 	}{
 		{
@@ -149,8 +151,9 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "merged variable",
-			key:  "test/airmail/",
+			name:   "merged variable",
+			key:    "test/airmail/",
+			append: []string{"DATABASE_URL:?pool=10"},
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey4, test.KeyValueMap[test.Key4]+"?pool=10",
 				test.ShortKey5, test.KeyValueMap[test.Key5],
@@ -158,13 +161,21 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "merged variable - multiple vars",
-			key:  "test/aircom/",
+			name:   "merged variable - multiple vars",
+			key:    "test/aircom/",
+			append: []string{"NEW_RELIC_LICENSE_KEY:test2", "TWILIO_AUTH_TOKEN:test1"},
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey7, test.KeyValueMap[test.Key7]+"test2",
 				test.ShortKey6, test.KeyValueMap[test.Key6]+"test1",
 			),
 			wantErr: false,
+		},
+		{
+			name:    "merged variable - bad input",
+			key:     "test/airmail/",
+			append:  []string{"DATABASE_URL"},
+			want:    "",
+			wantErr: true,
 		},
 		{
 			name:    "incorrect prefix key",
@@ -175,6 +186,7 @@ func TestClient_ExportToTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			c.Append = tt.append
 			got, err := c.ExportToTemplate(tt.key)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)

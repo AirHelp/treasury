@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -41,7 +42,11 @@ func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 	AppendMap = make(map[string]string)
 	for _, val := range c.Append {
 		parts := strings.Split(val, ":")
-		AppendMap[parts[0]] = parts[1]
+		if len(parts) == 2 {
+			AppendMap[parts[0]] = parts[1]
+		} else {
+			return "", errors.New("Bad append format (--append <variable>:<string>)")
+		}
 	}
 
 	sort.Strings(sortedKeys)
