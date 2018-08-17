@@ -121,8 +121,7 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
-		//	Append:  []string{"DATABASE_URL:?pool=10", "TWILIO_AUTH_TOKEN:test1", "NEW_RELIC_LICENSE_KEY:test2"},
-		Append: []string{},
+		Append:  []string{},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {
@@ -173,6 +172,13 @@ func TestClient_ExportToTemplate(t *testing.T) {
 		{
 			name:    "merged variable - bad input",
 			key:     "test/airmail/",
+			append:  []string{"DATABASE_URL"},
+			want:    "",
+			wantErr: true,
+		},
+		{
+			name:    "merged variable - bad input2",
+			key:     "",
 			append:  []string{"DATABASE_URL"},
 			want:    "",
 			wantErr: true,

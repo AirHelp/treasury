@@ -176,9 +176,9 @@ Treasury parses file in the Go Template format. The input text for a template is
 
 #### Template usage with string append to secret value
 ```bash
-treasury template --src /tmp/template.tpl --dst /tmp/result --append key1:string
+treasury template --src /tmp/template.tpl --dst /tmp/result --append key1:v2
 ```
-This command ends up with output file where the value of variable key1 has a "string" append
+This command ends up with output file where the value of variable key1 has a string "v2" appended.
 
 Supported actions:
 
