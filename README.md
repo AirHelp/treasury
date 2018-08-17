@@ -136,7 +136,7 @@ Assuming properties file `./secrets.env` with content:
 ke1=secret1
 key2=secret2
 ```
-To import these values into s3:
+To import these values into a previously configured store:
 ```bash
 > treasury import development/application/ ./secrets.env
 Import successful
