@@ -59,7 +59,7 @@ func ReadSecrets(secretsFile string) (map[string]string, error) {
 	for scanner.Scan() {
 		line := strings.Trim(scanner.Text(), " ")
 		if !strings.HasPrefix(line, "#") {
-			keyVal := strings.Split(line, "=")
+			keyVal := strings.SplitN(line, "=", 2)
 			if len(keyVal) == 2 {
 				secrets[keyVal[0]] = keyVal[1]
 			}
