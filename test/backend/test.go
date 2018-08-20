@@ -16,12 +16,16 @@ const (
 	ShortKey2 = "user_api_pass"
 	Key3      = "test/cockpit/user_api_pass"
 	ShortKey3 = "user_api_pass"
+        Key4      = "test/webapp/some_key"
+	ShortKey4 = "some_key"
+
 )
 
 var KeyValueMap = map[string]string{
 	Key1: "as9@#$%^&*(/2hdiwnf",
 	Key2: "as9@#$&*(/2saddsahdiwnf",
 	Key3: "#$&*(/2saddsah&as",
+	Key4: "value=with=multiple=equal=signs==",
 }
 
 // MockBackendClient fake backendAPI
