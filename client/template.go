@@ -24,13 +24,15 @@ func readTemplate(filePath string) (string, error) {
 }
 
 // Render template
-func (c *Client) renderTemplate(templateText string) (templateResultBuffer bytes.Buffer, err error) {
+func (c *Client) renderTemplate(templateText string, appendMap map[string]string) (templateResultBuffer bytes.Buffer, err error) {
 	// Create a FuncMap with which to register the function.
 	funcMap := template.FuncMap{
 		// The name "read" is what the function will be called in the template text.
 		"read":      c.ReadValue,
 		"exportMap": c.ExportMap,
-		"export":    c.ExportToTemplate,
+		"export": func(key string) (string, error) {
+			return c.ExportToTemplate(key, appendMap)
+		},
 	}
 	// Create a template, add the function map, and parse the text.
 	tmpl, err := template.New("templateCli").Funcs(funcMap).Parse(templateText)
@@ -74,12 +76,12 @@ func writeTemplateResults(destinationFilePath string, templateResultBuffer bytes
 }
 
 // Template generates a file with secrets from given template
-func (c *Client) Template(sourceFilePath, destinationFilePath string, perms os.FileMode) error {
+func (c *Client) Template(sourceFilePath, destinationFilePath string, perms os.FileMode, appendMap map[string]string) error {
 	templateText, err := readTemplate(sourceFilePath)
 	if err != nil {
 		return err
 	}
-	templateResultBuffer, err := c.renderTemplate(templateText)
+	templateResultBuffer, err := c.renderTemplate(templateText, appendMap)
 	if err != nil {
 		return err
 	}

@@ -52,7 +52,7 @@ func export(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	exportCommand, err := treasury.Export(key, ExportString)
+	exportCommand, err := treasury.Export(key, ExportString, map[string]string{})
 	if err != nil {
 		return err
 	}

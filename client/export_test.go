@@ -40,7 +40,7 @@ func TestExport(t *testing.T) {
 		},
 	}
 	for _, scenario := range scenarios {
-		exportString, err := treasury.Export(scenario.key, cmd.ExportString)
+		exportString, err := treasury.Export(scenario.key, cmd.ExportString, map[string]string{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -128,10 +128,11 @@ func TestClient_ExportToTemplate(t *testing.T) {
 		t.Error(err)
 	}
 	tests := []struct {
-		name    string
-		key     string
-		want    string
-		wantErr bool
+		name      string
+		key       string
+		want      string
+		appendMap map[string]string
+		wantErr   bool
 	}{
 		{
 			name:    "full key path",
@@ -150,6 +151,26 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:      "merged variable",
+			key:       "test/airmail/",
+			appendMap: map[string]string{"DATABASE_URL": "?pool=10"},
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey5, test.KeyValueMap[test.Key5]+"?pool=10",
+				test.ShortKey6, test.KeyValueMap[test.Key6],
+			),
+			wantErr: false,
+		},
+		{
+			name:      "merged variable - multiple vars",
+			key:       "test/aircom/",
+			appendMap: map[string]string{"NEW_RELIC_LICENSE_KEY": "test2", "TWILIO_AUTH_TOKEN": "test1"},
+			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+				test.ShortKey8, test.KeyValueMap[test.Key8]+"test2",
+				test.ShortKey7, test.KeyValueMap[test.Key7]+"test1",
+			),
+			wantErr: false,
+		},
+		{
 			name:    "incorrect prefix key",
 			key:     "bla_bla_bla",
 			want:    "",
@@ -158,7 +179,7 @@ func TestClient_ExportToTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := c.ExportToTemplate(tt.key)
+			got, err := c.ExportToTemplate(tt.key, tt.appendMap)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)
 			}

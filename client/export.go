@@ -13,7 +13,7 @@ import (
 // Export returns secrets in given format
 // format should be provided in singleKeyExportFormat
 // e.g.: singleKeyExportFormat = "export %s='%s'\n"
-func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
+func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]string) (string, error) {
 	var secrets []*Secret
 	var err error
 	// if we get valid prefix we use ReadGroup method
@@ -36,17 +36,19 @@ func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 		sortedKeys = append(sortedKeys, secret.Key)
 		keySecretMap[secret.Key] = secret
 	}
+
 	sort.Strings(sortedKeys)
 	var buffer bytes.Buffer
 	for _, key := range sortedKeys {
 		secret := keySecretMap[key]
+		secret.Value = fmt.Sprintf("%s%s", secret.Value, appendMap[filepath.Base(secret.Key)])
 		buffer.WriteString(fmt.Sprintf(singleKeyExportFormat, filepath.Base(secret.Key), secret.Value))
 	}
 	return buffer.String(), nil
 }
 
-func (c *Client) ExportToTemplate(key string) (string, error) {
-	return c.Export(key, "%s=%s\n")
+func (c *Client) ExportToTemplate(key string, appendMap map[string]string) (string, error) {
+	return c.Export(key, "%s=%s\n", appendMap)
 }
 
 // validPrefix returns true if correct Prefix is given as an input
