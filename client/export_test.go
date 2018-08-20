@@ -127,11 +127,11 @@ func TestClient_ExportToTemplate(t *testing.T) {
 		t.Error(err)
 	}
 	tests := []struct {
-		name    string
-		key     string
-		want    string
-		append  []string
-		wantErr bool
+		name      string
+		key       string
+		want      string
+		appendMap map[string]string
+		wantErr   bool
 	}{
 		{
 			name:    "full key path",
@@ -149,9 +149,9 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:   "merged variable",
-			key:    "test/airmail/",
-			append: []string{"DATABASE_URL:?pool=10"},
+			name:      "merged variable",
+			key:       "test/airmail/",
+			appendMap: map[string]string{"DATABASE_URL": "?pool=10"},
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey4, test.KeyValueMap[test.Key4]+"?pool=10",
 				test.ShortKey5, test.KeyValueMap[test.Key5],
@@ -159,9 +159,9 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:   "merged variable - multiple vars",
-			key:    "test/aircom/",
-			append: []string{"NEW_RELIC_LICENSE_KEY:test2", "TWILIO_AUTH_TOKEN:test1"},
+			name:      "merged variable - multiple vars",
+			key:       "test/aircom/",
+			appendMap: map[string]string{"NEW_RELIC_LICENSE_KEY": "test2", "TWILIO_AUTH_TOKEN": "test1"},
 			want: fmt.Sprintf("%s=%s\n%s=%s\n",
 				test.ShortKey7, test.KeyValueMap[test.Key7]+"test2",
 				test.ShortKey6, test.KeyValueMap[test.Key6]+"test1",
@@ -177,13 +177,7 @@ func TestClient_ExportToTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var appendMap map[string]string
-			appendMap = make(map[string]string)
-			for _, val := range tt.append {
-				parts := strings.Split(val, ":")
-				appendMap[parts[0]] = parts[1]
-			}
-			got, err := c.ExportToTemplate(tt.key, appendMap)
+			got, err := c.ExportToTemplate(tt.key, tt.appendMap)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)
 			}

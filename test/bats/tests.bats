@@ -130,6 +130,17 @@ invalid_aws_region=us-west-1
   [ $status -eq 0 ]
 }   
 
+@test "template-and-var-append-multiple-variables" {
+  run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret --append 'key1:treasury' --append 'key2:?pool=20'
+  [ $status -eq 0 ]
+  run grep "key1=secret1treasury" test/output/bats-output.secret
+  [ $status -eq 0 ]
+  run grep "key2=secret2?pool=20" test/output/bats-output.secret
+  [ $status -eq 0 ]
+
+}   
+
+
 @test "template wrong key" {
   run $treasury template --src test/resources/bats-wrong-source.secret.tpl --dst test/output/bats-output.secret
   [ $status -eq 255 ]
