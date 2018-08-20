@@ -66,7 +66,7 @@ func template(cmd *cobra.Command, args []string) error {
 
 	appendMap = make(map[string]string)
 	for _, val := range append {
-		parts := strings.Split(val, ":")
+		parts := strings.SplitN(val, ":", 2)
 		if len(parts) == 2 {
 			appendMap[parts[0]] = parts[1]
 		} else {
