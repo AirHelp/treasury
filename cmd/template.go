@@ -3,10 +3,10 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"os"
-
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
+	"os"
+	"strings"
 )
 
 const (
@@ -26,7 +26,7 @@ var (
 		Long:  `Generates a file with secrets from given template`,
 		RunE:  template,
 	}
-	append []string
+	appendMap map[string]string
 )
 
 func init() {
@@ -34,7 +34,7 @@ func init() {
 	templateCmd.PersistentFlags().String(templateCommandSourceFileArgument, "", "template file path")
 	templateCmd.PersistentFlags().String(templateCommandDestinationFileArgument, "", "destination file path")
 	templateCmd.PersistentFlags().Int(templateCommandPermissionFileArgument, 0, "destination file permission, e.g.: 0644")
-	templateCmd.PersistentFlags().StringArrayVar(&append, templateCommandAppendArgument, []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
+	templateCmd.PersistentFlags().StringArray(templateCommandAppendArgument, []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
 }
 
 func template(cmd *cobra.Command, args []string) error {
@@ -59,15 +59,30 @@ func template(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	treasury, err := client.New(&client.Options{
-		Region:       s3Region,
-		S3BucketName: treasuryS3,
-		Append:       append,
-	})
+	append, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
 	if err != nil {
 		return err
 	}
-	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms)); err != nil {
+
+	appendMap = make(map[string]string)
+	for _, val := range append {
+		parts := strings.Split(val, ":")
+		if len(parts) == 2 {
+			appendMap[parts[0]] = parts[1]
+		} else {
+			return errors.New("Bad append format (--append <variable>:<string>)")
+		}
+	}
+
+	treasury, err := client.New(&client.Options{
+		Region:       s3Region,
+		S3BucketName: treasuryS3,
+	})
+
+	if err != nil {
+		return err
+	}
+	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms), appendMap); err != nil {
 		return err
 	}
 	fmt.Println(templateSuccessMsg)

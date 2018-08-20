@@ -16,7 +16,6 @@ type Client struct {
 
 	// Backend interface
 	Backend backend.BackendAPI
-	Append  []string
 }
 
 // Options for client
@@ -25,7 +24,6 @@ type Options struct {
 	// backend region where we keep secrets
 	Region       string
 	S3BucketName string
-	Append       []string
 	Backend      backend.BackendAPI
 }
 
@@ -50,6 +48,5 @@ func New(options *Options) (*Client, error) {
 	return &Client{
 		version: options.Version,
 		Backend: options.Backend,
-		Append:  options.Append,
 	}, nil
 }

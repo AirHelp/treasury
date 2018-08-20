@@ -48,12 +48,11 @@ func export(cmd *cobra.Command, args []string) error {
 	treasury, err := client.New(&client.Options{
 		Region:       s3Region,
 		S3BucketName: treasuryS3,
-		Append:       append,
 	})
 	if err != nil {
 		return err
 	}
-	exportCommand, err := treasury.Export(key, ExportString)
+	exportCommand, err := treasury.Export(key, ExportString, map[string]string{})
 	if err != nil {
 		return err
 	}

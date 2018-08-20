@@ -2,7 +2,6 @@ package client
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -14,7 +13,7 @@ import (
 // Export returns secrets in given format
 // format should be provided in singleKeyExportFormat
 // e.g.: singleKeyExportFormat = "export %s='%s'\n"
-func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
+func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]string) (string, error) {
 	var secrets []*Secret
 	var err error
 	// if we get valid prefix we use ReadGroup method
@@ -38,29 +37,18 @@ func (c *Client) Export(key, singleKeyExportFormat string) (string, error) {
 		keySecretMap[secret.Key] = secret
 	}
 
-	var AppendMap map[string]string
-	AppendMap = make(map[string]string)
-	for _, val := range c.Append {
-		parts := strings.Split(val, ":")
-		if len(parts) == 2 {
-			AppendMap[parts[0]] = parts[1]
-		} else {
-			return "", errors.New("Bad append format (--append <variable>:<string>)")
-		}
-	}
-
 	sort.Strings(sortedKeys)
 	var buffer bytes.Buffer
 	for _, key := range sortedKeys {
 		secret := keySecretMap[key]
-		secret.Value = fmt.Sprintf("%s%s", secret.Value, AppendMap[filepath.Base(secret.Key)])
+		secret.Value = fmt.Sprintf("%s%s", secret.Value, appendMap[filepath.Base(secret.Key)])
 		buffer.WriteString(fmt.Sprintf(singleKeyExportFormat, filepath.Base(secret.Key), secret.Value))
 	}
 	return buffer.String(), nil
 }
 
-func (c *Client) ExportToTemplate(key string) (string, error) {
-	return c.Export(key, "%s=%s\n")
+func (c *Client) ExportToTemplate(key string, appendMap map[string]string) (string, error) {
+	return c.Export(key, "%s=%s\n", appendMap)
 }
 
 // validPrefix returns true if correct Prefix is given as an input

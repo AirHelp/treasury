@@ -40,7 +40,7 @@ func TestExport(t *testing.T) {
 		},
 	}
 	for _, scenario := range scenarios {
-		exportString, err := treasury.Export(scenario.key, cmd.ExportString)
+		exportString, err := treasury.Export(scenario.key, cmd.ExportString, map[string]string{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -121,7 +121,6 @@ func TestClient_ExportMap(t *testing.T) {
 func TestClient_ExportToTemplate(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend: &test.MockBackendClient{},
-		Append:  []string{},
 	}
 	c, err := client.New(dummyClientOptions)
 	if err != nil {
@@ -170,20 +169,6 @@ func TestClient_ExportToTemplate(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "merged variable - bad input",
-			key:     "test/airmail/",
-			append:  []string{"DATABASE_URL"},
-			want:    "",
-			wantErr: true,
-		},
-		{
-			name:    "merged variable - bad input2",
-			key:     "",
-			append:  []string{"DATABASE_URL"},
-			want:    "",
-			wantErr: true,
-		},
-		{
 			name:    "incorrect prefix key",
 			key:     "bla_bla_bla",
 			want:    "",
@@ -192,8 +177,13 @@ func TestClient_ExportToTemplate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c.Append = tt.append
-			got, err := c.ExportToTemplate(tt.key)
+			var appendMap map[string]string
+			appendMap = make(map[string]string)
+			for _, val := range tt.append {
+				parts := strings.Split(val, ":")
+				appendMap[parts[0]] = parts[1]
+			}
+			got, err := c.ExportToTemplate(tt.key, appendMap)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Client.ExportToTemplate() error = %v, wantErr %v", err, tt.wantErr)
 			}
