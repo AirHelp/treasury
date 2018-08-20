@@ -85,9 +85,9 @@ func TestReadGroup(t *testing.T) {
 		responseSecrets int
 	}{
 		{
-			description:     "should return 2 secrets for test/webapp/",
+			description:     "should return 3 secrets for test/webapp/",
 			key:             filepath.Dir(test.Key1) + "/",
-			responseSecrets: 2,
+			responseSecrets: 3,
 		},
 		{
 			description:     "should return only 1 secret when full key path is given",

@@ -93,7 +93,7 @@ In order to use SSM as a store, unset previously configured TREASURY_S3 environm
 In addition to the IAM credentials you'll need to specify the AWS region. You can specify the region either with an environment variable (example below), or directly in AWS configuration file `$HOME/.aws/config`. More about configuration [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-config-files.html).
 
 ```sh
-export AWS_REGION=eu-west-1
+export AWS_DEFAULT_REGION=eu-west-1
 ```
 
 ## Installation
@@ -141,9 +141,6 @@ To import these values into a previously configured store:
 > treasury import development/application/ ./secrets.env
 Import successful
 ```
-
-Note: Using `=` in secret value is not allowed.
-      If secret value is equal to existing one, import skips this value. `--force` flag can be used to overwrite.
 
 ### Export secrets
 Assuming stored secrets pairs on treasury store

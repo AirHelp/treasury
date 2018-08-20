@@ -22,12 +22,15 @@ func New(region, bucket string) (*Client, error) {
 	if bucket == "" {
 		return nil, errors.New("S3 bucket name is missing")
 	}
-	config := aws.Config{}
-	if region != "" {
-		config.Region = aws.String(region)
+	sessionOpts := session.Options{
+		SharedConfigState: session.SharedConfigEnable,
 	}
 
-	sess, err := session.NewSession(&config)
+	if region != "" {
+		sessionOpts.Config = aws.Config{Region: aws.String(region)}
+	}
+
+	sess, err := session.NewSessionWithOptions(sessionOpts)
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
 	}

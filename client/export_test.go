@@ -81,6 +81,7 @@ func TestClient_ExportMap(t *testing.T) {
 			wantResult: map[string]string{
 				test.ShortKey1: test.KeyValueMap[test.Key1],
 				test.ShortKey2: test.KeyValueMap[test.Key2],
+				test.ShortKey4: test.KeyValueMap[test.Key4],
 			},
 			wantErr: false,
 		},
@@ -141,8 +142,9 @@ func TestClient_ExportToTemplate(t *testing.T) {
 		{
 			name: "correct prefix key",
 			key:  "test/webapp/",
-			want: fmt.Sprintf("%s=%s\n%s=%s\n",
+			want: fmt.Sprintf("%s=%s\n%s=%s\n%s=%s\n",
 				test.ShortKey1, test.KeyValueMap[test.Key1],
+				test.ShortKey4, test.KeyValueMap[test.Key4],
 				test.ShortKey2, test.KeyValueMap[test.Key2],
 			),
 			wantErr: false,
