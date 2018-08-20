@@ -16,24 +16,27 @@ const (
 	ShortKey2 = "user_api_pass"
 	Key3      = "test/cockpit/user_api_pass"
 	ShortKey3 = "user_api_pass"
-	Key4      = "test/airmail/DATABASE_URL"
-	ShortKey4 = "DATABASE_URL"
-	Key5      = "test/airmail/user_api_pass"
-	ShortKey5 = "user_api_pass"
-	Key6      = "test/aircom/TWILIO_AUTH_TOKEN"
-	ShortKey6 = "TWILIO_AUTH_TOKEN"
-	Key7      = "test/aircom/NEW_RELIC_LICENSE_KEY"
-	ShortKey7 = "NEW_RELIC_LICENSE_KEY"
+	Key4      = "test/webapp/some_key"
+	ShortKey4 = "some_key"
+	Key5      = "test/airmail/DATABASE_URL"
+	ShortKey5 = "DATABASE_URL"
+	Key6      = "test/airmail/user_api_pass"
+	ShortKey6 = "user_api_pass"
+	Key7      = "test/aircom/TWILIO_AUTH_TOKEN"
+	ShortKey7 = "TWILIO_AUTH_TOKEN"
+	Key8      = "test/aircom/NEW_RELIC_LICENSE_KEY"
+	ShortKey8 = "NEW_RELIC_LICENSE_KEY"
 )
 
 var KeyValueMap = map[string]string{
 	Key1: "as9@#$%^&*(/2hdiwnf",
 	Key2: "as9@#$&*(/2saddsahdiwnf",
 	Key3: "#$&*(/2saddsah&as",
-	Key4: "postgres://user:password@ip:port/db",
-	Key5: "2oui3yrwohsf",
-	Key6: "weoirgfhdh",
-	Key7: "sfjsoidhgi340j",
+	Key4: "value=with=multiple=equal=signs==",
+	Key5: "postgres://user:password@ip:port/db",
+	Key6: "2oui3yrwohsf",
+	Key7: "weoirgfhdh",
+	Key8: "sfjsoidhgi340j",
 }
 
 // MockBackendClient fake backendAPI
