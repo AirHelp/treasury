@@ -15,7 +15,7 @@ podTemplate(label: label, containers: [
   node(label) {
     stage('go test') {
       container('golang'){
-        withEnv('GO111MODULE=on'){
+        withEnv(['GO111MODULE=on']){
           sh 'apk add --no-cache git'
           sh 'go mod download'
           sh 'go test -cover -v ./...'
