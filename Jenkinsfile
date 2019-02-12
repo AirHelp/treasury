@@ -9,18 +9,29 @@ podTemplate(label: label, containers: [
     ttyEnabled: true,
     command: 'cat',
     resourceRequestCpu: '100m',
-    resourceRequestMemory: '128Mi'
+    resourceRequestMemory: '128Mi',
+    envVars: [
+        envVar(key: 'GO111MODULE', value: 'on'),
+    ]
   )
   ]) {
   node(label) {
-    stage('go test') {
+    stage('github checkout') {
+      checkout scm
+    }
+
+    stage('download Go deps') {
       container('golang'){
-        withEnv(['GO111MODULE=on']){
-          sh 'apk add --no-cache git'
-          sh 'go mod download'
-          sh 'go test -cover -v ./...'
-        }
+        sh 'apk add --no-cache git'
+        sh 'go mod download'
       }
     }
+
+    stage('go test') {
+      container('golang'){
+        sh 'go test -cover -v ./...'
+      }
+    }
+
   }
 }
