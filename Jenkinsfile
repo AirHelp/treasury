@@ -34,5 +34,10 @@ podTemplate(label: label, containers: [
       }
     }
 
+    stage('go formatting') {
+      container('golang'){
+        sh 'gofmt -s -w .'
+      }
+    }
   }
 }
