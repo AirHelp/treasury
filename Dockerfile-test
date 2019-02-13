@@ -1,5 +1,7 @@
 FROM golang:1.11-alpine
 ENV GO111MODULE=on
+ENV CGO_ENABLED=0
+
 WORKDIR /usr/src/app
 
 RUN apk add --no-cache git

@@ -12,6 +12,7 @@ podTemplate(label: label, containers: [
     resourceRequestMemory: '128Mi',
     envVars: [
         envVar(key: 'GO111MODULE', value: 'on'),
+        envVar(key: 'CGO_ENABLED', value: '0'),
     ]
   )
   ]) {
