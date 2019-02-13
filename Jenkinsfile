@@ -39,5 +39,12 @@ podTemplate(label: label, containers: [
         sh 'gofmt -s -w .'
       }
     }
+
+    stage('go vet') {
+      container('golang'){
+        sh 'go vet -v ./...'
+      }
+    }
+
   }
 }
