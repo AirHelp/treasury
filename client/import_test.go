@@ -25,7 +25,7 @@ func TestImportS3(t *testing.T) {
 func TestImportSSM(t *testing.T) {
 	prefix := "test/webapp/"
 	dummyClientOptions := &client.Options{
-		Backend:      &test.MockBackendClient{},
+		Backend: &test.MockBackendClient{},
 	}
 	treasury, err := client.New(dummyClientOptions)
 	if err != nil {
