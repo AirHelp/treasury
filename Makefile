@@ -35,6 +35,7 @@ build: test
 		GOOS=$${distro} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
 		cd pkg/$${distro}; \
 		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
+		zip ../treasury-$${distro}-amd64.zip treasury; \
 		cd ../..; \
 	done
 
@@ -49,6 +50,9 @@ release: build
 		AWS_PROFILE=production aws s3 cp --acl public-read \
 			pkg/treasury-$${distro}-amd64.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.tar.bz2; \
 		shasum -a 256 pkg/treasury-$${distro}-amd64.tar.bz2; \
+		AWS_PROFILE=production aws s3 cp --acl public-read \
+			pkg/treasury-$${distro}-amd64.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.zip; \
+		shasum -a 256 pkg/treasury-$${distro}-amd64.zip; \
 	done
 dev:
 	go build
