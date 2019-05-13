@@ -35,11 +35,13 @@ build: test
 		GOOS=$${distro} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
 		cd pkg/$${distro}; \
 		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
+		zip ../treasury-$${distro}-amd64.zip treasury; \
 		cd ../..; \
 	done
 
 release: build
 	@which hub >/dev/null || { echo 'No hub cli installed. Exiting...'; exit 1; }
+	@which aws >/dev/null || { echo 'No awscli installed. Exiting...'; exit 1; }
 	hub release create \
 		-a pkg/treasury-darwin-amd64.tar.bz2 \
 		-a pkg/treasury-linux-amd64.tar.bz2 \
@@ -49,6 +51,13 @@ release: build
 		AWS_PROFILE=production aws s3 cp --acl public-read \
 			pkg/treasury-$${distro}-amd64.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.tar.bz2; \
 		shasum -a 256 pkg/treasury-$${distro}-amd64.tar.bz2; \
+		AWS_PROFILE=production aws s3 cp --acl public-read \
+			pkg/treasury-$${distro}-amd64.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.zip; \
+		shasum -a 256 pkg/treasury-$${distro}-amd64.zip; \
 	done
+	@aws --profile staging lambda publish-layer-version --layer-name treasury-client \
+			 --description "treasury ${TREASURY_VERSION} layer" \
+			 --content S3Bucket=airhelp-devops-binaries,S3Key=treasury/${TREASURY_VERSION}/treasury-linux-amd64.zip \
+			 --compatible-runtimes "python3.7" "python3.6" "ruby2.5" "go1.x" "nodejs8.10"
 dev:
 	go build
