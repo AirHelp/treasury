@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/AirHelp/treasury)](https://goreportcard.com/report/github.com/AirHelp/treasury)
+
 # treasury
 
 Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html)) service to store secrets. By default, Treasury uses SSM as a backend. The secrets are encrypted before saving them on disks in Amazon data centers and decrypted when being read. Treasury uses Server-Side Encryption with AWS KMS-Managed Keys ([SSE-KMS](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html)).
