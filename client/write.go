@@ -4,6 +4,11 @@ import (
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 	"github.com/aws/aws-sdk-go/aws/awserr"
+
+	"bytes"
+	"compress/gzip"
+	b64 "encoding/base64"
+	"os"
 )
 
 const (
@@ -47,4 +52,29 @@ func (c *Client) Write(key, secret string, force bool) error {
 		return err
 	}
 	return nil
+}
+
+func (c *Client) WriteFile(key, file string, force bool) error {
+
+	fh, err := os.Open(file)
+	if err != nil {
+		return err
+	}
+
+	fdata := make([]byte, 8192)
+	count, err := fh.Read(fdata)
+	if err != nil {
+		return err
+	}
+
+	var gzipped bytes.Buffer
+	gz := gzip.NewWriter(&gzipped)
+	if _, err := gz.Write(fdata[:count]); err != nil {
+		return err
+	}
+	if err := gz.Close(); err != nil {
+		return err
+	}
+
+	return c.Write(key, b64.StdEncoding.EncodeToString(gzipped.Bytes()), force)
 }
