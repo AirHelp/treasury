@@ -14,8 +14,9 @@ podTemplate(label: label, containers: [
         envVar(key: 'GO111MODULE', value: 'on'),
         envVar(key: 'CGO_ENABLED', value: '0'),
     ]
-  )
-  ]) {
+  )],
+  imagePullSecrets: ['regcred']
+  ) {
   node(label) {
     stage('github checkout') {
       checkout scm
