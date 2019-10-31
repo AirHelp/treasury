@@ -5,7 +5,7 @@ def label = "treasury-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
   containerTemplate(
     name: 'golang',
-    image: 'golang:1.12.6-alpine',
+    image: 'airhelp/golang:1.13-devops-builder',
     ttyEnabled: true,
     command: 'cat',
     resourceRequestCpu: '100m',
