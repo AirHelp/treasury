@@ -9,7 +9,7 @@ podTemplate(label: label, containers: [
     ttyEnabled: true,
     command: 'cat',
     resourceRequestCpu: '100m',
-    resourceRequestMemory: '128Mi',
+    resourceRequestMemory: '533Mi',
     envVars: [
         envVar(key: 'GO111MODULE', value: 'on'),
         envVar(key: 'CGO_ENABLED', value: '0'),
