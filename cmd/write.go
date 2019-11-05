@@ -34,7 +34,7 @@ func init() {
 	RootCmd.AddCommand(writeCmd)
 	writeCmd.SuggestFor = []string{"put"}
 	writeCmd.PersistentFlags().Bool("force", false, "Force overwrite secret value")
-	writeCmd.PersistentFlags().Bool("file", false, "Save file content into treasury")
+	writeCmd.PersistentFlags().Bool("file", false, "Save file content into Treasury")
 }
 
 func write(cmd *cobra.Command, args []string) error {
