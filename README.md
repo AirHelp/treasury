@@ -123,7 +123,11 @@ Note: if secret value is equal to existing one, write is skipped. `--force` flag
 Success! Data written to: development/webapp/credentials_yaml
 ```
 
-Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite. Stored file content in key is gzipped and converted to base64
+Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite. Stored file content in key is gzipped and converted to base64. You can with easy decode with bash script:
+```
+> treasury read  development/webapp/credentials_yaml | base64 -D | gzip -d > creadentails.yaml
+```
+or you can handle it with your application. Size limit depends on backend that you are using - for AWS SSM size limit is 4096 bytes (after gzip and base64).
 
 
 ### Read secret
