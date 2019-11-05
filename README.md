@@ -123,7 +123,7 @@ Note: if secret value is equal to existing one, write is skipped. `--force` flag
 Success! Data written to: development/webapp/credentials_yaml
 ```
 
-Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite. Stored file content in key is gzipped and converted to base64. You can with easy decode with bash script:
+Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite. Stored file content in key is gzipped and converted to base64. You can decode it with bash script easily:
 ```
 > treasury read  development/webapp/credentials_yaml | base64 -D | gzip -d > creadentails.yaml
 ```
