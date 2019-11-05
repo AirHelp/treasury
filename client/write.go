@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	b64 "encoding/base64"
-	"os"
+	"io/ioutil"
 )
 
 const (
@@ -56,20 +56,14 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 func (c *Client) WriteFile(key, file string, force bool) error {
 
-	fh, err := os.Open(file)
-	if err != nil {
-		return err
-	}
-
-	fdata := make([]byte, 8192)
-	count, err := fh.Read(fdata)
+	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
 	}
 
 	var gzipped bytes.Buffer
 	gz := gzip.NewWriter(&gzipped)
-	if _, err := gz.Write(fdata[:count]); err != nil {
+	if _, err := gz.Write(data); err != nil {
 		return err
 	}
 	if err := gz.Close(); err != nil {
