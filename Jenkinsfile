@@ -5,17 +5,18 @@ def label = "treasury-${UUID.randomUUID().toString()}"
 podTemplate(label: label, containers: [
   containerTemplate(
     name: 'golang',
-    image: 'golang:1.12.6-alpine',
+    image: 'airhelp/golang:1.13-devops-builder',
     ttyEnabled: true,
     command: 'cat',
     resourceRequestCpu: '100m',
-    resourceRequestMemory: '128Mi',
+    resourceRequestMemory: '533Mi',
     envVars: [
         envVar(key: 'GO111MODULE', value: 'on'),
         envVar(key: 'CGO_ENABLED', value: '0'),
     ]
-  )
-  ]) {
+  )],
+  imagePullSecrets: ['regcred']
+  ) {
   node(label) {
     stage('github checkout') {
       checkout scm
