@@ -164,7 +164,6 @@ invalid_aws_region=us-west-1
   [ $status -eq 255 ]
 }
 
-
 @test "check version" {
   run $treasury version
   [ $status -eq 0 ]
