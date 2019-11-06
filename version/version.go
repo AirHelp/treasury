@@ -6,7 +6,7 @@ import (
 )
 
 // treasury version should be changed here
-const version = "0.5.2"
+const version = "0.6.0"
 
 // This will be filled in by the compiler.
 var (

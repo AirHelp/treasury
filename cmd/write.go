@@ -34,6 +34,7 @@ func init() {
 	RootCmd.AddCommand(writeCmd)
 	writeCmd.SuggestFor = []string{"put"}
 	writeCmd.PersistentFlags().Bool("force", false, "Force overwrite secret value")
+	writeCmd.PersistentFlags().Bool("file", false, "Save file content into Treasury")
 }
 
 func write(cmd *cobra.Command, args []string) error {
@@ -47,6 +48,11 @@ func write(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	file, err := cmd.Flags().GetBool("file")
+	if err != nil {
+		return err
+	}
+
 	treasury, err := client.New(&client.Options{
 		Region:       s3Region,
 		S3BucketName: treasuryS3,
@@ -54,10 +60,17 @@ func write(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	err = treasury.Write(key, value, force)
+
+	if file {
+		err = treasury.WriteFile(key, value, force)
+	} else {
+		err = treasury.Write(key, value, force)
+	}
+
 	if err != nil {
 		return err
 	}
+
 	fmt.Println("Success! Data written to: ", key)
 	return nil
 }

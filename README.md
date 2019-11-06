@@ -117,6 +117,19 @@ Success! Data written to: development/webapp/cockpit_api_pass
 
 Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite.
 
+### Write file content
+```
+> treasury write development/webapp/credentials_yaml <filename> --file
+Success! Data written to: development/webapp/credentials_yaml
+```
+
+Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite. Stored file content in key is gzipped and converted to base64. You can decode it with bash script easily:
+```
+> treasury read  development/webapp/credentials_yaml | base64 -D | gzip -d > creadentails.yaml
+```
+or you can handle it with your application. Size limit depends on backend that you are using - for AWS SSM size limit is 4096 bytes (after gzip and base64).
+
+
 ### Read secret
 ```
 > treasury read development/webapp/cockpit_api_pass

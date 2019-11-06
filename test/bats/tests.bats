@@ -146,9 +146,21 @@ invalid_aws_region=us-west-1
   [ $status -eq 0 ]
 }
 
-
 @test "template wrong key" {
   run $treasury template --src test/resources/bats-wrong-source.secret.tpl --dst test/output/bats-output.secret
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "write file content to treasury key" {
+  run $treasury write development/treasury/key5 test/resources/test_file --file
+  [ $status -eq 0 ]
+  run $treasury read development/treasury/key5 
+  [[ ${lines[0]} =~ "H4sIAAAAAAAA/yopSk0sLi2q5OICBAAA///FZR9LCgAAAA==" ]]
+}
+
+@test "write too large file content to treasury key" {
+  run $treasury write development/treasury/key5 test/resources/test_large_file --file
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
 }
