@@ -39,14 +39,18 @@ build: test
 		cd ../..; \
 	done
 
-release: build
+_check_deps:
 	@which hub >/dev/null || { echo 'No hub cli installed. Exiting...'; exit 1; }
 	@which aws >/dev/null || { echo 'No awscli installed. Exiting...'; exit 1; }
+
+_github_release:
 	hub release create \
 		-a pkg/treasury-darwin-amd64.tar.bz2 \
 		-a pkg/treasury-linux-amd64.tar.bz2 \
 		-m ${TREASURY_VERSION} \
 		${TREASURY_VERSION}
+
+_s3_release:
 	@for distro in ${BUILD_DISTROS}; do \
 		AWS_PROFILE=production aws s3 cp --acl public-read \
 			pkg/treasury-$${distro}-amd64.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.tar.bz2; \
@@ -55,9 +59,16 @@ release: build
 			pkg/treasury-$${distro}-amd64.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.zip; \
 		shasum -a 256 pkg/treasury-$${distro}-amd64.zip; \
 	done
-	@aws --profile staging lambda publish-layer-version --layer-name treasury-client \
-			 --description "treasury ${TREASURY_VERSION} layer" \
-			 --content S3Bucket=airhelp-devops-binaries,S3Key=treasury/${TREASURY_VERSION}/treasury-linux-amd64.zip \
-			 --compatible-runtimes "python3.7" "python3.6" "ruby2.5" "go1.x" "nodejs8.10"
+
+_lambda_layers_release: _check_deps
+	for env in staging development; do \
+		aws --profile $${env} lambda publish-layer-version --layer-name treasury-client \
+			--description "treasury ${TREASURY_VERSION} layer" \
+			--content S3Bucket=airhelp-devops-binaries,S3Key=treasury/${TREASURY_VERSION}/treasury-linux-amd64.zip \
+			--compatible-runtimes "python3.8" "go1.x" "nodejs10.x" "nodejs12.x" --output text; \
+	done
+
+release: build _check_deps _github_release _s3_release _lambda_layers_release
+
 dev:
 	go build
