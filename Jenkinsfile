@@ -10,23 +10,7 @@ golang(label: label) {
     }
 
     ci {
-      stage('go test') {
-        container('golang'){
-          sh 'go test -cover -v ./...'
-        }
-      }
-
-      stage('go formatting') {
-        container('golang'){
-          sh 'gofmt -s -w .'
-        }
-      }
-
-      stage('go vet') {
-        container('golang'){
-          sh 'go vet -v ./...'
-        }
-      }
+      golangTestPipeline()
     }
   }
 }
