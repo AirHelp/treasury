@@ -1,5 +1,5 @@
 #!groovy
-@Library('jenkins-pipeline-library@feature/golang-podTemplate') _
+@Library('jenkins-pipeline-library') _
 
 def label = "treasury-${UUID.randomUUID().toString()}"
 
