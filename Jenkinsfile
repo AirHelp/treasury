@@ -1,51 +1,16 @@
 #!groovy
+@Library('jenkins-pipeline-library') _
 
 def label = "treasury-${UUID.randomUUID().toString()}"
 
-podTemplate(label: label, containers: [
-  containerTemplate(
-    name: 'golang',
-    image: 'airhelp/golang:1.13-devops-builder',
-    ttyEnabled: true,
-    command: 'cat',
-    resourceRequestCpu: '100m',
-    resourceRequestMemory: '533Mi',
-    envVars: [
-        envVar(key: 'GO111MODULE', value: 'on'),
-        envVar(key: 'CGO_ENABLED', value: '0'),
-    ]
-  )],
-  imagePullSecrets: ['regcred']
-  ) {
+golang(label: label) {
   node(label) {
     stage('github checkout') {
       checkout scm
     }
 
-    stage('download Go deps') {
-      container('golang'){
-        sh 'apk add --no-cache git'
-        sh 'go mod download'
-      }
+    ci {
+      golangTestPipeline()
     }
-
-    stage('go test') {
-      container('golang'){
-        sh 'go test -cover -v ./...'
-      }
-    }
-
-    stage('go formatting') {
-      container('golang'){
-        sh 'gofmt -s -w .'
-      }
-    }
-
-    stage('go vet') {
-      container('golang'){
-        sh 'go vet -v ./...'
-      }
-    }
-
   }
 }
