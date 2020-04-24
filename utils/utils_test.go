@@ -9,6 +9,8 @@ func TestValidateInputKey(t *testing.T) {
 		"Integration/claim-score/elasticsearch_url",
 		"staging/webapp/1coc3_k--pit123",
 		"staging/wordpress-v2/WP_MIXPANEL_API_KEY",
+		"user/user.name/phone",
+		"user/user.name/xyz-ABC_123",
 	}
 	for _, testString := range validTestStrings {
 		if err := ValidateInputKey(testString); err != nil {
@@ -21,6 +23,8 @@ func TestValidateInputKey(t *testing.T) {
 		"45678901jbf",
 		"asasa/123!12/312313",
 		"1231/1231*2/312313",
+		"user/username/phone",
+		"user/user.name./phone",
 	}
 	for _, testString := range invalidTestStrings {
 		if err := ValidateInputKey(testString); err == nil {
@@ -36,6 +40,8 @@ func TestValidateInputKeyPattern(t *testing.T) {
 		"Integration/claim-score/elasticsearch_url",
 		"staging/webapp/1coc3_k--pit123",
 		"staging/webapp/",
+		"user/user.name/phone",
+		"user/user.name/",
 	}
 	for _, testString := range validTestStrings {
 		if err := ValidateInputKeyPattern(testString); err != nil {
@@ -47,6 +53,9 @@ func TestValidateInputKeyPattern(t *testing.T) {
 		"45678901jbf",
 		"asasa/123/12/312313",
 		"1231/123!12/312313",
+		"user/username/phone",
+		"user/user.name./phone",
+		"user/user.name./",
 	}
 	for _, testString := range invalidTestStrings {
 		if err := ValidateInputKeyPattern(testString); err == nil {

@@ -24,7 +24,7 @@ import (
 
 // writeCmd represents the write command
 var writeCmd = &cobra.Command{
-	Use:   "write ENVIRONMENT/APPLICATION/KEY SECRET",
+	Use:   "write ENVIRONMENT/APPLICATION/KEY SECRET or write user/USER.NAME/KEY SECRET",
 	Short: "Write secrets into Treasury",
 	Long:  `Write sends data into Treasury at the given key (path).`,
 	RunE:  write,

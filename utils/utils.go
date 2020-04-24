@@ -12,15 +12,23 @@ import (
 const (
 	environmentApplicationKeyRegex = `^[a-zA-Z-_]+\/[a-zA-Z-_0-9]+\/[a-zA-Z-_0-9]+$`
 	environmentApplicationRegex    = `^[a-zA-Z-_]+\/[a-zA-Z-_0-9]+\/[a-zA-Z-_0-9]*$`
+	userUsernameKeyRegex           = `^user\/[a-zA-Z]+\.[a-zA-Z]+\/[a-zA-Z-_0-9]+$`
+	userUsernameRegex              = `^user\/[a-zA-Z]+\.[a-zA-Z]+\/[a-zA-Z-_0-9]*$`
 )
 
 // ValidateInputKey checks if cli input is valid
 func ValidateInputKey(cliIn string) error {
+	if strings.HasPrefix(cliIn, "user") {
+		return validate(cliIn, userUsernameKeyRegex)
+	}
 	return validate(cliIn, environmentApplicationKeyRegex)
 }
 
 // ValidateInputKeyPattern checks if cli input is valid, also without key name
 func ValidateInputKeyPattern(cliIn string) error {
+	if strings.HasPrefix(cliIn, "user") {
+		return validate(cliIn, userUsernameRegex)
+	}
 	return validate(cliIn, environmentApplicationRegex)
 }
 
