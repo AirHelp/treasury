@@ -26,6 +26,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
     - [Setting up the infrastructure](#setting-up-the-infrastructure)
         - [IAM Policy for S3 store](#iam-policy-for-s3-store)
         - [IAM Policy for SSM Store](#iam-policy-for-ssm-store)
+    - [Treasury as a user vault](#treasury-as-a-user-vault)
     - [Go Client](#go-client)
     - [Development](#development)
     - [Build for development](#build-for-development)
@@ -439,6 +440,36 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
         }
     ]
 }
+```
+
+## Treasury as a user vault
+
+You can now use the treasure as a user vault with minimal policy change. Including the following statement in the default policy allows users to manage their secrets.
+
+```terraform
+  statement {
+    actions = [
+      "ssm:*",
+    ]
+
+    resources = [
+      "arn:aws:ssm::${var.aws_account_id}:parameter/user/$${aws:username}",
+      "arn:aws:ssm::${var.aws_account_id}:parameter/user/$${aws:username}/*",
+    ]
+  }
+```
+
+* Write user/marcin.janas/phone
+
+```bash
+$ treasury write write user/firstname.lastname/phone +48987654321
+Success! Data written to:  user/firstname.lastname/phone
+```
+
+* Read user/firstname.lastname/phone
+```bash
+$ treasury write read user/firstname.lastname/phone
++48987654321
 ```
 
 ## Go Client
