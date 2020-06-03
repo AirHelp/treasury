@@ -128,7 +128,7 @@ invalid_aws_region=us-west-1
   [ $status -eq 0 ]
   run grep "key1=secret1treasury" test/output/bats-output.secret
   [ $status -eq 0 ]
-}   
+}
 
 @test "template-and-var-append-multiple-variables" {
   run $treasury template --src test/resources/bats-source.secret.tpl --dst test/output/bats-output.secret --append 'key1:treasury' --append 'key2:?pool=20'
@@ -137,6 +137,30 @@ invalid_aws_region=us-west-1
   [ $status -eq 0 ]
   run grep "key2=secret2?pool=20" test/output/bats-output.secret
   [ $status -eq 0 ]
+}
+
+@test "template-and-var-interpolation-multiple" {
+  run $treasury template --src test/resources/bats-source-interpolation.secret.tpl --dst test/output/bats-output.secret -e Name=someapp,Environment=development
+  [ $status -eq 0 ]
+  run grep "APPLICATION_SECRET_KEY=secret2" test/output/bats-output.secret
+  [ $status -eq 0 ]
+  run grep "NAME=someapp" test/output/bats-output.secret
+  [ $status -eq 0 ]
+}
+
+@test "template-and-var-interpolation-multiple-alternate-syntax" {
+  run $treasury template --src test/resources/bats-source-interpolation.secret.tpl --dst test/output/bats-output.secret -e Name=someapp -e Environment=development
+  [ $status -eq 0 ]
+  run grep "APPLICATION_SECRET_KEY=secret2" test/output/bats-output.secret
+  [ $status -eq 0 ]
+  run grep "NAME=someapp" test/output/bats-output.secret
+  [ $status -eq 0 ]
+}
+
+@test "template-and-var-interpolation-variable-not-provided" {
+  run $treasury template --src test/resources/bats-source-interpolation.secret.tpl --dst test/output/bats-output.secret -e Name=someapp
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error" ]]
 }
 
 @test "template-and-var-append-bad-input" {
@@ -155,7 +179,7 @@ invalid_aws_region=us-west-1
 @test "write file content to treasury key" {
   run $treasury write development/treasury/key5 test/resources/test_file --file
   [ $status -eq 0 ]
-  run $treasury read development/treasury/key5 
+  run $treasury read development/treasury/key5
   [[ ${lines[0]} =~ "H4sIAAAAAAAA/yopSk0sLi2q5OICBAAA///FZR9LCgAAAA==" ]]
 }
 

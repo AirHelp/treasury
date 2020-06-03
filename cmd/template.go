@@ -3,10 +3,11 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"github.com/AirHelp/treasury/client"
-	"github.com/spf13/cobra"
 	"os"
 	"strings"
+
+	"github.com/AirHelp/treasury/client"
+	"github.com/spf13/cobra"
 )
 
 const (
@@ -17,6 +18,8 @@ const (
 	templateCommandDestinationFileArgument = "dst"
 	templateCommandPermissionFileArgument  = "perms"
 	templateCommandAppendArgument          = "append"
+	templateEnvKeyValueArgument            = "env"
+	templateEnvKeyValueArgumentShort       = "e"
 )
 
 var (
@@ -35,6 +38,7 @@ func init() {
 	templateCmd.PersistentFlags().String(templateCommandDestinationFileArgument, "", "destination file path")
 	templateCmd.PersistentFlags().Int(templateCommandPermissionFileArgument, 0, "destination file permission, e.g.: 0644")
 	templateCmd.PersistentFlags().StringArray(templateCommandAppendArgument, []string{}, "variable suffix, e.g: --append \"DATABASE_URL:?pool=10\"")
+	templateCmd.PersistentFlags().StringToStringP(templateEnvKeyValueArgument, templateEnvKeyValueArgumentShort, map[string]string{}, "key-value parameters for template, e.g. -e Environment=staging,AppName=someapp")
 }
 
 func template(cmd *cobra.Command, args []string) error {
@@ -74,6 +78,11 @@ func template(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	envMap, err := cmd.Flags().GetStringToString(templateEnvKeyValueArgument)
+	if err != nil {
+		return err
+	}
+
 	treasury, err := client.New(&client.Options{
 		Region:       s3Region,
 		S3BucketName: treasuryS3,
@@ -82,7 +91,7 @@ func template(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms), appendMap); err != nil {
+	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms), appendMap, envMap); err != nil {
 		return err
 	}
 	fmt.Println(templateSuccessMsg)
