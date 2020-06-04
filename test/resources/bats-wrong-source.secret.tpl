@@ -1,1 +1,1 @@
-APPLICATION_SECRET_KEY={{ read "development/treasury/wrong_application_key" }}
+APPLICATION_SECRET_KEY={{ readFromEnv "development" "treasury/wrong_application_key" }}

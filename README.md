@@ -26,6 +26,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
       - [read](#read)
       - [readFromEnv](#readfromenv)
       - [export](#export)
+      - [exportFromEnv](#exportfromenv)
       - [exportMap](#exportmap)
   - [Setting up the infrastructure](#setting-up-the-infrastructure)
     - [IAM Policy for S3 store](#iam-policy-for-s3-store)
@@ -239,10 +240,29 @@ Returns single value for given key in specified environment
 
 
 #### export
-Returns all values for a given path in `key=value` format
+**DEPRECATED (please use [exportFromEnv](#exportFromEnv))** Returns all values for a given path in `key=value` format
 
 ```
 {{ export "development/treasury/" }}
+```
+
+will generate:
+```
+key1=secret1
+key2=secret2
+key3=secret3
+key4=secret4
+```
+
+#### exportFromEnv
+Returns all values from given environment and given key in `key=value` format
+
+```
+{{ exportFromEnv "development" "treasury" }}
+
+# or using interpolation
+
+{{ exportFromEnv .Environment "treasury" }}
 ```
 
 will generate:
