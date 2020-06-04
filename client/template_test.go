@@ -23,9 +23,16 @@ func TestTemplate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile, 0, map[string]string{}); err != nil {
+
+	envMap := map[string]string{
+		"Environment": "test",
+		"Name":        "some_testing_template",
+	}
+
+	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile, 0, map[string]string{}, envMap); err != nil {
 		t.Error("Could not generate secret file from template. Error: ", err.Error())
 	}
+
 	_, err = os.Stat(templateTestDestinationParentDir)
 	if err != nil {
 		t.Error("Destination directory does not exist. Error: ", err.Error())

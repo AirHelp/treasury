@@ -1,6 +1,8 @@
 package client
 
 import (
+	"fmt"
+
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 )
@@ -32,6 +34,10 @@ func (c *Client) ReadValue(key string) (string, error) {
 		return "", err
 	}
 	return secret.Value, nil
+}
+
+func (c *Client) ReadFromEnv(env, key string) (string, error) {
+	return c.ReadValue(fmt.Sprintf("%s/%s", env, key))
 }
 
 // ReadGroup returns list of secrets for given key prefix

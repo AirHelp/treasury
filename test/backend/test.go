@@ -10,21 +10,29 @@ import (
 )
 
 const (
-	Key1      = "test/webapp/cocpit_api_pass"
-	ShortKey1 = "cocpit_api_pass"
+	Key1      = "test/webapp/cockpit_api_pass"
+	Key1NoEnv = "webapp/cockpit_api_pass"
+	ShortKey1 = "cockpit_api_pass"
 	Key2      = "test/webapp/user_api_pass"
+	Key2NoEnv = "webapp/user_api_pass"
 	ShortKey2 = "user_api_pass"
 	Key3      = "test/cockpit/user_api_pass"
+	Key3NoEnv = "cockpit/user_api_pass"
 	ShortKey3 = "user_api_pass"
 	Key4      = "test/webapp/some_key"
+	Key4NoEnv = "webapp/some_key"
 	ShortKey4 = "some_key"
 	Key5      = "test/airmail/DATABASE_URL"
+	Key5NoEnv = "airmail/DATABASE_URL"
 	ShortKey5 = "DATABASE_URL"
 	Key6      = "test/airmail/user_api_pass"
+	Key6NoEnv = "airmail/user_api_pass"
 	ShortKey6 = "user_api_pass"
 	Key7      = "test/aircom/TWILIO_AUTH_TOKEN"
+	Key7NoEnv = "aircom/TWILIO_AUTH_TOKEN"
 	ShortKey7 = "TWILIO_AUTH_TOKEN"
 	Key8      = "test/aircom/NEW_RELIC_LICENSE_KEY"
+	Key8NoEnv = "aircom/NEW_RELIC_LICENSE_KEY"
 	ShortKey8 = "NEW_RELIC_LICENSE_KEY"
 )
 

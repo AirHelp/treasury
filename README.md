@@ -5,32 +5,36 @@
 Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([Systems Manager Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html)) service to store secrets. By default, Treasury uses SSM as a backend. The secrets are encrypted before saving them on disks in Amazon data centers and decrypted when being read. Treasury uses Server-Side Encryption with AWS KMS-Managed Keys ([SSE-KMS](http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingKMSEncryption.html)).
 
 - [treasury](#treasury)
-    - [Architecture](#architecture)
-    - [Command Line interface (CLI)](#command-line-interface-cli)
-    - [Configuration](#configuration)
-        - [AWS Credentials](#aws-credentials)
-        - [SSM store configuration](#ssm-store-configuration)
-        - [S3 store configuration](#s3-store-configuration)
-        - [AWS Region configuration](#aws-region-configuration)
-    - [Installation](#installation)
-    - [CLI Usage](#cli-usage)
-        - [Write secret](#write-secret)
-        - [Read secret](#read-secret)
-        - [List secrets](#list-secrets)
-        - [Import secrets](#import-secrets)
-        - [Export secrets](#export-secrets)
-        - [Teamplate usage](#teamplate-usage)
-            - [read](#read)
-            - [export](#export)
-            - [exportMap](#exportmap)
-    - [Setting up the infrastructure](#setting-up-the-infrastructure)
-        - [IAM Policy for S3 store](#iam-policy-for-s3-store)
-        - [IAM Policy for SSM Store](#iam-policy-for-ssm-store)
-    - [Treasury as a user vault](#treasury-as-a-user-vault)
-    - [Go Client](#go-client)
-    - [Development](#development)
-    - [Build for development](#build-for-development)
-    - [Tests](#tests)
+  - [Architecture](#architecture)
+  - [Command Line interface (CLI)](#command-line-interface-cli)
+  - [Configuration](#configuration)
+    - [AWS Credentials](#aws-credentials)
+    - [SSM store configuration](#ssm-store-configuration)
+    - [S3 store configuration](#s3-store-configuration)
+    - [AWS Region configuration](#aws-region-configuration)
+  - [Installation](#installation)
+  - [CLI Usage](#cli-usage)
+    - [Write secret](#write-secret)
+    - [Write file content](#write-file-content)
+    - [Read secret](#read-secret)
+    - [List secrets](#list-secrets)
+    - [Import secrets](#import-secrets)
+    - [Export secrets](#export-secrets)
+    - [Teamplate usage](#teamplate-usage)
+      - [Template usage with string append to secret value](#template-usage-with-string-append-to-secret-value)
+      - [Template usage with variables interpolation](#template-usage-with-variables-interpolation)
+      - [read](#read)
+      - [readFromEnv](#readfromenv)
+      - [export](#export)
+      - [exportMap](#exportmap)
+  - [Setting up the infrastructure](#setting-up-the-infrastructure)
+    - [IAM Policy for S3 store](#iam-policy-for-s3-store)
+    - [IAM Policy for SSM Store](#iam-policy-for-ssm-store)
+  - [Treasury as a user vault](#treasury-as-a-user-vault)
+  - [Go Client](#go-client)
+  - [Development](#development)
+  - [Build for development](#build-for-development)
+  - [Tests](#tests)
 
 ## Architecture
 
@@ -193,19 +197,46 @@ treasury template --src /tmp/template.tpl --dst /tmp/result --append key1:v2
 ```
 This command ends up with output file where the value of variable key1 has a string "v2" appended.
 
+#### Template usage with variables interpolation
+
+Example template:
+
+```
+APPNAME={{ .AppName }}
+API_PASSWORD={{ .ApiPassword }}
+```
+
+```bash
+treasury template --src /tmp/template.tpl --dst /tmp/result.env --env AppName=test,ApiPassword=qwerty12345
+```
+
 Supported actions:
 
-#### read 
-Returns single value for given key
+#### read
+**DEPRECATED (please use [readFromEnv](#readfromenv))** Returns single value for given key
 
 ```
 {{ read "ENVIRONMENT/APPLICATION/SECRET_NAME" }}
 ```
 
 Example:
+
 ```
 COCKPIT_API_PASSWORD={{ read "production/cockpit/cockpit_api_password" }}
 ```
+
+#### readFromEnv
+
+Returns single value for given key in specified environment
+
+```
+{{ readFromEnv "ENVIRONMENT" "APPLICATION/SECRET_NAME" }}
+
+# example using interpolation:
+
+{{ readFromEnv .Environment "app/API_PASSWORD" }}
+```
+
 
 #### export
 Returns all values for a given path in `key=value` format

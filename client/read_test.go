@@ -70,6 +70,52 @@ func TestReadValue(t *testing.T) {
 	}
 }
 
+func TestReadFromEnv(t *testing.T) {
+	dummyClientOptions := &client.Options{
+		Backend:      &test.MockBackendClient{},
+		S3BucketName: "fake_s3_bucket",
+	}
+	treasury, err := client.New(dummyClientOptions)
+	if err != nil {
+		t.Error(err)
+	}
+
+	tests := []struct {
+		name    string
+		env     string
+		key     string
+		want    string
+		wantErr bool
+	}{
+		{
+			name:    "test valid key",
+			env:     "test",
+			key:     test.Key1NoEnv,
+			want:    test.KeyValueMap[test.Key1],
+			wantErr: false,
+		},
+		{
+			name:    "test non existing key",
+			env:     "test",
+			key:     "nonExistingKey",
+			want:    "",
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := treasury.ReadFromEnv(tt.env, tt.key)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Client.ReadFromEnv() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("Client.ReadFromEnv() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestReadGroup(t *testing.T) {
 	dummyClientOptions := &client.Options{
 		Backend:      &test.MockBackendClient{},
