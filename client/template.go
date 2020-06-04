@@ -2,10 +2,13 @@ package client
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"text/template"
+
+	"github.com/AirHelp/treasury/utils"
 )
 
 const (
@@ -27,12 +30,19 @@ func readTemplate(filePath string) (string, error) {
 func (c *Client) renderTemplate(templateText string, appendMap, envMap map[string]string) (templateResultBuffer bytes.Buffer, err error) {
 	// Create a FuncMap with which to register the function.
 	funcMap := template.FuncMap{
-		// The name "read" is what the function will be called in the template text.
-		"read":        c.ReadValue,
 		"readFromEnv": c.ReadFromEnv,
 		"exportMap":   c.ExportMap,
+		// The name "read" is what the function will be called in the template text.
+		"read": func(key string) (string, error) {
+			utils.DeprecationWarning("`read` template function is deprecated, please use `readFromEnv` instead.")
+			return c.ReadValue(key)
+		},
 		"export": func(key string) (string, error) {
+			utils.DeprecationWarning("`export` template function is deprecated, please use `exportFromEnv` instead.")
 			return c.ExportToTemplate(key, appendMap)
+		},
+		"exportFromEnv": func(environment, key string) (string, error) {
+			return c.ExportToTemplate(fmt.Sprintf("%s/%s/", environment, key), appendMap)
 		},
 	}
 	// Create a template, add the function map, and parse the text.

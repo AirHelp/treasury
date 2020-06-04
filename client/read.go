@@ -36,6 +36,7 @@ func (c *Client) ReadValue(key string) (string, error) {
 	return secret.Value, nil
 }
 
+// ReadFromEnv returns value of given key in specified env.
 func (c *Client) ReadFromEnv(env, key string) (string, error) {
 	return c.ReadValue(fmt.Sprintf("%s/%s", env, key))
 }
