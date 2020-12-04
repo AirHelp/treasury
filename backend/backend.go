@@ -5,6 +5,7 @@ import (
 
 	"github.com/AirHelp/treasury/backend/s3"
 	"github.com/AirHelp/treasury/backend/ssm"
+	"github.com/aws/aws-sdk-go/aws"
 )
 
 const (
@@ -17,6 +18,7 @@ type Options struct {
 	Region       string
 	S3BucketName string
 	Backend      string
+	AWSConfig    aws.Config
 }
 
 // New returns client for specific backend - s3 or ssm
@@ -34,7 +36,7 @@ func New(options Options) (BackendAPI, error) {
 	case s3Name:
 		return s3.New(options.Region, options.S3BucketName)
 	case ssmName:
-		return ssm.New(options.Region)
+		return ssm.New(options.Region, options.AWSConfig)
 	}
 	return nil, errors.New("Invalid backend")
 }

@@ -15,16 +15,14 @@ type Client struct {
 }
 
 // New returns clients for AWS services
-func New(region string) (*Client, error) {
-	sessionOpts := session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}
-
+func New(region string, awsConfig aws.Config) (*Client, error) {
 	if region != "" {
-		sessionOpts.Config = aws.Config{Region: aws.String(region)}
+		awsConfig = *awsConfig.WithRegion(region)
 	}
 
-	sess, err := session.NewSessionWithOptions(sessionOpts)
+	sess, err := session.NewSessionWithOptions(session.Options{
+		Config: awsConfig,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
 	}
