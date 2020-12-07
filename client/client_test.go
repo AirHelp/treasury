@@ -1,21 +1,42 @@
-package client_test
+package client
 
 import (
 	"testing"
 
-	"github.com/AirHelp/treasury/client"
+	"github.com/aws/aws-sdk-go/aws"
 )
 
-func TestClient(t *testing.T) {
+func TestNew(t *testing.T) {
+	type args struct {
+		options *Options
+	}
 	tests := []struct {
-		options *client.Options
+		name    string
+		args    args
+		want    *Client
+		wantErr bool
 	}{
-		{&client.Options{S3BucketName: "fake_s3_bucket_name"}},
+		{
+			name:    "empty options",
+			args:    args{options: &Options{}},
+			want:    &Client{},
+			wantErr: false,
+		},
+		{
+			name:    "add aws config",
+			args:    args{options: &Options{AWSConfig: aws.Config{Region: aws.String("eu-west-1")}}},
+			want:    &Client{},
+			wantErr: false,
+		},
 	}
 
-	for _, test := range tests {
-		if _, got := client.New(test.options); got != nil {
-			t.Fatalf("Could not initialize client. Error:%s", got)
-		}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := New(tt.args.options)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
 	}
 }

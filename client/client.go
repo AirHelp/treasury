@@ -2,6 +2,7 @@ package client
 
 import (
 	"github.com/AirHelp/treasury/backend"
+	"github.com/aws/aws-sdk-go/aws"
 )
 
 const (
@@ -25,6 +26,7 @@ type Options struct {
 	Region       string
 	S3BucketName string
 	Backend      backend.BackendAPI
+	AWSConfig    aws.Config
 }
 
 // New initializes a new client for the given AWS account with S3 bucket
@@ -39,6 +41,7 @@ func New(options *Options) (*Client, error) {
 		options.Backend, err = backend.New(backend.Options{
 			Region:       options.Region,
 			S3BucketName: options.S3BucketName,
+			AWSConfig:    options.AWSConfig,
 		})
 		if err != nil {
 			return nil, err
