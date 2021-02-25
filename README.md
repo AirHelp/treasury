@@ -108,7 +108,7 @@ export AWS_DEFAULT_REGION=eu-west-1
 
 on OSX:
 ```
-brew tap airhelp/taps git@github.com:AirHelp/homebrew-taps.git
+brew tap airhelp/taps https://github.com/AirHelp/homebrew-taps.git
 brew update
 brew install treasury
 ```
