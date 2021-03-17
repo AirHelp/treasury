@@ -1,4 +1,4 @@
-FROM airhelp/golang:1.14-devops-builder
+FROM airhelp/golang:1.16-devops-builder
 
 COPY go.mod go.sum ./
 RUN go mod download
