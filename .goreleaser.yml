@@ -1,0 +1,94 @@
+before:
+  hooks:
+    - go mod tidy
+    - go test -cover -v ./...
+
+env:
+  - S3BUCKET=airhelp-devops-binaries
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-pre"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^Merge pull request'
+      - '^docs:'
+      - '^test:'
+
+source:
+  enabled: true
+  name_template: '{{ .Version }}'
+
+builds:
+  - goos:
+      - linux
+      - darwin
+    ldflags:
+      - "-X {{ .ModulePath }}/version.gitCommit={{ .ShortCommit }}"
+      - "-X {{ .ModulePath }}/version.gitTreeState={{ if .IsSnapshot }}clean{{ else }}dirty{{ end }}"
+      - "-X {{ .ModulePath }}/version.buildDate={{ .Date }}"
+  - id: lambda
+    targets:
+      - linux_amd64
+    ldflags:
+      - "-X {{ .ModulePath }}/version.gitCommit={{ .ShortCommit }}"
+      - "-X {{ .ModulePath }}/version.gitTreeState={{ if .IsSnapshot }}clean{{ else }}dirty{{ end }}"
+      - "-X {{ .ModulePath }}/version.buildDate={{ .Date }}"
+
+archives:
+  - id: tar
+    format: tar.bz2
+    builds:
+      - treasury
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+  - id: zip
+    format: zip
+    builds:
+      - treasury
+    name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
+  - id: lambda
+    format: zip
+    builds:
+      - lambda
+    name_template: "{{ .ProjectName }}-lambda-{{ .Os }}-{{ .Arch }}"
+
+blobs:
+  - provider: s3
+    ids:
+      - tar
+      - zip
+    bucket: "{{ .Env.S3BUCKET }}"
+    folder: "treasury/{{ .Version }}"
+
+brews:
+  - homepage: "https://{{ .ModulePath }}"
+    description: Treasury is a very simple tool for managing secrets.
+    ids:
+      - tar
+      - zip
+    tap:
+      owner: airhelp
+      name: homebrew-taps
+
+release:
+  ids:
+    - tar
+    - zip
+
+publishers:
+  - name: publish-layer-version
+    ids: 
+      - lambda
+    dir: "{{ dir .ArtifactPath }}"
+    cmd: |
+        for env in sta staging development; do \
+          aws --profile $${env} lambda publish-layer-version --layer-name treasury-client \
+            --description "treasury {{ .Version }} layer" \
+            --content S3Bucket="{{ .Env.S3BUCKET }}",S3Key=treasury/{{ .Version }}/{{ .ArtifactName }} \
+            --compatible-runtimes "python3.8" "go1.x" "nodejs10.x" "nodejs12.x" --output text; \
+        done
