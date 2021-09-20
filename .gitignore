@@ -3,3 +3,5 @@ pkg
 test/output
 vendor/
 tmp
+
+dist/
