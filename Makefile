@@ -43,6 +43,9 @@ _check_deps:
 	@which hub >/dev/null || { echo 'No hub cli installed. Exiting...'; exit 1; }
 	@which aws >/dev/null || { echo 'No awscli installed. Exiting...'; exit 1; }
 
+_check_goreleaser_deps:
+	@which goreleaser >/dev/null || { echo 'No goreleaser installed. Exiting...'; exit 1; }
+
 _github_release:
 	hub release create \
 		-a pkg/treasury-darwin-amd64.tar.bz2 \
@@ -68,7 +71,14 @@ _lambda_layers_release: _check_deps
 			--compatible-runtimes "python3.8" "go1.x" "nodejs10.x" "nodejs12.x" --output text; \
 	done
 
-release: build _check_deps _github_release _s3_release _lambda_layers_release
+release-legacy: build _check_deps _github_release _s3_release _lambda_layers_release
+
+release: _check_goreleaser_deps
+	git describe --tags ${TREASURY_VERSION} || { \
+		git tag "${TREASURY_VERSION}"; \
+		git push --tags; \
+		goreleaser release --rm-dist \
+	}
 
 dev:
 	go build
