@@ -86,7 +86,7 @@ publishers:
       - lambda
     dir: "{{ dir .ArtifactPath }}"
     cmd: |
-        for env in sta staging development; do \
+        for env in sta development; do \
           aws --profile $${env} lambda publish-layer-version --layer-name treasury-client \
             --description "treasury {{ .Version }} layer" \
             --content S3Bucket="{{ .Env.S3BUCKET }}",S3Key=treasury/{{ .Version }}/{{ .ArtifactName }} \
