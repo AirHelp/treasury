@@ -7,8 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"text/template"
-
-	"github.com/AirHelp/treasury/utils"
 )
 
 const (
@@ -34,11 +32,9 @@ func (c *Client) renderTemplate(templateText string, appendMap, envMap map[strin
 		"exportMap":   c.ExportMap,
 		// The name "read" is what the function will be called in the template text.
 		"read": func(key string) (string, error) {
-			utils.DeprecationWarning("`read` template function is deprecated, please use `readFromEnv` instead.")
 			return c.ReadValue(key)
 		},
 		"export": func(key string) (string, error) {
-			utils.DeprecationWarning("`export` template function is deprecated, please use `exportFromEnv` instead.")
 			return c.ExportToTemplate(key, appendMap)
 		},
 		"exportFromEnv": func(environment, key string) (string, error) {

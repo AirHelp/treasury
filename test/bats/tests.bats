@@ -176,18 +176,6 @@ invalid_aws_region=us-west-1
   [[ ${lines[0]} =~ "Error" ]]
 }
 
-@test "template-deprecations" {
-  run $treasury template --src test/resources/bats-source-deprecations.secret.tpl --dst test/output/bats-output.secret
-  [ $status -eq 0 ]
-  [[ ${lines[0]} == "[Deprecation warning] \`read\` template function is deprecated, please use \`readFromEnv\` instead." ]]
-  [[ ${lines[1]} == "[Deprecation warning] \`export\` template function is deprecated, please use \`exportFromEnv\` instead." ]]
-  [[ ${lines[2]} == "File with secrets successfully generated" ]]
-  run grep "APPLICATION_SECRET_KEY=secret2" test/output/bats-output.secret
-  [ $status -eq 0 ]
-  run grep "key4=secret4" test/output/bats-output.secret
-  [ $status -eq 0 ]
-}
-
 @test "write file content to treasury key" {
   run $treasury write development/treasury/key5 test/resources/test_file --file
   [ $status -eq 0 ]

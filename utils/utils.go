@@ -78,8 +78,3 @@ func ReadSecrets(secretsFile string) (map[string]string, error) {
 	}
 	return secrets, nil
 }
-
-// Prints deprecation warning to stdout
-func DeprecationWarning(body string) {
-	fmt.Printf("[Deprecation warning] %s\n", body)
-}
