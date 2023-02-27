@@ -1,6 +1,7 @@
 FROM golang:1.20
 
 ENV CGO_ENABLED=0
+ENV GOPATH=''
 
 COPY go.mod go.sum ./
 RUN go mod download
