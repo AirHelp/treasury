@@ -32,7 +32,7 @@ build: test
 	@rm -fr pkg
 	@mkdir pkg
 	@for distro in ${BUILD_DISTROS}; do \
-		GOOS=$${distro} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
+		GOOS=$${distro} GOARCH=amd64 go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
 		cd pkg/$${distro}; \
 		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
 		zip ../treasury-$${distro}-amd64.zip treasury; \
