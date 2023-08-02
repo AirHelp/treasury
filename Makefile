@@ -57,14 +57,14 @@ _github_release:
 
 _s3_release:
 	@for distro in ${BUILD_DISTROS}; do \
-	    @for arch in ${BUILD_ARCH}; do \
+	    for arch in ${BUILD_ARCH}; do \
 			AWS_PROFILE=production aws s3 cp --acl public-read \
-				pkg/treasury-$${distro}-$${arch}.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-$#{arch}.tar.bz2; \
+				pkg/treasury-$${distro}-$${arch}.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-$${arch}.tar.bz2; \
 			shasum -a 256 pkg/treasury-$${distro}-$${arch}.tar.bz2; \
 			AWS_PROFILE=production aws s3 cp --acl public-read \
 				pkg/treasury-$${distro}-$${arch}.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-$${arch}.zip; \
 			shasum -a 256 pkg/treasury-$${distro}-$${arch}.zip; \
-		done \ 
+		done \
 	done
 
 _lambda_layers_release: _check_deps
