@@ -1,5 +1,6 @@
 BUILD_TIME = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 BUILD_DISTROS = darwin linux
+BUILD_ARCH = amd64 arm64
 GIT_COMMIT = $(shell git rev-parse HEAD)
 GIT_TREE_STATE = $(shell test -n "`git status --porcelain`" && echo "dirty" || echo "clean")
 GIT_IMPORT = github.com/AirHelp/treasury/version
@@ -28,15 +29,17 @@ test: docker-test-build fmt vet
 testall: test dev
 	bats test/bats/tests.bats
 
-build: test
+build:
 	@rm -fr pkg
 	@mkdir pkg
 	@for distro in ${BUILD_DISTROS}; do \
-		GOOS=$${distro} GOARCH=amd64 go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/treasury; \
-		cd pkg/$${distro}; \
-		tar -cjf ../treasury-$${distro}-amd64.tar.bz2 treasury; \
-		zip ../treasury-$${distro}-amd64.zip treasury; \
-		cd ../..; \
+		for arch in ${BUILD_ARCH}; do \
+			GOOS=$${distro} GOARCH=$${arch} go build -ldflags "${GO_LDFLAGS}" -o pkg/$${distro}/$${arch}/treasury; \
+			cd pkg/$${distro}/$${arch}; \
+			tar -cjf ../../treasury-$${distro}-$${arch}.tar.bz2 treasury; \
+			zip ../../treasury-$${distro}-$${arch}.zip treasury; \
+			cd ../../..; \
+		done \
 	done
 
 _check_deps:
@@ -47,17 +50,21 @@ _github_release:
 	hub release create \
 		-a pkg/treasury-darwin-amd64.tar.bz2 \
 		-a pkg/treasury-linux-amd64.tar.bz2 \
+		-a pkg/treasury-darwin-arm64.tar.bz2 \
+		-a pkg/treasury-linux-arm64.tar.bz2 \
 		-m ${TREASURY_VERSION} \
 		${TREASURY_VERSION}
 
 _s3_release:
 	@for distro in ${BUILD_DISTROS}; do \
-		AWS_PROFILE=production aws s3 cp --acl public-read \
-			pkg/treasury-$${distro}-amd64.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.tar.bz2; \
-		shasum -a 256 pkg/treasury-$${distro}-amd64.tar.bz2; \
-		AWS_PROFILE=production aws s3 cp --acl public-read \
-			pkg/treasury-$${distro}-amd64.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-amd64.zip; \
-		shasum -a 256 pkg/treasury-$${distro}-amd64.zip; \
+	    @for arch in ${BUILD_ARCH}; do \
+			AWS_PROFILE=production aws s3 cp --acl public-read \
+				pkg/treasury-$${distro}-$${arch}.tar.bz2 s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-$#{arch}.tar.bz2; \
+			shasum -a 256 pkg/treasury-$${distro}-$${arch}.tar.bz2; \
+			AWS_PROFILE=production aws s3 cp --acl public-read \
+				pkg/treasury-$${distro}-$${arch}.zip s3://airhelp-devops-binaries/treasury/${TREASURY_VERSION}/treasury-$${distro}-$${arch}.zip; \
+			shasum -a 256 pkg/treasury-$${distro}-$${arch}.zip; \
+		done \ 
 	done
 
 _lambda_layers_release: _check_deps
