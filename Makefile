@@ -29,7 +29,7 @@ test: docker-test-build fmt vet
 testall: test dev
 	bats test/bats/tests.bats
 
-build:
+build: test
 	@rm -fr pkg
 	@mkdir pkg
 	@for distro in ${BUILD_DISTROS}; do \
