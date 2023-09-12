@@ -67,7 +67,7 @@ blobs:
 brews:
   - # Name template of the recipe
     # Default to project name
-    name: mycli
+    name: treasury
     ids:
       - treasury_binaries_zip
     # NOTE: make sure the url_template, the token and given repo (github or gitlab) owner and name are from the
