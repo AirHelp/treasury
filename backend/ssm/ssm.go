@@ -99,3 +99,13 @@ func unSlash(input string) string {
 	}
 	return input
 }
+
+func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
+	params := &ssm.DeleteParameterInput{
+		// we decided to use path based keys without `/` at the begining
+		// so we need to add it here
+		Name: aws.String("/" + object.Key),
+	}
+	_, err := c.svc.DeleteParameter(params)
+	return err
+}

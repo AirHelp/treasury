@@ -74,3 +74,10 @@ func (m *MockBackendClient) GetObjects(input *types.GetObjectsInput) (*types.Get
 	}
 	return &types.GetObjectsOuput{Secrets: response}, nil
 }
+
+func (m *MockBackendClient) DeleteObject(input *types.DeleteObjectInput) error {
+	if _, ok := KeyValueMap[input.Key]; !ok {
+		return errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", input.Key))
+	}
+	return nil
+}

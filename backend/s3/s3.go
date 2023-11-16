@@ -94,3 +94,11 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 	}
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
 }
+func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
+	params := &s3.DeleteObjectInput{
+		Bucket: aws.String(c.bucket),
+		Key:    aws.String(object.Key),
+	}
+	_, err := c.S3Svc.DeleteObject(params)
+	return err
+}
