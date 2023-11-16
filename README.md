@@ -18,6 +18,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
     - [Write file content](#write-file-content)
     - [Read secret](#read-secret)
     - [List secrets](#list-secrets)
+    - [Delete secret](#delete-secret)
     - [Import secrets](#import-secrets)
     - [Export secrets](#export-secrets)
     - [Teamplate usage](#teamplate-usage)
@@ -149,6 +150,14 @@ List the secrets set for a path
 > treasury list development/application/
 development/application/app_api_pass
 development/application/test
+```
+
+### Delete secret
+Delete the secret from treasury
+
+```
+> treasury delete development/application/secret_key
+Key development/application/secret_key has been successfully deleted
 ```
 
 ### Import secrets
