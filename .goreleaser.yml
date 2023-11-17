@@ -1,0 +1,134 @@
+# This is an example goreleaser.yaml file with some sane defaults.
+# Make sure to check the documentation at http://goreleaser.com
+before:
+  hooks:
+    # You may remove this if you don't use go modules.
+    - go mod download
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+      - GO111MODULE=on
+
+    goos:
+      - darwin
+      - linux
+
+    goarch:
+      - amd64
+      - arm64
+
+    binary: treasury
+archives:
+  - id: treasury_binaries_targz
+    name_template: >-
+      {{- .ProjectName }}-
+      {{- .Os }}-
+      {{- .Arch }}
+    wrap_in_directory: true
+  - id: treasury_binaries_zip
+    format: zip
+    name_template: >-
+      {{- .ProjectName }}-
+      {{- .Os }}-
+      {{- .Arch }}
+    wrap_in_directory: true
+    
+checksum:
+  name_template: "checksums.txt"
+snapshot:
+  name_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - Merge pull request
+      - Merge branch
+
+blobs:
+  # You can have multiple blob configs
+  - # Template for the cloud provider name
+    # s3 for AWS S3 Storage
+    # azblob for Azure Blob Storage
+    # gs for Google Cloud Storage
+    provider: s3
+    region: eu-west-1
+
+    # Template for the bucket name
+    bucket: airhelp-devops-binaries
+
+    # Template for the path/name inside the bucket.
+    # Default is `{{ .ProjectName }}/{{ .Tag }}`
+    #   folder: "foo/bar/{{.Version}}"
+    # - provider: s3
+    #   bucket: goreleaser-bucket
+    #   folder: "foo/bar/{{.Version}}"
+
+brews:
+  - # Name template of the recipe
+    # Default to project name
+    name: treasury
+    ids:
+      - treasury_binaries_zip
+    # NOTE: make sure the url_template, the token and given repo (github or gitlab) owner and name are from the
+    # same kind. We will probably unify this in the next major version like it is done with scoop.
+
+    repository:
+      owner: AirHelp
+      name: homebrew-taps
+
+    # Template for the url which is determined by the given Token (github or gitlab)
+    # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+    url_template: "https://s3-eu-west-1.amazonaws.com/airhelp-devops-binaries/treasury/{{ .Tag }}{{ .ArtifactName }}"
+
+    # Allows you to set a custom download strategy. Note that you'll need
+    # to implement the strategy and add it to your tap repository.
+    # Example: https://docs.brew.sh/Formula-Cookbook#specifying-the-download-strategy-explicitly
+    # Default is empty.
+    # download_strategy: CurlDownloadStrategy
+
+    # Git author used to commit to the repository.
+    # Defaults are shown.
+    commit_author:
+      name: PawelGoBot
+      email: devops@airhelp.com
+
+    # Folder inside the repository to put the formula.
+    # Default is the root folder.
+    # folder: Formula
+
+    # Caveats for the user of your binary.
+    # Default is empty.
+    # caveats: "How to use this binary"
+
+    # Your app's homepage.
+    # Default is empty.
+    homepage: "https://github.com/AirHelp/treasury"
+
+    # Your app's description.
+    # Default is empty.
+    description: "Treasury is a simple tool for managing secrets in AWS Parameter Store"
+
+    # Setting this will prevent goreleaser to actually try to commit the updated
+    # formula - instead, the formula file will be stored on the dist folder only,
+    # leaving the responsibility of publishing it to the user.
+    # If set to auto, the release will not be uploaded to the homebrew tap
+    # in case there is an indicator for prerelease in the tag e.g. v1.0.0-rc1
+    # Default is false.
+    skip_upload: true
+
+    # Custom block for brew.
+    # Can be used to specify alternate downloads for devel or head releases.
+    # Default is empty.
+    # custom_block: |
+    #   head "https://github.com/some/package.git"
+    #   ...
+
+    # Packages your package depends on.
+    dependencies:
+      - git
+
+    # Packages that conflict with your package.
+    # conflicts:
+    #   - svn
+    #   - bash
