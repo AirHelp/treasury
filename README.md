@@ -18,6 +18,7 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
     - [Write file content](#write-file-content)
     - [Read secret](#read-secret)
     - [List secrets](#list-secrets)
+    - [Delete secret](#delete-secret)
     - [Import secrets](#import-secrets)
     - [Export secrets](#export-secrets)
     - [Teamplate usage](#teamplate-usage)
@@ -149,6 +150,14 @@ List the secrets set for a path
 > treasury list development/application/
 development/application/app_api_pass
 development/application/test
+```
+
+### Delete secret
+Delete the secret from treasury
+
+```
+> treasury delete development/application/secret_key
+Key development/application/secret_key has been successfully deleted
 ```
 
 ### Import secrets
@@ -325,7 +334,8 @@ key4: secret4
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject*",
-                "s3:GetObject*"
+                "s3:GetObject*",
+                "s3:DeleteObject*"
             ],
             "Resource": [
                 "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/test/test/*",
@@ -472,7 +482,8 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
             "Effect": "Allow",
             "Action": [
                 "ssm:GetParameter*",
-                "ssm:PutParameter"
+                "ssm:PutParameter",
+                "ssm:DeleteParameter"
             ],
             "Resource": [
                 "arn:aws:ssm:eu-west-1:064764542321:parameter/development/application/*"

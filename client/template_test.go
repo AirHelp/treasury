@@ -9,7 +9,8 @@ import (
 )
 
 const (
-	templateTestSourceFile           = "../test/resources/source.secret.tpl"
+	templateTestSourceFile           = "../test/resources/source.existing_secret.tpl"
+	templateTestSourceFile2          = "../test/resources/source.not_existing_secret.tpl"
 	templateTestDestinationFile      = "../test/output/destination.secret"
 	templateTestDestinationParentDir = "../test/output"
 )
@@ -29,8 +30,28 @@ func TestTemplate(t *testing.T) {
 		"Name":        "some_testing_template",
 	}
 
-	if err := treasury.Template(templateTestSourceFile, templateTestDestinationFile, 0, map[string]string{}, envMap); err != nil {
-		t.Error("Could not generate secret file from template. Error: ", err.Error())
+	tests := []struct {
+		file    string
+		wantErr bool
+	}{
+		{
+			file:    templateTestSourceFile,
+			wantErr: false,
+		},
+		{
+			file:    templateTestSourceFile2,
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.file, func(t *testing.T) {
+			err := treasury.Template(tt.file, templateTestDestinationFile, 0, map[string]string{}, envMap)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Failed to use treasury template, error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+		})
 	}
 
 	_, err = os.Stat(templateTestDestinationParentDir)

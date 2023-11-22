@@ -34,6 +34,9 @@ const (
 	Key8      = "test/aircom/NEW_RELIC_LICENSE_KEY"
 	Key8NoEnv = "aircom/NEW_RELIC_LICENSE_KEY"
 	ShortKey8 = "NEW_RELIC_LICENSE_KEY"
+	Key9      = "test/slack/SLACK_TOKEN"
+	Key9NoEnv = "slack/SLACK_TOKEN"
+	ShortKey9 = "SLACK_TOKEN"
 )
 
 var KeyValueMap = map[string]string{
@@ -45,6 +48,7 @@ var KeyValueMap = map[string]string{
 	Key6: "2oui3yrwohsf",
 	Key7: "weoirgfhdh",
 	Key8: "sfjsoidhgi340j",
+	Key9: "sdfjksdfjksdf",
 }
 
 // MockBackendClient fake backendAPI
@@ -60,6 +64,12 @@ func (m *MockBackendClient) PutObject(input *types.PutObjectInput) error {
 }
 
 func (m *MockBackendClient) GetObject(input *types.GetObjectInput) (*types.GetObjectOutput, error) {
+	if _, ok := KeyValueMap[input.Key]; !ok {
+		return &types.GetObjectOutput{
+			Value: "",
+		}, fmt.Errorf("Missing key:%s in KeyValue map", input.Key)
+	}
+
 	return &types.GetObjectOutput{
 		Value: KeyValueMap[input.Key],
 	}, nil
@@ -73,4 +83,14 @@ func (m *MockBackendClient) GetObjects(input *types.GetObjectsInput) (*types.Get
 		}
 	}
 	return &types.GetObjectsOuput{Secrets: response}, nil
+}
+
+func (m *MockBackendClient) DeleteObject(input *types.DeleteObjectInput) error {
+	if _, ok := KeyValueMap[input.Key]; !ok {
+		return errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", input.Key))
+	}
+
+	delete(KeyValueMap, input.Key)
+
+	return nil
 }

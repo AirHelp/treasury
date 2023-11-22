@@ -28,3 +28,7 @@ type GetObjectOutput struct {
 type GetObjectsOuput struct {
 	Secrets map[string]string
 }
+
+type DeleteObjectInput struct {
+	Key string
+}
