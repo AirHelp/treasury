@@ -64,6 +64,12 @@ func (m *MockBackendClient) PutObject(input *types.PutObjectInput) error {
 }
 
 func (m *MockBackendClient) GetObject(input *types.GetObjectInput) (*types.GetObjectOutput, error) {
+	if _, ok := KeyValueMap[input.Key]; !ok {
+		return &types.GetObjectOutput{
+			Value: "",
+		}, fmt.Errorf("Missing key:%s in KeyValue map", input.Key)
+	}
+
 	return &types.GetObjectOutput{
 		Value: KeyValueMap[input.Key],
 	}, nil
@@ -85,10 +91,6 @@ func (m *MockBackendClient) DeleteObject(input *types.DeleteObjectInput) error {
 	}
 
 	delete(KeyValueMap, input.Key)
-
-	if _, ok := KeyValueMap[input.Key]; ok {
-		return errors.New(fmt.Sprintf("Failed to delete key:%s from KeyValue map", input.Key))
-	}
 
 	return nil
 }
