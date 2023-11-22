@@ -334,7 +334,8 @@ key4: secret4
             "Effect": "Allow",
             "Action": [
                 "s3:PutObject*",
-                "s3:GetObject*"
+                "s3:GetObject*",
+                "s3:DeleteObject*"
             ],
             "Resource": [
                 "arn:aws:s3:::TREASURY_S3_BUCKET_NAME/test/test/*",
@@ -481,7 +482,8 @@ The following bucket policy denies upload object (s3:PutObject) permission to ev
             "Effect": "Allow",
             "Action": [
                 "ssm:GetParameter*",
-                "ssm:PutParameter"
+                "ssm:PutParameter",
+                "ssm:DeleteParameter"
             ],
             "Resource": [
                 "arn:aws:ssm:eu-west-1:064764542321:parameter/development/application/*"
