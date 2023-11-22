@@ -24,29 +24,16 @@ func TestDelete(t *testing.T) {
 		t.Error(err)
 	}
 
-	tests := []struct {
-		name    string
-		key     string
-		want    string
-		wantErr bool
-	}{
-		{
-			name:    "test non existing key",
-			key:     test.Key9,
-			want:    "",
-			wantErr: true,
-		},
+	// Check whether the key was deleted
+	got, err := treasury.ReadValue(test.Key9)
+
+	if err == nil {
+		t.Errorf("Client.ReadValue() returned nil value for error when there should be one ")
+		return
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got, err := treasury.ReadValue(tt.key)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Client.ReadValue() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Client.ReadValue() = %v, want %v", got, tt.want)
-			}
-		})
+
+	if got != "" {
+		t.Errorf("Client.ReadValue() returned non empty string for deleted key")
+		return
 	}
 }
