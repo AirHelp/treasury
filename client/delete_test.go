@@ -13,12 +13,13 @@ func TestDelete(t *testing.T) {
 		Backend:      &test.MockBackendClient{},
 		S3BucketName: "fake_s3_bucket",
 	}
+
 	treasury, err := client.New(dummyClientOptions)
 	if err != nil {
 		t.Error(err)
 	}
 
-	err = treasury.Delete(test.Key1)
+	err = treasury.Delete(test.Key9)
 	if err != nil {
 		t.Error(err)
 	}
