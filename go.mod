@@ -1,7 +1,7 @@
 module github.com/AirHelp/treasury
 
 require (
-	github.com/aws/aws-sdk-go v1.50.8
+	github.com/aws/aws-sdk-go v1.50.29
 	github.com/spf13/cobra v1.8.0
 )
 
