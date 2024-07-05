@@ -1,0 +1,65 @@
+# Description: This workflow will build binaries for all directories in binaries/ directory
+# and upload them to airhelp-devops-binaries S3 bucket on production account
+
+name: GoRelease
+run-name: Run GoRelease for treasury
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      # Only master here as running this for production won't make sense
+      # as this will only create and upload the same binary again to the same place
+      - "feature/gha-goreleaser"
+
+jobs:
+  build:
+    # production runner is required to put binaries in ah-devops-binaries S3 bucket
+    runs-on: [self-hosted-production-deployer-arm64]
+    name: Build
+
+    # defaults:
+    #   run:
+    #     working-directory: ${{ env.DIR }}/${{ matrix.dir }}
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4 
+
+      - name: Setup git auth
+        run: |
+          git config --global --add url."https://${{ secrets.AH_GITHUB_TOKEN_READ_ONLY }}:x-oauth-basic@github.com/AirHelp/".insteadOf "https://github.com/AirHelp/"
+
+      - uses: actions/setup-go@v5
+        with:
+          # this will match 1.21 when released
+          go-version: "^1.x"
+          # setup-go@v4 enables cache by default
+          cache: false
+
+      - name: Install GoReleaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          install-only: true
+
+      - name: Show GoReleaser version
+        run: goreleaser -v
+
+      - name: Get version from Makefile
+        run: |
+          echo "GORELEASER_CURRENT_TAG=$(grep VERSION= Makefile | head -n 1 | sed -e s/VERSION=//)" >> $GITHUB_ENV
+
+      - name: Assume github_actions_devops_binaries role
+        id: role_assumption
+        uses: AirHelp/gh-actions/.helpers/assume-role@master
+        with:
+          account_id: "555911484621"
+          role_name: github_actions_devops_binaries
+
+      - name: Run GoRelease  
+        env:
+          AWS_ACCESS_KEY_ID: ${{ steps.role_assumption.outputs.access_key_id }}
+          AWS_SECRET_ACCESS_KEY: ${{ steps.role_assumption.outputs.secret_access_key }}
+          AWS_SESSION_TOKEN: ${{ steps.role_assumption.outputs.session_token }}
+        run: |
+          goreleaser release --skip=validate --clean
