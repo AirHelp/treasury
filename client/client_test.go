@@ -3,7 +3,7 @@ package client
 import (
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 func TestNew(t *testing.T) {
@@ -24,7 +24,7 @@ func TestNew(t *testing.T) {
 		},
 		{
 			name:    "add aws config",
-			args:    args{options: &Options{AWSConfig: aws.Config{Region: aws.String("eu-west-1")}}},
+			args:    args{options: &Options{AWSConfig: aws.Config{Region: "eu-west-1"}}},
 			want:    &Client{},
 			wantErr: false,
 		},

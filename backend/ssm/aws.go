@@ -1,34 +1,29 @@
 package ssm
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
 // Client with AWS services
 type Client struct {
-	svc ssmiface.SSMAPI
+	svc *ssm.Client
 }
 
 // New returns clients for AWS services
 func New(region string, awsConfig aws.Config) (*Client, error) {
-	if region != "" {
-		awsConfig = *awsConfig.WithRegion(region)
-	}
-
-	sess, err := session.NewSessionWithOptions(session.Options{
-		Config: awsConfig,
-	})
+	// Load the default configuration
+	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
+		return nil, fmt.Errorf("failed to load AWS configuration. Error: %s", err)
 	}
 
 	// Create a SSM client with additional configuration
-	svc := ssm.New(sess)
+	svc := ssm.NewFromConfig(cfg)
 
 	return &Client{
 		svc: svc,

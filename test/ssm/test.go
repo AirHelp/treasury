@@ -1,12 +1,12 @@
 package ssm
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
 const (
@@ -33,9 +33,15 @@ var SSMKeyValueMap = map[string]string{
 	SSMKey3: KeyValueMap[Key3],
 }
 
-// MockSSMClient fake SSMAPI
+// MockSSMClient is a mock implementation of the SSMClient interface.
 type MockSSMClient struct {
-	ssmiface.SSMAPI
+	Parameters map[string]string
+}
+
+type SSMClient interface {
+	PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
+	GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
+	GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)
 }
 
 func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutParameterOutput, error) {

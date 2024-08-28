@@ -2,7 +2,7 @@ package client
 
 import (
 	"github.com/AirHelp/treasury/backend"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 const (

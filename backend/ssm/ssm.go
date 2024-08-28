@@ -1,11 +1,13 @@
 package ssm
 
 import (
+	"context"
 	"errors"
 
 	"github.com/AirHelp/treasury/types"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/ssm"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
 const defaultParameterType = "SecureString"
@@ -17,34 +19,34 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 	if object.Key == "" {
 		return errors.New("The key name is not valid.")
 	}
-	// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#PutParameterInput
+	// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/ssm#PutParameterInput
 	putParameterInput := &ssm.PutParameterInput{
 		KeyId: aws.String("alias/" + object.Environment),
-		// we decided to use path based keys without `/` at the begining
+		// we decided to use path based keys without `/` at the beginning
 		// so we need to add it here
 		Name:      aws.String("/" + object.Key),
-		Type:      aws.String(defaultParameterType),
+		Type:      ssmtypes.ParameterType(defaultParameterType),
 		Value:     aws.String(object.Value),
 		Overwrite: aws.Bool(true),
 	}
 
 	// PutParameter returns Version of the parameter
 	// shall we validate this version?
-	_, err := c.svc.PutParameter(putParameterInput)
+	_, err := c.svc.PutParameter(context.TODO(), putParameterInput)
 	return err
 }
 
 // GetObject returns a secret for given key
 func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput, error) {
 	params := &ssm.GetParameterInput{
-		// we decided to use path based keys without `/` at the begining
+		// we decided to use path based keys without `/` at the beginning
 		// so we need to add it here
 		Name: aws.String("/" + object.Key),
 		// Retrieve all parameters in a hierarchy with their value decrypted.
 		WithDecryption: aws.Bool(true),
 	}
 
-	resp, err := c.svc.GetParameter(params)
+	resp, err := c.svc.GetParameter(context.TODO(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -55,21 +57,21 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 // GetObjects returns key value map for given pattern/prefix
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
 	var nextToken *string
-	var parameters []*ssm.Parameter
+	var parameters []ssmtypes.Parameter
 	for {
-		// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
+		// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/ssm#GetParametersByPathInput
 		getParametersByPathInput := &ssm.GetParametersByPathInput{
 			Path: aws.String("/" + object.Prefix),
 			// Retrieve all parameters in a hierarchy with their value decrypted.
 			WithDecryption: aws.Bool(true),
-			MaxResults:     aws.Int64(10),
+			MaxResults:     aws.Int32(10),
 			NextToken:      nextToken,
 		}
 
 		// we're only interested with GetParametersByPathOutput.Parameters
-		// Parameters []*Parameter `type:"list"`
+		// Parameters []Parameter `type:"list"`
 		// See also, https://docs.aws.amazon.com/goto/WebAPI/ssm-2014-11-06/Parameter
-		resp, err := c.svc.GetParametersByPath(getParametersByPathInput)
+		resp, err := c.svc.GetParametersByPath(context.TODO(), getParametersByPathInput)
 		if err != nil {
 			return nil, err
 		}
@@ -90,7 +92,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
 }
 
-// unShash removes 1st char from a string
+// unSlash removes 1st char from a string
 // GetParametersByPath from SSM returns key path with "/" at the beginning
 // but we don't need it :)
 func unSlash(input string) string {
@@ -102,10 +104,10 @@ func unSlash(input string) string {
 
 func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
 	params := &ssm.DeleteParameterInput{
-		// we decided to use path based keys without `/` at the begining
+		// we decided to use path based keys without `/` at the beginning
 		// so we need to add it here
 		Name: aws.String("/" + object.Key),
 	}
-	_, err := c.svc.DeleteParameter(params)
+	_, err := c.svc.DeleteParameter(context.TODO(), params)
 	return err
 }
