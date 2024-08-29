@@ -44,7 +44,7 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 		Tagging:              aws.String(tags),
 	}
 
-	_, err := c.S3Svc.PutObject(context.TODO(), params)
+	_, err := c.S3Svc.PutObject(context.Background(), params)
 
 	return err
 }
@@ -59,7 +59,7 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 		Key:    aws.String(object.Key),
 	}
 
-	resp, err := c.S3Svc.GetObject(context.TODO(), params)
+	resp, err := c.S3Svc.GetObject(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +76,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 		Prefix: aws.String(object.Prefix),
 	}
 
-	resp, err := c.S3Svc.ListObjects(context.TODO(), params)
+	resp, err := c.S3Svc.ListObjects(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +97,6 @@ func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(object.Key),
 	}
-	_, err := c.S3Svc.DeleteObject(context.TODO(), params)
+	_, err := c.S3Svc.DeleteObject(context.Background(), params)
 	return err
 }

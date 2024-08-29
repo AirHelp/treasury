@@ -3,12 +3,12 @@ package client
 import (
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
-	s3Types"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 
-	"errors"
 	"bytes"
 	"compress/gzip"
 	b64 "encoding/base64"
+	"errors"
 	"io/ioutil"
 )
 
@@ -25,9 +25,8 @@ func (c *Client) Write(key, secret string, force bool) error {
 		if err != nil {
 			var nsk *s3Types.NoSuchKey
 			var nf *s3Types.NotFound
+
 			if !errors.As(err, &nsk) && !errors.As(err, &nf) {
-				return err
-			} else {
 				return err
 			}
 		} else if secret == secretObject.Value {

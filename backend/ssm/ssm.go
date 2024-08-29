@@ -32,7 +32,7 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 
 	// PutParameter returns Version of the parameter
 	// shall we validate this version?
-	_, err := c.svc.PutParameter(context.TODO(), putParameterInput)
+	_, err := c.svc.PutParameter(context.Background(), putParameterInput)
 	return err
 }
 
@@ -46,7 +46,7 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 		WithDecryption: aws.Bool(true),
 	}
 
-	resp, err := c.svc.GetParameter(context.TODO(), params)
+	resp, err := c.svc.GetParameter(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 		// we're only interested with GetParametersByPathOutput.Parameters
 		// Parameters []Parameter `type:"list"`
 		// See also, https://docs.aws.amazon.com/goto/WebAPI/ssm-2014-11-06/Parameter
-		resp, err := c.svc.GetParametersByPath(context.TODO(), getParametersByPathInput)
+		resp, err := c.svc.GetParametersByPath(context.Background(), getParametersByPathInput)
 		if err != nil {
 			return nil, err
 		}
@@ -108,6 +108,6 @@ func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
 		// so we need to add it here
 		Name: aws.String("/" + object.Key),
 	}
-	_, err := c.svc.DeleteParameter(context.TODO(), params)
+	_, err := c.svc.DeleteParameter(context.Background(), params)
 	return err
 }

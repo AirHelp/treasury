@@ -27,7 +27,6 @@ var KeyValueMap = map[string]string{
 
 // MockS3Client fake S3API
 type MockS3Client struct {
-	anything string
 }
 
 func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {

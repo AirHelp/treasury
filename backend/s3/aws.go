@@ -18,8 +18,8 @@ type S3ClientInterface interface {
 }
 
 type Client struct {
-    S3Svc  S3ClientInterface
-    bucket string
+	S3Svc  S3ClientInterface
+	bucket string
 }
 
 func New(region, bucket string) (*Client, error) {

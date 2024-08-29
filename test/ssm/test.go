@@ -46,7 +46,6 @@ type SSMClient interface {
 	DeleteParameter(ctx context.Context, input *ssm.DeleteParameterInput, optFns ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error)
 }
 
-//PutParameter(ctx context.Context, params *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
 func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error) {
 	if input == nil {
 		return nil, fmt.Errorf("PutParameterInput is empty")
@@ -66,7 +65,6 @@ func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParamete
 	return &ssm.PutParameterOutput{Version: version}, nil
 }
 
-//GetParameter(ctx context.Context, params *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
 func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error) {
 	log.Println("input.Name:", input.Name)
 	if _, ok := SSMKeyValueMap[*input.Name]; !ok {
@@ -78,7 +76,7 @@ func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParamete
 	value := SSMKeyValueMap[*input.Name]
 	return &ssm.GetParameterOutput{
 		// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#Parameter
-		Parameter : &types.Parameter{
+		Parameter: &types.Parameter{
 			Name:  input.Name,
 			Value: &value,
 		},
@@ -108,16 +106,5 @@ func (m *MockSSMClient) GetParametersByPath(ctx context.Context, input *ssm.GetP
 }
 
 func (m *MockSSMClient) DeleteParameter(ctx context.Context, input *ssm.DeleteParameterInput, optFns ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error) {
-	if input == nil {
-		return nil, fmt.Errorf("DeleteParameterInput is empty")
-	}
-	if *input.Name == "" {
-		return nil, fmt.Errorf("Name in DeleteParameterInput is not set")
-	}
-	// SSM path based key needs to start from "/"
-	name := *input.Name
-	if string(name[0]) != "/" {
-		return nil, fmt.Errorf("SSM Name needs to start from /")
-	}
 	return &ssm.DeleteParameterOutput{}, nil
 }
