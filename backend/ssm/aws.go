@@ -1,36 +1,33 @@
 package ssm
 
 import (
+	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
+
+type SSMClientInterface interface {
+	GetParameter(context.Context, *ssm.GetParameterInput, ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
+	PutParameter(context.Context, *ssm.PutParameterInput, ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
+	GetParametersByPath(context.Context, *ssm.GetParametersByPathInput, ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)
+	DeleteParameter(context.Context, *ssm.DeleteParameterInput, ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error)
+}
 
 // Client with AWS services
 type Client struct {
-	svc ssmiface.SSMAPI
+	svc SSMClientInterface
 }
 
-// New returns clients for AWS services
 func New(region string, awsConfig aws.Config) (*Client, error) {
-	if region != "" {
-		awsConfig = *awsConfig.WithRegion(region)
-	}
-
-	sess, err := session.NewSessionWithOptions(session.Options{
-		Config: awsConfig,
-	})
+	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
+		return nil, fmt.Errorf("failed to load AWS configuration. Error: %s", err)
 	}
-
-	// Create a SSM client with additional configuration
-	svc := ssm.New(sess)
 
 	return &Client{
-		svc: svc,
+		svc: ssm.NewFromConfig(cfg),
 	}, nil
 }

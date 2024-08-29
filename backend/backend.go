@@ -5,7 +5,7 @@ import (
 
 	"github.com/AirHelp/treasury/backend/s3"
 	"github.com/AirHelp/treasury/backend/ssm"
-	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 const (
@@ -38,5 +38,5 @@ func New(options Options) (BackendAPI, error) {
 	case ssmName:
 		return ssm.New(options.Region, options.AWSConfig)
 	}
-	return nil, errors.New("Invalid backend")
+	return nil, errors.New("invalid backend")
 }

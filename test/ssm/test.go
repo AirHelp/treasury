@@ -1,12 +1,13 @@
 package ssm
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
+	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	"github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
 const (
@@ -33,12 +34,19 @@ var SSMKeyValueMap = map[string]string{
 	SSMKey3: KeyValueMap[Key3],
 }
 
-// MockSSMClient fake SSMAPI
+// MockSSMClient is a mock implementation of the SSMClient interface.
 type MockSSMClient struct {
-	ssmiface.SSMAPI
+	Parameters map[string]string
 }
 
-func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutParameterOutput, error) {
+type SSMClient interface {
+	PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
+	GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
+	GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)
+	DeleteParameter(ctx context.Context, input *ssm.DeleteParameterInput, optFns ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error)
+}
+
+func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error) {
 	if input == nil {
 		return nil, fmt.Errorf("PutParameterInput is empty")
 	}
@@ -54,10 +62,10 @@ func (m *MockSSMClient) PutParameter(input *ssm.PutParameterInput) (*ssm.PutPara
 		return nil, fmt.Errorf("Value in PutParameterInput is not set")
 	}
 	var version int64 = 1
-	return &ssm.PutParameterOutput{Version: &version}, nil
+	return &ssm.PutParameterOutput{Version: version}, nil
 }
 
-func (m *MockSSMClient) GetParameter(input *ssm.GetParameterInput) (*ssm.GetParameterOutput, error) {
+func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error) {
 	log.Println("input.Name:", input.Name)
 	if _, ok := SSMKeyValueMap[*input.Name]; !ok {
 		return nil, fmt.Errorf("Missing key:%s in KeyValue map", *input.Name)
@@ -68,7 +76,7 @@ func (m *MockSSMClient) GetParameter(input *ssm.GetParameterInput) (*ssm.GetPara
 	value := SSMKeyValueMap[*input.Name]
 	return &ssm.GetParameterOutput{
 		// https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#Parameter
-		Parameter: &ssm.Parameter{
+		Parameter: &types.Parameter{
 			Name:  input.Name,
 			Value: &value,
 		},
@@ -77,16 +85,16 @@ func (m *MockSSMClient) GetParameter(input *ssm.GetParameterInput) (*ssm.GetPara
 
 // https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#SSM.GetParametersByPath
 // https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#GetParametersByPathInput
-func (m *MockSSMClient) GetParametersByPath(input *ssm.GetParametersByPathInput) (*ssm.GetParametersByPathOutput, error) {
+func (m *MockSSMClient) GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error) {
 	if !*input.WithDecryption {
 		return nil, fmt.Errorf("Missing decryption field")
 	}
-	var contents []*ssm.Parameter
+	var contents []types.Parameter
 	for key, value := range SSMKeyValueMap {
 		key := key
 		value := value
 		if strings.Contains(key, *input.Path) {
-			contents = append(contents, &ssm.Parameter{
+			contents = append(contents, types.Parameter{
 				Name:  &key,
 				Value: &value,
 			})
@@ -95,4 +103,8 @@ func (m *MockSSMClient) GetParametersByPath(input *ssm.GetParametersByPathInput)
 	return &ssm.GetParametersByPathOutput{
 		Parameters: contents,
 	}, nil
+}
+
+func (m *MockSSMClient) DeleteParameter(ctx context.Context, input *ssm.DeleteParameterInput, optFns ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error) {
+	return &ssm.DeleteParameterOutput{}, nil
 }

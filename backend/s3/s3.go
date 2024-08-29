@@ -2,18 +2,16 @@ package s3
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 
 	"github.com/AirHelp/treasury/types"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 const (
-	// http://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html
-	s3ACL = "private"
-	// http://docs.aws.amazon.com/AmazonS3/latest/dev/UsingServerSideEncryption.html
-	s3ServerSideEncryption = "aws:kms"
 	// ApplicatonMetaKey is used as a Key for s3 object's metadata and tag
 	ApplicatonMetaKey = "Application"
 	// EnvironmentMetaKey is used as a Key for s3 object's metadata and tag
@@ -35,18 +33,18 @@ func (c *Client) PutObject(object *types.PutObjectInput) error {
 	params := &s3.PutObjectInput{
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(object.Key),
-		ACL:    aws.String(s3ACL),
+		ACL:    s3Types.ObjectCannedACLPrivate,
 		Body:   bytes.NewReader([]byte(object.Value)),
-		Metadata: map[string]*string{
-			ApplicatonMetaKey:  aws.String(object.Application),
-			EnvironmentMetaKey: aws.String(object.Environment),
+		Metadata: map[string]string{
+			ApplicatonMetaKey:  object.Application,
+			EnvironmentMetaKey: object.Environment,
 		},
-		ServerSideEncryption: aws.String(s3ServerSideEncryption),
+		ServerSideEncryption: s3Types.ServerSideEncryptionAwsKms,
 		SSEKMSKeyId:          aws.String("alias/" + object.Environment),
 		Tagging:              aws.String(tags),
 	}
 
-	_, err := c.S3Svc.PutObject(params)
+	_, err := c.S3Svc.PutObject(context.Background(), params)
 
 	return err
 }
@@ -61,7 +59,7 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 		Key:    aws.String(object.Key),
 	}
 
-	resp, err := c.S3Svc.GetObject(params)
+	resp, err := c.S3Svc.GetObject(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +76,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 		Prefix: aws.String(object.Prefix),
 	}
 
-	resp, err := c.S3Svc.ListObjects(params)
+	resp, err := c.S3Svc.ListObjects(context.Background(), params)
 	if err != nil {
 		return nil, err
 	}
@@ -99,6 +97,6 @@ func (c *Client) DeleteObject(object *types.DeleteObjectInput) error {
 		Bucket: aws.String(c.bucket),
 		Key:    aws.String(object.Key),
 	}
-	_, err := c.S3Svc.DeleteObject(params)
+	_, err := c.S3Svc.DeleteObject(context.Background(), params)
 	return err
 }
