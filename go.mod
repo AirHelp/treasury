@@ -1,8 +1,15 @@
 module github.com/AirHelp/treasury
 
 require (
-	github.com/aws/aws-sdk-go v1.54.11
+	github.com/aws/aws-sdk-go-v2/service/s3 v1.61.0
 	github.com/spf13/cobra v1.8.1
+)
+
+require (
+	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.6.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/v4a v1.3.16 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.3.18 // indirect
+	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.17.16 // indirect
 )
 
 require (

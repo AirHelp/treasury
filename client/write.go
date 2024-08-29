@@ -3,17 +3,13 @@ package client
 import (
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
-	"github.com/aws/aws-sdk-go/aws/awserr"
+	s3Types"github.com/aws/aws-sdk-go-v2/service/s3/types"
 
+	"errors"
 	"bytes"
 	"compress/gzip"
 	b64 "encoding/base64"
 	"io/ioutil"
-)
-
-const (
-	noSuchKey       = "NoSuchKey"
-	noSuchParameter = "ParameterNotFound"
 )
 
 // Write secret to Treasure
@@ -25,13 +21,12 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 	if !force {
 		secretObject, err := c.Read(key)
+
 		if err != nil {
-			if aerr, ok := err.(awserr.Error); ok {
-				// in this case 404 is ok for us
-				// so we'd proceed if 404 occurs
-				if aerr.Code() != noSuchKey && aerr.Code() != noSuchParameter {
-					return err
-				}
+			var nsk *s3Types.NoSuchKey
+			var nf *s3Types.NotFound
+			if !errors.As(err, &nsk) && !errors.As(err, &nf) {
+				return err
 			} else {
 				return err
 			}

@@ -30,8 +30,8 @@ const (
 // exportCmd represents the read command
 var exportCmd = &cobra.Command{
 	Use:   "export ENVIRONMENT/APPLICATION/[KEY]",
-	Short: "Returns command exporting found secretes",
-	Long:  `Returns command exporting found secretes to environment variables.`,
+	Short: "Returns command exporting found secrets",
+	Long:  `Returns command exporting found secrets to environment variables.`,
 	RunE:  export,
 }
 

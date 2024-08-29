@@ -1,45 +1,41 @@
 package s3
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3iface"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 // Client with AWS services
-type Client struct {
-	sess   *session.Session
-	S3Svc  s3iface.S3API
-	bucket string
+type S3ClientInterface interface {
+	PutObject(context.Context, *s3.PutObjectInput, ...func(*s3.Options)) (*s3.PutObjectOutput, error)
+	GetObject(context.Context, *s3.GetObjectInput, ...func(*s3.Options)) (*s3.GetObjectOutput, error)
+	ListObjects(context.Context, *s3.ListObjectsInput, ...func(*s3.Options)) (*s3.ListObjectsOutput, error)
+	DeleteObject(context.Context, *s3.DeleteObjectInput, ...func(*s3.Options)) (*s3.DeleteObjectOutput, error)
 }
 
-// New returns clients for AWS services
+type Client struct {
+    S3Svc  S3ClientInterface
+    bucket string
+}
+
 func New(region, bucket string) (*Client, error) {
 	if bucket == "" {
 		return nil, errors.New("S3 bucket name is missing")
 	}
-	sessionOpts := session.Options{
-		SharedConfigState: session.SharedConfigEnable,
-	}
+	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
 
-	if region != "" {
-		sessionOpts.Config = aws.Config{Region: aws.String(region)}
-	}
-
-	sess, err := session.NewSessionWithOptions(sessionOpts)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to create AWS session. Error: %s", err)
+		return &Client{}, errors.Join(
+			fmt.Errorf("unable to load SDK config with region %s", region),
+			err,
+		)
 	}
-
-	s3Svc := s3.New(sess)
 
 	return &Client{
-		sess:   sess,
-		S3Svc:  s3Svc,
-		bucket: bucket,
-	}, nil
+		S3Svc: s3.NewFromConfig(cfg),
+	}, err
 }
