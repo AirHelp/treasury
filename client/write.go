@@ -4,11 +4,11 @@ import (
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	ssmTypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 
 	"bytes"
 	"compress/gzip"
 	b64 "encoding/base64"
-	"errors"
 	"io/ioutil"
 )
 
@@ -23,10 +23,10 @@ func (c *Client) Write(key, secret string, force bool) error {
 		secretObject, err := c.Read(key)
 
 		if err != nil {
-			var nsk *s3Types.NoSuchKey
-			var nf *s3Types.NotFound
-
-			if !errors.As(err, &nsk) && !errors.As(err, &nf) {
+			switch err := err.(type) {
+			case *s3Types.NoSuchKey, *s3Types.NotFound, *ssmTypes.ParameterNotFound:
+				// Continue if secret does not exist
+			default:
 				return err
 			}
 		} else if secret == secretObject.Value {
@@ -49,7 +49,6 @@ func (c *Client) Write(key, secret string, force bool) error {
 }
 
 func (c *Client) WriteFile(key, file string, force bool) error {
-
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		return err
