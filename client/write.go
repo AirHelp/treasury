@@ -22,7 +22,6 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 	if !force {
 		secretObject, err := c.Read(key)
-
 		if err != nil {
 			var nsk *s3Types.NoSuchKey
 			var nf *ssmTypes.ParameterNotFound

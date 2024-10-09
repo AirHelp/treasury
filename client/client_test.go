@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	. "github.com/onsi/ginkgo/v2"
+	. "github.com/onsi/gomega"
 )
 
 func TestNew(t *testing.T) {
@@ -39,4 +41,9 @@ func TestNew(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient(t *testing.T) {
+	RegisterFailHandler(Fail)
+	RunSpecs(t, "Client Suite")
 }
