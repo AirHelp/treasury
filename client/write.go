@@ -4,6 +4,7 @@ import (
 	"github.com/AirHelp/treasury/types"
 	"github.com/AirHelp/treasury/utils"
 	s3Types "github.com/aws/aws-sdk-go-v2/service/s3/types"
+	ssmTypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 
 	"bytes"
 	"compress/gzip"
@@ -21,10 +22,9 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 	if !force {
 		secretObject, err := c.Read(key)
-
 		if err != nil {
 			var nsk *s3Types.NoSuchKey
-			var nf *s3Types.NotFound
+			var nf *ssmTypes.ParameterNotFound
 
 			if !errors.As(err, &nsk) && !errors.As(err, &nf) {
 				return err
