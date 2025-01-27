@@ -36,7 +36,7 @@ func New(options Options) (BackendAPI, error) {
 	case s3Name:
 		return s3.New(options.Region, options.S3BucketName)
 	case ssmName:
-		return ssm.New(options.Region, options.AWSConfig)
+		return ssm.New(options.AWSConfig)
 	}
 	return nil, errors.New("invalid backend")
 }

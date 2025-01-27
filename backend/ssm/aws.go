@@ -2,10 +2,8 @@ package ssm
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
@@ -21,13 +19,8 @@ type Client struct {
 	svc SSMClientInterface
 }
 
-func New(region string, awsConfig aws.Config) (*Client, error) {
-	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(region))
-	if err != nil {
-		return nil, fmt.Errorf("failed to load AWS configuration. Error: %s", err)
-	}
-
+func New(awsConfig aws.Config) (*Client, error) {
 	return &Client{
-		svc: ssm.NewFromConfig(cfg),
+		svc: ssm.NewFromConfig(awsConfig),
 	}, nil
 }
