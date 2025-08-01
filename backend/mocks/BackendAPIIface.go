@@ -8,7 +8,7 @@ import (
 	reflect "reflect"
 
 	types "github.com/AirHelp/treasury/types"
-	gomock "github.com/golang/mock/gomock"
+	gomock "go.uber.org/mock/gomock"
 )
 
 // MockBackendAPI is a mock of BackendAPI interface.
