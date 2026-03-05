@@ -56,7 +56,7 @@ func (c *Client) ExportToTemplate(key string, appendMap map[string]string) (stri
 // test/key/var is a full key path not a prefix
 func validPrefix(input string) bool {
 	err := utils.ValidateInputKey(input)
-	return (err != nil) == true
+	return err != nil
 }
 
 // ExportMap returns map of Key=Value secrets (Key is without full path)

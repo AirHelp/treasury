@@ -76,9 +76,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 			return nil, err
 		}
 
-		for _, parameter := range resp.Parameters {
-			parameters = append(parameters, parameter)
-		}
+		parameters = append(parameters, resp.Parameters...)
 		if resp.NextToken == nil {
 			break
 		}
