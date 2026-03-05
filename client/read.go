@@ -54,7 +54,7 @@ func (c *Client) ReadGroup(keyPrefix string) ([]*Secret, error) {
 		return nil, err
 	}
 
-	var secrets []*Secret
+	secrets := make([]*Secret, 0, len(resp.Secrets))
 
 	for key, value := range resp.Secrets {
 		secret := &Secret{

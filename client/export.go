@@ -30,7 +30,7 @@ func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]
 		}
 		secrets = append(secrets, secret)
 	}
-	var sortedKeys []string
+	sortedKeys := make([]string, 0, len(secrets))
 	keySecretMap := make(map[string]*Secret, len(secrets))
 	for _, secret := range secrets {
 		sortedKeys = append(sortedKeys, secret.Key)
