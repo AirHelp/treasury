@@ -64,7 +64,9 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 		return nil, err
 	}
 	buf := new(bytes.Buffer)
-	buf.ReadFrom(resp.Body)
+	if _, err := buf.ReadFrom(resp.Body); err != nil {
+		return nil, err
+	}
 
 	return &types.GetObjectOutput{Value: buf.String()}, nil
 }
