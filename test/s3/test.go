@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -37,7 +37,7 @@ func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, 
 
 func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
 	return &s3.GetObjectOutput{
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			bytes.NewReader(
 				[]byte(KeyValueMap[*input.Key]))),
 	}, nil

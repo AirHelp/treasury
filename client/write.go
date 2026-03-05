@@ -10,7 +10,7 @@ import (
 	"compress/gzip"
 	b64 "encoding/base64"
 	"errors"
-	"io/ioutil"
+	"os"
 )
 
 // Write secret to Treasure
@@ -50,7 +50,7 @@ func (c *Client) Write(key, secret string, force bool) error {
 
 func (c *Client) WriteFile(key, file string, force bool) error {
 
-	data, err := ioutil.ReadFile(file)
+	data, err := os.ReadFile(file)
 	if err != nil {
 		return err
 	}
