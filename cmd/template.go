@@ -62,6 +62,9 @@ func template(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	if perms < 0 || perms > 0o7777 {
+		return errors.New("invalid file permission value")
+	}
 
 	appendArgs, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
 	if err != nil {
@@ -91,7 +94,7 @@ func template(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms), appendMap, envMap); err != nil {
+	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(uint32(perms)), appendMap, envMap); err != nil {
 		return err
 	}
 	fmt.Println(templateSuccessMsg)
