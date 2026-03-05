@@ -34,12 +34,12 @@ var SSMKeyValueMap = map[string]string{
 	SSMKey3: KeyValueMap[Key3],
 }
 
-// MockSSMClient is a mock implementation of the SSMClient interface.
+// MockSSMClient is a mock implementation of the Client interface.
 type MockSSMClient struct {
 	Parameters map[string]string
 }
 
-type SSMClient interface {
+type Client interface {
 	PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
 	GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
 	GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)

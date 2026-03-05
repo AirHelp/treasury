@@ -4,7 +4,7 @@ import (
 	"github.com/AirHelp/treasury/types"
 )
 
-type BackendAPI interface {
+type API interface {
 	PutObject(*types.PutObjectInput) error
 	DeleteObject(*types.DeleteObjectInput) error
 	GetObject(*types.GetObjectInput) (*types.GetObjectOutput, error)

@@ -24,7 +24,7 @@ type Options struct {
 // New returns client for specific backend - s3 or ssm
 // by default we use SSM
 // once S3 bucket name is specified and no backend chosen we use S3
-func New(options Options) (BackendAPI, error) {
+func New(options Options) (API, error) {
 	if options.Backend == "" {
 		if options.S3BucketName != "" {
 			options.Backend = s3Name

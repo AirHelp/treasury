@@ -10,7 +10,7 @@ import (
 )
 
 // Client with AWS services
-type S3ClientInterface interface {
+type ClientInterface interface {
 	PutObject(context.Context, *s3.PutObjectInput, ...func(*s3.Options)) (*s3.PutObjectOutput, error)
 	GetObject(context.Context, *s3.GetObjectInput, ...func(*s3.Options)) (*s3.GetObjectOutput, error)
 	ListObjects(context.Context, *s3.ListObjectsInput, ...func(*s3.Options)) (*s3.ListObjectsOutput, error)
@@ -18,7 +18,7 @@ type S3ClientInterface interface {
 }
 
 type Client struct {
-	S3Svc  S3ClientInterface
+	S3Svc  ClientInterface
 	bucket string
 }
 

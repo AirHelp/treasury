@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-type SSMClientInterface interface {
+type ClientInterface interface {
 	GetParameter(context.Context, *ssm.GetParameterInput, ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
 	PutParameter(context.Context, *ssm.PutParameterInput, ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
 	GetParametersByPath(context.Context, *ssm.GetParametersByPathInput, ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)
@@ -16,7 +16,7 @@ type SSMClientInterface interface {
 
 // Client with AWS services
 type Client struct {
-	svc SSMClientInterface
+	svc ClientInterface
 }
 
 func New(awsConfig aws.Config) (*Client, error) {

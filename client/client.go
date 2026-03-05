@@ -16,7 +16,7 @@ type Client struct {
 	version string
 
 	// Backend interface
-	Backend backend.BackendAPI
+	Backend backend.API
 }
 
 // Options for client
@@ -25,7 +25,7 @@ type Options struct {
 	// backend region where we keep secrets
 	Region       string
 	S3BucketName string
-	Backend      backend.BackendAPI
+	Backend      backend.API
 	AWSConfig    aws.Config
 }
 

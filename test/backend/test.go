@@ -53,7 +53,7 @@ var KeyValueMap = map[string]string{
 
 // MockBackendClient fake backendAPI
 type MockBackendClient struct {
-	backend.BackendAPI
+	backend.API
 }
 
 func (m *MockBackendClient) PutObject(input *types.PutObjectInput) error {
