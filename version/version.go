@@ -15,7 +15,7 @@ var (
 	// state of git tree, either "clean" or "dirty"
 	gitTreeState string
 	// BuildTime has time when binary is builded
-	buildDate string = "1970-01-01T00:00:00Z"
+	buildDate = "1970-01-01T00:00:00Z"
 )
 
 type Version struct {
