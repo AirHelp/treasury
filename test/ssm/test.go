@@ -51,7 +51,7 @@ func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParamete
 		return nil, fmt.Errorf("PutParameterInput is empty")
 	}
 	if *input.Name == "" {
-		return nil, fmt.Errorf("Name in PutParameterInput is not set")
+		return nil, fmt.Errorf("name in PutParameterInput is not set")
 	}
 	// SSM path based key needs to start from "/"
 	name := *input.Name
@@ -59,7 +59,7 @@ func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParamete
 		return nil, fmt.Errorf("SSM Name needs to start from /")
 	}
 	if *input.Value == "" {
-		return nil, fmt.Errorf("Value in PutParameterInput is not set")
+		return nil, fmt.Errorf("value in PutParameterInput is not set")
 	}
 	var version int64 = 1
 	return &ssm.PutParameterOutput{Version: version}, nil
@@ -68,10 +68,10 @@ func (m *MockSSMClient) PutParameter(ctx context.Context, input *ssm.PutParamete
 func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error) {
 	log.Println("input.Name:", input.Name)
 	if _, ok := SSMKeyValueMap[*input.Name]; !ok {
-		return nil, fmt.Errorf("Missing key:%s in KeyValue map", *input.Name)
+		return nil, fmt.Errorf("missing key:%s in KeyValue map", *input.Name)
 	}
 	if !*input.WithDecryption {
-		return nil, fmt.Errorf("Missing decryption field")
+		return nil, fmt.Errorf("missing decryption field")
 	}
 	value := SSMKeyValueMap[*input.Name]
 	return &ssm.GetParameterOutput{
@@ -87,7 +87,7 @@ func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParamete
 // https://docs.aws.amazon.com/sdk-for-go/api/service/ssm/#GetParametersByPathInput
 func (m *MockSSMClient) GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error) {
 	if !*input.WithDecryption {
-		return nil, fmt.Errorf("Missing decryption field")
+		return nil, fmt.Errorf("missing decryption field")
 	}
 	var contents []types.Parameter
 	for key, value := range SSMKeyValueMap {

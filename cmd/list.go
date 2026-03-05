@@ -36,7 +36,7 @@ func init() {
 
 func list(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
-		return errors.New("Missing key path to list")
+		return errors.New("missing key path to list")
 	}
 	path := args[0]
 

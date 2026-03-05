@@ -1,3 +1,5 @@
+version: "2"
+
 run:
   timeout: 5m
 
@@ -6,9 +8,7 @@ linters:
     - dupword
     - errcheck
     - gocritic
-    - goimports
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - misspell
@@ -18,6 +18,28 @@ linters:
     - staticcheck
     - unconvert
     - unused
+  settings:
+    gosec:
+      # G304: reading user-supplied paths is intentional in a secrets manager CLI
+      # G301: 0755 directory permissions are intentional for parent dir creation
+      excludes:
+        - G304
+        - G301
+    revive:
+      rules:
+        # Too noisy: requires comments on all exported symbols
+        - name: exported
+          disabled: true
+        # Too noisy: requires package-level comments on every package
+        - name: package-comments
+          disabled: true
+        # False positives on idiomatic test package names (utils, version, etc.)
+        - name: var-naming
+          disabled: true
+
+formatters:
+  enable:
+    - goimports
 
 issues:
   exclude-dirs:
@@ -27,14 +49,14 @@ issues:
     - linters:
         - revive
       text: "dot-imports"
-      path: _test\.go
+      path: "_test\\.go$"
     # Cobra command handlers must match func(cmd *cobra.Command, args []string) signature
     - linters:
         - revive
       text: "unused-parameter"
-      path: cmd/
+      path: "^cmd/"
     # Test mock methods must match interface signatures (ctx unused in mocks)
     - linters:
         - revive
       text: "unused-parameter"
-      path: test/
+      path: "^test/"

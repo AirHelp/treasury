@@ -12,8 +12,8 @@ import (
 
 const (
 	templateSuccessMsg                     = "File with secrets successfully generated"
-	templateErrorMissingSourceFile         = "Missing source file path"
-	templateErrorMissingDestinationFile    = "Missing destination file path"
+	templateErrorMissingSourceFile         = "missing source file path"
+	templateErrorMissingDestinationFile    = "missing destination file path"
 	templateCommandSourceFileArgument      = "src"
 	templateCommandDestinationFileArgument = "dst"
 	templateCommandPermissionFileArgument  = "perms"
@@ -74,7 +74,7 @@ func template(cmd *cobra.Command, args []string) error {
 		if len(parts) == 2 {
 			appendMap[parts[0]] = parts[1]
 		} else {
-			return errors.New("Bad append format (--append <variable>:<string>)")
+			return errors.New("bad append format (--append <variable>:<string>)")
 		}
 	}
 

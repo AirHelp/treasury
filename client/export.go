@@ -42,7 +42,7 @@ func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]
 	for _, key := range sortedKeys {
 		secret := keySecretMap[key]
 		secret.Value = fmt.Sprintf("%s%s", secret.Value, appendMap[filepath.Base(secret.Key)])
-		buffer.WriteString(fmt.Sprintf(singleKeyExportFormat, filepath.Base(secret.Key), secret.Value))
+		fmt.Fprintf(&buffer, singleKeyExportFormat, filepath.Base(secret.Key), secret.Value)
 	}
 	return buffer.String(), nil
 }
