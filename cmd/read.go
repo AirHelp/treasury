@@ -37,7 +37,7 @@ func init() {
 
 func read(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
-		return errors.New("Missing Key to read.")
+		return errors.New("missing key to read")
 	}
 	key := args[0]
 

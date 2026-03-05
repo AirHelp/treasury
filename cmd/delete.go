@@ -37,7 +37,7 @@ func init() {
 
 func delete(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
-		return errors.New("Missing Key to delete.")
+		return errors.New("missing key to delete")
 	}
 	key := args[0]
 

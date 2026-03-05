@@ -38,7 +38,7 @@ func validate(cliIn, pattern string) error {
 		return err
 	}
 	if !match {
-		return fmt.Errorf("Given Key (%s) does not match to defined regex.", cliIn)
+		return fmt.Errorf("given key (%s) does not match defined regex", cliIn)
 	}
 	return nil
 }
@@ -51,7 +51,7 @@ func FindEnvironmentApplicationName(cliIn string) (string, string, error) {
 
 	substrings := strings.Split(cliIn, "/")
 	if len(substrings) < 2 {
-		return "", "", errors.New("Unable to split the input into environment and application name.")
+		return "", "", errors.New("unable to split input into environment and application name")
 	}
 	return substrings[0], substrings[1], nil
 }
