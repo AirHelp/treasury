@@ -10,8 +10,8 @@ import (
 	"github.com/AirHelp/treasury/utils"
 )
 
-// Export returns secrets in given format
-// format should be provided in singleKeyExportFormat
+// Export returns secrets in given format.
+// It should be provided in singleKeyExportFormat
 // e.g.: singleKeyExportFormat = "export %s='%s'\n"
 func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]string) (string, error) {
 	var secrets []*Secret
