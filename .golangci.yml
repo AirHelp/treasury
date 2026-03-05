@@ -18,6 +18,25 @@ linters:
     - staticcheck
     - unconvert
     - unused
+  exclusions:
+    paths:
+      - backend/mocks
+    rules:
+      # Ginkgo/Gomega idiomatically use dot imports
+      - linters:
+          - revive
+        text: "dot-imports"
+        path: "_test\\.go$"
+      # Cobra command handlers must match func(cmd *cobra.Command, args []string) signature
+      - linters:
+          - revive
+        text: "unused-parameter"
+        path: "^cmd/"
+      # Test mock methods must match interface signatures (ctx unused in mocks)
+      - linters:
+          - revive
+        text: "unused-parameter"
+        path: "^test/"
   settings:
     gosec:
       # G304: reading user-supplied paths is intentional in a secrets manager CLI
@@ -41,22 +60,3 @@ formatters:
   enable:
     - goimports
 
-issues:
-  exclude-dirs:
-    - backend/mocks
-  exclude-rules:
-    # Ginkgo/Gomega idiomatically use dot imports
-    - linters:
-        - revive
-      text: "dot-imports"
-      path: "_test\\.go$"
-    # Cobra command handlers must match func(cmd *cobra.Command, args []string) signature
-    - linters:
-        - revive
-      text: "unused-parameter"
-      path: "^cmd/"
-    # Test mock methods must match interface signatures (ctx unused in mocks)
-    - linters:
-        - revive
-      text: "unused-parameter"
-      path: "^test/"
