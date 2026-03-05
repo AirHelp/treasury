@@ -63,13 +63,13 @@ func template(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	append, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
+	appendArgs, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
 	if err != nil {
 		return err
 	}
 
 	appendMap = make(map[string]string)
-	for _, val := range append {
+	for _, val := range appendArgs {
 		parts := strings.SplitN(val, ":", 2)
 		if len(parts) == 2 {
 			appendMap[parts[0]] = parts[1]
