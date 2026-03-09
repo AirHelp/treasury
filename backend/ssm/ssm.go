@@ -17,7 +17,7 @@ const defaultParameterType = "SecureString"
 // https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_PutParameter.html
 func (c *Client) PutObject(object *types.PutObjectInput) error {
 	if object.Key == "" {
-		return errors.New("The key name is not valid.")
+		return errors.New("key name is not valid")
 	}
 	// https://pkg.go.dev/github.com/aws/aws-sdk-go-v2/service/ssm#PutParameterInput
 	putParameterInput := &ssm.PutParameterInput{
@@ -76,9 +76,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 			return nil, err
 		}
 
-		for _, parameter := range resp.Parameters {
-			parameters = append(parameters, parameter)
-		}
+		parameters = append(parameters, resp.Parameters...)
 		if resp.NextToken == nil {
 			break
 		}

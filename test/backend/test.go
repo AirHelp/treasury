@@ -1,7 +1,6 @@
 package backend
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -53,12 +52,12 @@ var KeyValueMap = map[string]string{
 
 // MockBackendClient fake backendAPI
 type MockBackendClient struct {
-	backend.BackendAPI
+	backend.API
 }
 
 func (m *MockBackendClient) PutObject(input *types.PutObjectInput) error {
 	if _, ok := KeyValueMap[input.Key]; !ok {
-		return errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", input.Key))
+		return fmt.Errorf("missing key:%s in KeyValue map", input.Key)
 	}
 	return nil
 }
@@ -67,7 +66,7 @@ func (m *MockBackendClient) GetObject(input *types.GetObjectInput) (*types.GetOb
 	if _, ok := KeyValueMap[input.Key]; !ok {
 		return &types.GetObjectOutput{
 			Value: "",
-		}, fmt.Errorf("Missing key:%s in KeyValue map", input.Key)
+		}, fmt.Errorf("missing key:%s in KeyValue map", input.Key)
 	}
 
 	return &types.GetObjectOutput{
@@ -87,7 +86,7 @@ func (m *MockBackendClient) GetObjects(input *types.GetObjectsInput) (*types.Get
 
 func (m *MockBackendClient) DeleteObject(input *types.DeleteObjectInput) error {
 	if _, ok := KeyValueMap[input.Key]; !ok {
-		return errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", input.Key))
+		return fmt.Errorf("missing key:%s in KeyValue map", input.Key)
 	}
 
 	delete(KeyValueMap, input.Key)

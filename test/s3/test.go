@@ -3,9 +3,8 @@ package s3
 import (
 	"bytes"
 	"context"
-	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -31,14 +30,14 @@ type MockS3Client struct {
 
 func (m *MockS3Client) PutObject(ctx context.Context, input *s3.PutObjectInput, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
 	if _, ok := KeyValueMap[*input.Key]; !ok {
-		return nil, errors.New(fmt.Sprintf("Missing key:%s in KeyValue map", *input.Key))
+		return nil, fmt.Errorf("missing key:%s in KeyValue map", *input.Key)
 	}
 	return &s3.PutObjectOutput{}, nil
 }
 
 func (m *MockS3Client) GetObject(ctx context.Context, input *s3.GetObjectInput, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
 	return &s3.GetObjectOutput{
-		Body: ioutil.NopCloser(
+		Body: io.NopCloser(
 			bytes.NewReader(
 				[]byte(KeyValueMap[*input.Key]))),
 	}, nil

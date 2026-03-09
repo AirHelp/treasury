@@ -53,7 +53,7 @@ func TestExport(t *testing.T) {
 }
 
 func formatExportString(keyValue map[string]string) []string {
-	var exportStrings []string
+	exportStrings := make([]string, 0, len(keyValue))
 	for key, value := range keyValue {
 		valueToExport := fmt.Sprintf(cmd.ExportString, filepath.Base(key), value)
 		exportStrings = append(exportStrings, valueToExport)

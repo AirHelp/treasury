@@ -5,6 +5,22 @@ permissions:
 on: pull_request
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v6
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v7
+        with:
+          version: v2.10.1
+
   test:
     runs-on: ubuntu-latest
 
@@ -22,6 +38,3 @@ jobs:
 
       - name: Test
         run: go test -v -cover -race ./...
-
-      - name: Run Go Vet
-        run: go vet ./...

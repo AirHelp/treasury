@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"text/template"
@@ -17,7 +16,7 @@ const (
 
 // Read template file
 func readTemplate(filePath string) (string, error) {
-	templateBuffer, err := ioutil.ReadFile(filePath)
+	templateBuffer, err := os.ReadFile(filePath)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +78,7 @@ func writeTemplateResults(destinationFilePath string, templateResultBuffer bytes
 		}
 	}
 
-	return ioutil.WriteFile(destinationFilePath, templateResultBuffer.Bytes(), perms)
+	return os.WriteFile(destinationFilePath, templateResultBuffer.Bytes(), perms)
 }
 
 // Template generates a file with secrets from given template

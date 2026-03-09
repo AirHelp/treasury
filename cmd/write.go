@@ -39,7 +39,7 @@ func init() {
 
 func write(cmd *cobra.Command, args []string) error {
 	if len(args) != 2 {
-		return errors.New("Missing Key and Value to write.")
+		return errors.New("missing key and value to write")
 	}
 	key := args[0]
 	value := args[1]

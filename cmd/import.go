@@ -26,7 +26,7 @@ func init() {
 
 func importFunc(cmd *cobra.Command, args []string) error {
 	if len(args) != 2 {
-		return errors.New("Missing environment/application/ and secrets/file/path")
+		return errors.New("missing environment/application/ and secrets/file/path")
 	}
 	keyPrefix := args[0]
 	secretsFilePath := args[1]

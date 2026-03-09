@@ -10,8 +10,8 @@ import (
 	"github.com/AirHelp/treasury/utils"
 )
 
-// Export returns secrets in given format
-// format should be provided in singleKeyExportFormat
+// Export returns secrets in given format.
+// It should be provided in singleKeyExportFormat
 // e.g.: singleKeyExportFormat = "export %s='%s'\n"
 func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]string) (string, error) {
 	var secrets []*Secret
@@ -30,7 +30,7 @@ func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]
 		}
 		secrets = append(secrets, secret)
 	}
-	var sortedKeys []string
+	sortedKeys := make([]string, 0, len(secrets))
 	keySecretMap := make(map[string]*Secret, len(secrets))
 	for _, secret := range secrets {
 		sortedKeys = append(sortedKeys, secret.Key)
@@ -42,7 +42,7 @@ func (c *Client) Export(key, singleKeyExportFormat string, appendMap map[string]
 	for _, key := range sortedKeys {
 		secret := keySecretMap[key]
 		secret.Value = fmt.Sprintf("%s%s", secret.Value, appendMap[filepath.Base(secret.Key)])
-		buffer.WriteString(fmt.Sprintf(singleKeyExportFormat, filepath.Base(secret.Key), secret.Value))
+		fmt.Fprintf(&buffer, singleKeyExportFormat, filepath.Base(secret.Key), secret.Value)
 	}
 	return buffer.String(), nil
 }
@@ -56,7 +56,7 @@ func (c *Client) ExportToTemplate(key string, appendMap map[string]string) (stri
 // test/key/var is a full key path not a prefix
 func validPrefix(input string) bool {
 	err := utils.ValidateInputKey(input)
-	return (err != nil) == true
+	return err != nil
 }
 
 // ExportMap returns map of Key=Value secrets (Key is without full path)

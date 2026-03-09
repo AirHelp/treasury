@@ -41,7 +41,7 @@ func init() {
 
 func export(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
-		return errors.New("Missing Key pattern to export.")
+		return errors.New("missing key pattern to export")
 	}
 	key := args[0]
 

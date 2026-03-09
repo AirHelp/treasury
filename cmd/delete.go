@@ -27,7 +27,7 @@ var deleteCmd = &cobra.Command{
 	Use:   "delete KEY",
 	Short: "Remove secrets from Treasury",
 	Long:  `Remove secret with the given key from Treasury.`,
-	RunE:  delete,
+	RunE:  deleteSecret,
 }
 
 func init() {
@@ -35,9 +35,9 @@ func init() {
 	deleteCmd.SuggestFor = []string{"remove"}
 }
 
-func delete(cmd *cobra.Command, args []string) error {
+func deleteSecret(cmd *cobra.Command, args []string) error {
 	if len(args) != 1 {
-		return errors.New("Missing Key to delete.")
+		return errors.New("missing key to delete")
 	}
 	key := args[0]
 

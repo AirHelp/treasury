@@ -12,8 +12,8 @@ import (
 
 const (
 	templateSuccessMsg                     = "File with secrets successfully generated"
-	templateErrorMissingSourceFile         = "Missing source file path"
-	templateErrorMissingDestinationFile    = "Missing destination file path"
+	templateErrorMissingSourceFile         = "missing source file path"
+	templateErrorMissingDestinationFile    = "missing destination file path"
 	templateCommandSourceFileArgument      = "src"
 	templateCommandDestinationFileArgument = "dst"
 	templateCommandPermissionFileArgument  = "perms"
@@ -62,19 +62,22 @@ func template(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	if perms < 0 || perms > 0o7777 {
+		return errors.New("invalid file permission value")
+	}
 
-	append, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
+	appendArgs, err := cmd.Flags().GetStringArray(templateCommandAppendArgument)
 	if err != nil {
 		return err
 	}
 
 	appendMap = make(map[string]string)
-	for _, val := range append {
+	for _, val := range appendArgs {
 		parts := strings.SplitN(val, ":", 2)
 		if len(parts) == 2 {
 			appendMap[parts[0]] = parts[1]
 		} else {
-			return errors.New("Bad append format (--append <variable>:<string>)")
+			return errors.New("bad append format (--append <variable>:<string>)")
 		}
 	}
 
@@ -91,7 +94,7 @@ func template(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(perms), appendMap, envMap); err != nil {
+	if err := treasury.Template(sourceFilePath, destinationFilePath, os.FileMode(uint32(perms)), appendMap, envMap); err != nil {
 		return err
 	}
 	fmt.Println(templateSuccessMsg)
