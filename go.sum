@@ -1,7 +1,7 @@
 github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
 github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
-github.com/aws/aws-sdk-go-v2 v1.43.1 h1:t6AQIB1uQ7HJA+0CDRWjOYG5MfwnOyyDsN4vRDHcwIY=
-github.com/aws/aws-sdk-go-v2 v1.43.1/go.mod h1:WEzLKBh/mEjXvx1FtQMWgSxMSTVqxQzjkRtk5fa3wkg=
+github.com/aws/aws-sdk-go-v2 v1.43.4 h1:b9FTvbRwy+JCsfp2Wp6wV/KbOx3Aj7nkoFb2cRX0IhE=
+github.com/aws/aws-sdk-go-v2 v1.43.4/go.mod h1:70vwSy16txshwG+g55WkpgPKDIByzHI8ccBsOteo3bQ=
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.15 h1:rq/p1VNFfygoKEQ9hHMKsKBE98lspPvT8IxaFs5mFhw=
 github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.15/go.mod h1:bELIhlPfW8OkpDhP1MvCjHDtvv8NhiBTz+K4o26zrXA=
 github.com/aws/aws-sdk-go-v2/config v1.31.6 h1:a1t8fXY4GT4xjyJExz4knbuoxSCacB5hT/WgtfPyLjo=
@@ -36,8 +36,8 @@ github.com/aws/aws-sdk-go-v2/service/ssooidc v1.34.2 h1:gKWSTnqudpo8dAxqBqZnDoDW
 github.com/aws/aws-sdk-go-v2/service/ssooidc v1.34.2/go.mod h1:x7+rkNmRoEN1U13A6JE2fXne9EWyJy54o3n6d4mGaXQ=
 github.com/aws/aws-sdk-go-v2/service/sts v1.38.2 h1:YZPjhyaGzhDQEvsffDEcpycq49nl7fiGcfJTIo8BszI=
 github.com/aws/aws-sdk-go-v2/service/sts v1.38.2/go.mod h1:2dIN8qhQfv37BdUYGgEC8Q3tteM3zFxTI1MLO2O3J3c=
-github.com/aws/smithy-go v1.27.5 h1:d1ro7KpYOYwP6m73YFa+Kc/A130VsAdX68SpsJwARMM=
-github.com/aws/smithy-go v1.27.5/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
+github.com/aws/smithy-go v1.27.6 h1:0zjT8jgK3jbrTT7JJ3EE6JsMhX8JTrZ+f1sEndYDXrA=
+github.com/aws/smithy-go v1.27.6/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
 github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
