@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/AirHelp/treasury/backend"
+	"github.com/aws/aws-sdk-go-v2/aws"
 )
 
 func TestNew(t *testing.T) {
@@ -29,6 +30,14 @@ func TestNew(t *testing.T) {
 			args: backend.Options{
 				Backend: "ssm",
 				Region:  "eu-west-1",
+			},
+			wantErr: false,
+		},
+		{
+			name: "ssm backend with AWS config provided by the caller",
+			args: backend.Options{
+				Backend:   "ssm",
+				AWSConfig: aws.Config{Region: "eu-west-1"},
 			},
 			wantErr: false,
 		},

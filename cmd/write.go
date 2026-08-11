@@ -17,6 +17,7 @@ package cmd
 import (
 	"errors"
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/AirHelp/treasury/client"
 	"github.com/spf13/cobra"
@@ -24,10 +25,23 @@ import (
 
 // writeCmd represents the write command
 var writeCmd = &cobra.Command{
-	Use:   "write ENVIRONMENT/APPLICATION/KEY SECRET or write user/USER.NAME/KEY SECRET",
+	Use:   "write ENVIRONMENT/APPLICATION/KEY or write user/USER.NAME/KEY",
 	Short: "Write secrets into Treasury",
-	Long:  `Write sends data into Treasury at the given key (path).`,
-	RunE:  write,
+	Long: `Write sends data into Treasury at the given key (path).
+
+The secret value is never given as a command line argument, so it does not end
+up in the shell history nor in the process list. When run in a terminal treasury
+asks for the secret and hides what is typed, otherwise the secret is read from
+the standard input:
+
+  treasury write development/webapp/cockpit_api_pass
+  echo "${SECRET}" | treasury write development/webapp/cockpit_api_pass
+
+The trailing newline added by echo is stripped. Pipe a variable or a command,
+never the secret itself - that would leak into the shell history again.
+
+With --file the second argument is a path to a file with the content to store.`,
+	RunE: write,
 }
 
 func init() {
@@ -38,11 +52,6 @@ func init() {
 }
 
 func write(cmd *cobra.Command, args []string) error {
-	if len(args) != 2 {
-		return errors.New("missing key and value to write")
-	}
-	key := args[0]
-	value := args[1]
 	force, err := cmd.Flags().GetBool("force")
 	if err != nil {
 		return err
@@ -53,24 +62,58 @@ func write(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	treasury, err := client.New(&client.Options{
+	if file {
+		return writeFile(cmd, args, force)
+	}
+
+	if len(args) == 0 {
+		return errors.New("missing key to write")
+	}
+	if len(args) > 1 {
+		return errors.New("too many arguments, the secret is not passed as an argument anymore - treasury asks for it or reads it from the standard input")
+	}
+	key := args[0]
+
+	secret, err := readSecret(cmd)
+	if err != nil {
+		return err
+	}
+
+	treasury, err := newClient()
+	if err != nil {
+		return err
+	}
+
+	if err := treasury.Write(key, secret, force); err != nil {
+		return err
+	}
+
+	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Success! Data written to: %s (%d characters)\n", key, utf8.RuneCountInString(secret))
+	return nil
+}
+
+func writeFile(cmd *cobra.Command, args []string, force bool) error {
+	if len(args) != 2 {
+		return errors.New("missing key and file path to write")
+	}
+	key, filePath := args[0], args[1]
+
+	treasury, err := newClient()
+	if err != nil {
+		return err
+	}
+
+	if err := treasury.WriteFile(key, filePath, force); err != nil {
+		return err
+	}
+
+	_, _ = fmt.Fprintf(cmd.OutOrStdout(), "Success! Data written to: %s\n", key)
+	return nil
+}
+
+func newClient() (*client.Client, error) {
+	return client.New(&client.Options{
 		Region:       s3Region,
 		S3BucketName: treasuryS3,
 	})
-	if err != nil {
-		return err
-	}
-
-	if file {
-		err = treasury.WriteFile(key, value, force)
-	} else {
-		err = treasury.Write(key, value, force)
-	}
-
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("Success! Data written to: ", key)
-	return nil
 }

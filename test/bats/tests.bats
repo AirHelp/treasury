@@ -26,37 +26,56 @@ invalid_aws_region=us-west-1
 # }
 
 @test "write" {
-  run $treasury write development/treasury/key1 secret1
+  run bash -c "echo secret1 | $treasury write development/treasury/key1"
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
+  [[ ${lines[0]} =~ "7 characters" ]]
 }
 
 @test "write second" {
-  run $treasury write development/treasury/key2 secret2
+  run bash -c "echo secret2 | $treasury write development/treasury/key2"
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second not forced" {
-  run $treasury write development/treasury/key2 secret2
+  run bash -c "echo secret2 | $treasury write development/treasury/key2"
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
 @test "write second forced" {
-  run $treasury write development/treasury/key2 secret2 --force
+  run bash -c "echo secret2 | $treasury write development/treasury/key2 --force"
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }
 
+@test "write secret without trailing newline on stdin" {
+  run bash -c "printf %s secret2 | $treasury write development/treasury/key2 --force"
+  [ $status -eq 0 ]
+  [[ ${lines[0]} =~ "7 characters" ]]
+}
+
 @test "write-wrong-data" {
-  run $treasury write test secret1
+  run bash -c "echo secret1 | $treasury write test"
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "write-secret-as-argument-is-rejected" {
+  run $treasury write development/treasury/key1 secret1
+  [ $status -eq 255 ]
+  [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "write-empty-secret-is-rejected" {
+  run bash -c "echo | $treasury write development/treasury/key1"
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
 }
 
 @test "write random key" {
-  run $treasury write development/application/"${randomKey}" secret
+  run bash -c "echo secret | $treasury write development/application/${randomKey}"
   [ $status -eq 0 ]
   [[ ${lines[0]} =~ "Success!" ]]
 }

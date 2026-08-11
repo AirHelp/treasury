@@ -117,10 +117,23 @@ brew install treasury
 ## CLI Usage
 
 ### Write secret
+
+The secret value is never passed as a command line argument, so it does not leak into the shell history nor into the process list. Treasury asks for it and hides the input:
 ```
-> treasury write development/webapp/cockpit_api_pass superSecretPassword
-Success! Data written to: development/webapp/cockpit_api_pass
+> treasury write development/webapp/cockpit_api_pass
+Please paste your secret:
+Success! Data written to: development/webapp/cockpit_api_pass (19 characters)
 ```
+
+In scripts and CI, where there is no terminal, the secret is read from the standard input:
+```
+> echo "${SECRET}" | treasury write development/webapp/cockpit_api_pass
+Success! Data written to: development/webapp/cockpit_api_pass (19 characters)
+```
+
+The single trailing newline that `echo` adds is stripped, so there is no need for `echo -n` (which is not portable between shells anyway). Any other whitespace is treated as a part of the secret. If the secret has to end with a newline, use `printf '%s\n' "${SECRET}"` or write it from a file with `--file`.
+
+Do not put the secret itself in the pipe - `echo thisIsASecret | treasury write KEY` leaks into the shell history exactly like the old `treasury write KEY thisIsASecret` did. Pipe a variable or another command (`echo "${SECRET}" | ...`), and type secrets by hand only into the interactive prompt.
 
 Note: if secret value is equal to existing one, write is skipped. `--force` flag can be used to overwrite.
 
@@ -524,13 +537,14 @@ You can now use the treasure as a user vault with minimal policy change. Includi
 * Write user/marcin.janas/phone
 
 ```bash
-$ treasury write write user/firstname.lastname/phone +48987654321
-Success! Data written to:  user/firstname.lastname/phone
+$ treasury write user/firstname.lastname/phone
+Please paste your secret:
+Success! Data written to: user/firstname.lastname/phone (13 characters)
 ```
 
 * Read user/firstname.lastname/phone
 ```bash
-$ treasury write read user/firstname.lastname/phone
+$ treasury read user/firstname.lastname/phone
 +48987654321
 ```
 
