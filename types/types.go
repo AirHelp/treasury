@@ -14,9 +14,11 @@ type GetObjectInput struct {
 	Version string
 }
 
-// GetObjectsInput structure for GetObjects
+// GetObjectsInput structure for GetObjects. Set Prefix to get every secret
+// under a path, or Keys to get only the listed ones.
 type GetObjectsInput struct {
 	Prefix string
+	Keys   []string
 }
 
 // GetObjectOuput structure for GetObject

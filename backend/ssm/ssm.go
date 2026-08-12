@@ -3,6 +3,9 @@ package ssm
 import (
 	"context"
 	"errors"
+	"fmt"
+	"sort"
+	"strings"
 
 	"github.com/AirHelp/treasury/types"
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -10,7 +13,13 @@ import (
 	ssmtypes "github.com/aws/aws-sdk-go-v2/service/ssm/types"
 )
 
-const defaultParameterType = "SecureString"
+const (
+	defaultParameterType = "SecureString"
+
+	// maxKeysPerCall is the hard limit SSM puts on both GetParameters and
+	// GetParametersByPath, so it is the batch size of every read we do
+	maxKeysPerCall = 10
+)
 
 // PutObject writes a given secret value on SSM
 // it uses PutParameter API call
@@ -54,8 +63,13 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	return &types.GetObjectOutput{Value: *resp.Parameter.Value}, nil
 }
 
-// GetObjects returns key value map for given pattern/prefix
+// GetObjects returns key value map for the listed keys, or for the given
+// pattern/prefix when no keys are given
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
+	if len(object.Keys) > 0 {
+		return c.getParameters(object.Keys)
+	}
+
 	var nextToken *string
 	var parameters []ssmtypes.Parameter
 	for {
@@ -64,7 +78,7 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 			Path: aws.String("/" + object.Prefix),
 			// Retrieve all parameters in a hierarchy with their value decrypted.
 			WithDecryption: aws.Bool(true),
-			MaxResults:     aws.Int32(10),
+			MaxResults:     aws.Int32(maxKeysPerCall),
 			NextToken:      nextToken,
 		}
 
@@ -86,6 +100,46 @@ func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOup
 	keyValuePairs := make(map[string]string, len(parameters))
 	for _, parameter := range parameters {
 		keyValuePairs[unSlash(*parameter.Name)] = *parameter.Value
+	}
+	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
+}
+
+// getParameters fetches the given keys only, in batches of maxKeysPerCall,
+// which is what makes reading a handful of secrets from a big path cheap
+// https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_GetParameters.html
+func (c *Client) getParameters(keys []string) (*types.GetObjectsOuput, error) {
+	keyValuePairs := make(map[string]string, len(keys))
+	for start := 0; start < len(keys); start += maxKeysPerCall {
+		batch := keys[start:min(start+maxKeysPerCall, len(keys))]
+		names := make([]string, 0, len(batch))
+		for _, key := range batch {
+			// we decided to use path based keys without `/` at the beginning
+			// so we need to add it here
+			names = append(names, "/"+key)
+		}
+
+		resp, err := c.svc.GetParameters(context.Background(), &ssm.GetParametersInput{
+			Names: names,
+			// Retrieve all parameters in a hierarchy with their value decrypted.
+			WithDecryption: aws.Bool(true),
+		})
+		if err != nil {
+			return nil, err
+		}
+		// a name which does not exist is not an error for SSM, it comes back
+		// on a list of its own
+		if len(resp.InvalidParameters) > 0 {
+			missing := make([]string, 0, len(resp.InvalidParameters))
+			for _, name := range resp.InvalidParameters {
+				missing = append(missing, unSlash(name))
+			}
+			sort.Strings(missing)
+			return nil, fmt.Errorf("secrets not found: %s", strings.Join(missing, ", "))
+		}
+
+		for _, parameter := range resp.Parameters {
+			keyValuePairs[unSlash(*parameter.Name)] = *parameter.Value
+		}
 	}
 	return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
 }

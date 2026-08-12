@@ -42,6 +42,7 @@ type MockSSMClient struct {
 type Client interface {
 	PutParameter(ctx context.Context, input *ssm.PutParameterInput, optFns ...func(*ssm.Options)) (*ssm.PutParameterOutput, error)
 	GetParameter(ctx context.Context, input *ssm.GetParameterInput, optFns ...func(*ssm.Options)) (*ssm.GetParameterOutput, error)
+	GetParameters(ctx context.Context, input *ssm.GetParametersInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersOutput, error)
 	GetParametersByPath(ctx context.Context, input *ssm.GetParametersByPathInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersByPathOutput, error)
 	DeleteParameter(ctx context.Context, input *ssm.DeleteParameterInput, optFns ...func(*ssm.Options)) (*ssm.DeleteParameterOutput, error)
 }
@@ -80,6 +81,33 @@ func (m *MockSSMClient) GetParameter(ctx context.Context, input *ssm.GetParamete
 			Name:  input.Name,
 			Value: &value,
 		},
+	}, nil
+}
+
+// https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_GetParameters.html
+func (m *MockSSMClient) GetParameters(ctx context.Context, input *ssm.GetParametersInput, optFns ...func(*ssm.Options)) (*ssm.GetParametersOutput, error) {
+	if !*input.WithDecryption {
+		return nil, fmt.Errorf("missing decryption field")
+	}
+	if len(input.Names) > 10 {
+		return nil, fmt.Errorf("SSM accepts at most 10 names per call, got %d", len(input.Names))
+	}
+	var parameters []types.Parameter
+	var invalid []string
+	for _, name := range input.Names {
+		value, ok := SSMKeyValueMap[name]
+		if !ok {
+			invalid = append(invalid, name)
+			continue
+		}
+		parameters = append(parameters, types.Parameter{
+			Name:  &name,
+			Value: &value,
+		})
+	}
+	return &ssm.GetParametersOutput{
+		Parameters:        parameters,
+		InvalidParameters: invalid,
 	}, nil
 }
 
