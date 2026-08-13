@@ -21,7 +21,8 @@ Treasury is a very simple tool for managing secrets. It uses Amazon S3 or SSM ([
     - [Delete secret](#delete-secret)
     - [Import secrets](#import-secrets)
     - [Export secrets](#export-secrets)
-    - [Teamplate usage](#teamplate-usage)
+    - [Run a command with secrets](#run-a-command-with-secrets)
+    - [Template usage](#template-usage)
       - [Template usage with string append to secret value](#template-usage-with-string-append-to-secret-value)
       - [Template usage with variables interpolation](#template-usage-with-variables-interpolation)
       - [read](#read)
@@ -204,7 +205,45 @@ To export them into shell environment variables:
 eval $(treasury export development/webapp/)
 ```
 
-### Teamplate usage
+### Run a command with secrets
+
+Runs a command with secrets exported as environment variables, without ever writing them to disk.
+
+The secrets are described in an environment file, `.env.treasury` by default. A complete example:
+
+```bash
+# Comments and empty lines are ignored.
+
+# Exports all secrets from the path, each one named after the last part of the
+# key, so development/mobile-app-gateway/API_TOKEN becomes API_TOKEN
+{{ export "development/mobile-app-gateway/" }}
+
+# Exports a single secret under a name of your choice
+USER_PROFILES_API_PASSWORD={{ read "development/user-profiles/API_PASSWORD_MOBILE_GATEWAY" }}
+AUTH_API_PASSWORD={{ read "development/auth/INTERNAL_API_BASIC_AUTH_PASSWORD" }}
+AUTH_ACCESS_TOKEN_SECRET={{ read "development/auth/ACCESS_TOKEN_SECRET" }}
+
+# Plain values are taken as they are, no secret store involved
+RAILS_ENV=development
+API_TOKEN=test
+```
+
+Every line is a Go template, and `read` and `export` are the directives you know from the [template command](#template-usage). `read` inserts the value of a single secret, `export` turns a whole path into entries, one per secret. Entries are applied in the order of appearance, so a later entry overrides an earlier one with the same name.
+
+```bash
+> treasury run bundle exec rake db:migrate
+> treasury run --env-file .env.staging -- rails server
+```
+
+The AWS profile is taken from the `AWS_PROFILE` environment variable, use `--profile` to pick another one:
+
+```bash
+> treasury run --profile development bundle exec rails console
+```
+
+Treasury steps out of the way of the command it runs. Signals it receives, a `SIGTERM` from a supervisor for example, are passed to the command, and its exit code becomes the exit code of treasury: `127` when the command does not exist, `126` when it cannot be executed and `128 + signal number` when it is killed.
+
+### Template usage
 
 Render the template on disk at /tmp/template.tpl to /tmp/result:
 

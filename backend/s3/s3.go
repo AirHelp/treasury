@@ -63,6 +63,8 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = resp.Body.Close() }()
+
 	buf := new(bytes.Buffer)
 	if _, err := buf.ReadFrom(resp.Body); err != nil {
 		return nil, err
@@ -71,8 +73,23 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	return &types.GetObjectOutput{Value: buf.String()}, nil
 }
 
-// GetObjects returns key value map for given pattern
+// GetObjects returns key value map for the listed keys, or for the given
+// pattern when no keys are given
 func (c *Client) GetObjects(object *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
+	// S3 has no way to read several objects at once, so the keys are fetched
+	// one by one, which is still fewer objects than a whole prefix
+	if len(object.Keys) > 0 {
+		keyValuePairs := make(map[string]string, len(object.Keys))
+		for _, key := range object.Keys {
+			found, err := c.GetObject(&types.GetObjectInput{Key: key})
+			if err != nil {
+				return nil, err
+			}
+			keyValuePairs[key] = found.Value
+		}
+		return &types.GetObjectsOuput{Secrets: keyValuePairs}, nil
+	}
+
 	params := &s3.ListObjectsInput{
 		Bucket: aws.String(c.bucket),
 		Prefix: aws.String(object.Prefix),

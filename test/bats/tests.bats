@@ -4,6 +4,7 @@ treasury=$PWD/treasury
 randomKey=$(cat /dev/urandom | env LC_CTYPE=C tr -dc a-zA-Z0-9 | head -c 16)
 valid_aws_region=eu-west-1
 invalid_aws_region=us-west-1
+runEnvFile=$PWD/test/resources/bats.env.treasury
 
 @test "Check that the treasury binary is available" {
     command $treasury
@@ -206,6 +207,66 @@ invalid_aws_region=us-west-1
   run $treasury write development/treasury/key5 test/resources/test_large_file --file
   [ $status -eq 255 ]
   [[ ${lines[0]} =~ "Error" ]]
+}
+
+@test "run exports a plain value" {
+  run $treasury run --env-file $runEnvFile printenv PLAIN_VALUE
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "plain" ]]
+}
+
+@test "run exports a single secret" {
+  run $treasury run --env-file $runEnvFile printenv KEY_FROM_READ
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "secret1" ]]
+}
+
+@test "run exports all secrets from a path" {
+  run $treasury run --env-file $runEnvFile printenv key1 key2
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "secret1" ]]
+  [[ ${lines[1]} == "secret2" ]]
+}
+
+@test "run drops an inline comment but keeps a hash inside a value" {
+  run $treasury run --env-file $runEnvFile printenv COMMENTED_VALUE HASH_VALUE
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "plain" ]]
+  [[ ${lines[1]} == "pass#word" ]]
+}
+
+@test "run lets a later entry override an earlier one" {
+  run $treasury run --env-file $runEnvFile printenv OVERRIDDEN
+  [ $status -eq 0 ]
+  [[ ${lines[0]} == "second" ]]
+}
+
+@test "run exits with the code of the command" {
+  run $treasury run --env-file $runEnvFile sh -c "exit 3"
+  [ $status -eq 3 ]
+}
+
+@test "run exits with 128 + signal when the command is killed" {
+  run $treasury run --env-file $runEnvFile sh -c 'kill -TERM $$'
+  [ $status -eq 143 ]
+}
+
+@test "run exits with 127 when the command does not exist" {
+  run $treasury run --env-file $runEnvFile no-such-command
+  [ $status -eq 127 ]
+  [[ ${output} =~ "command not found" ]]
+}
+
+@test "run forwards signals to the command" {
+  run timeout 10 bash -c '"$1" run --env-file "$2" sh -c "trap \"exit 42\" TERM; while true; do sleep 0.1; done" & child=$!; sleep 1; kill -TERM $child; wait $child' bash $treasury $runEnvFile
+  [ $status -eq 42 ]
+}
+
+@test "run points to --env-file when the environment file is missing" {
+  run $treasury run --env-file /no/such/.env.treasury printenv
+  [ $status -ne 0 ]
+  [[ ${output} =~ "not found" ]]
+  [[ ${output} =~ "--env-file" ]]
 }
 
 @test "check version" {

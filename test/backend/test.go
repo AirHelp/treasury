@@ -76,6 +76,21 @@ func (m *MockBackendClient) GetObject(input *types.GetObjectInput) (*types.GetOb
 
 func (m *MockBackendClient) GetObjects(input *types.GetObjectsInput) (*types.GetObjectsOuput, error) {
 	response := make(map[string]string)
+	if len(input.Keys) > 0 {
+		var missing []string
+		for _, key := range input.Keys {
+			value, ok := KeyValueMap[key]
+			if !ok {
+				missing = append(missing, key)
+				continue
+			}
+			response[key] = value
+		}
+		if len(missing) > 0 {
+			return nil, fmt.Errorf("secrets not found: %s", strings.Join(missing, ", "))
+		}
+		return &types.GetObjectsOuput{Secrets: response}, nil
+	}
 	for key := range KeyValueMap {
 		if strings.Contains(key, input.Prefix) {
 			response[key] = KeyValueMap[key]
