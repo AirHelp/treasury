@@ -63,6 +63,8 @@ func (c *Client) GetObject(object *types.GetObjectInput) (*types.GetObjectOutput
 	if err != nil {
 		return nil, err
 	}
+	defer func() { _ = resp.Body.Close() }()
+
 	buf := new(bytes.Buffer)
 	if _, err := buf.ReadFrom(resp.Body); err != nil {
 		return nil, err
