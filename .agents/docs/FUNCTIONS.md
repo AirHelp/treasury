@@ -1,0 +1,15 @@
+- **Secret storage** — keeps AirHelp application secrets encrypted at rest in a central cloud vault, organised by environment and application path.
+  - **Write secret** — saves a secret value under a path, skipping the write when the value is unchanged unless forced.
+  - **Write file secret** — stores whole file contents (compressed and encoded) as a single secret.
+  - **Read secret** — returns the decrypted value of a single secret.
+  - **List secrets** — enumerates secret keys under a path.
+  - **Delete secret** — removes a secret from the vault.
+- **Bulk transfer** — moves many secrets at once between the vault and configuration files.
+  - **Import** — loads key/value pairs from a properties file into a vault path.
+  - **Export** — prints all secrets under a path as shell environment-variable assignments for direct use by applications.
+- **Configuration templating** — renders configuration files by injecting secrets into templates.
+  - **Single-value lookup** — resolves an individual secret (optionally per environment) inside a template.
+  - **Path expansion** — expands all secrets under a path into key/value lines or a map inside a template.
+  - **Variable interpolation** — substitutes caller-supplied variables and appends suffixes to secret values during rendering.
+- **Embedded access library** — lets other AirHelp programs read, write, export and delete secrets programmatically instead of via the command line.
+- **Personal user vault** — gives each employee a private path to store and read their own secrets.

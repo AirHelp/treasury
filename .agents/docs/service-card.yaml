@@ -1,0 +1,6 @@
+---
+name: treasury
+kind: platform
+domain: platform
+description: |
+  Treasury is AirHelp's **secrets management tool**. Teams use its **command line** and **embedded library** to store, read and share **encrypted application secrets** in a central cloud vault, **export** them as environment variables, and **render configuration files** from templates with secrets injected.
