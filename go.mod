@@ -3,7 +3,7 @@ module github.com/AirHelp/treasury
 require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.113.4
 	github.com/golang/mock v1.6.0
-	github.com/onsi/ginkgo/v2 v2.29.0
+	github.com/onsi/ginkgo/v2 v2.33.0
 	github.com/onsi/gomega v1.41.0
 	github.com/spf13/cobra v1.10.2
 	golang.org/x/term v0.43.0
