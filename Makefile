@@ -67,15 +67,7 @@ _s3_release:
 		done \
 	done
 
-_lambda_layers_release: _check_deps
-	for env in sta staging development; do \
-		aws --profile $${env} lambda publish-layer-version --layer-name treasury-client \
-			--description "treasury ${TREASURY_VERSION} layer" \
-			--content S3Bucket=airhelp-devops-binaries,S3Key=treasury/${TREASURY_VERSION}/treasury-linux-amd64.zip \
-			--compatible-runtimes "python3.8" "go1.x" "nodejs10.x" "nodejs12.x" --output text; \
-	done
-
-release: build _check_deps _github_release _s3_release _lambda_layers_release
+release: build _check_deps _github_release _s3_release
 
 dev:
 	go build
